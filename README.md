@@ -1,4 +1,16 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SeenIt - Votre Tracker de Watchlist Personnel
+
+**SeenIt** est une application moderne de suivi de contenu qui vous permet de garder une trace précise de tous les films, séries, documentaires et autres contenus que vous avez déjà visionnés. Ne perdez plus jamais le fil de ce que vous avez regardé et découvrez facilement ce qui vous reste à explorer.
+
+## 🎬 Fonctionnalités
+
+- **Suivi complet** : Enregistrez tous les films et séries que vous avez vus
+- **Organisation intuitive** : Classez et organisez votre bibliothèque de contenu
+- **Historique personnel** : Conservez une trace de votre parcours cinématographique
+- **Recherche facile** : Trouvez rapidement ce que vous avez déjà regardé
+- **Statistiques** : Visualisez vos habitudes de visionnage
+
+## 🚀 Démarrage rapide
 
 ## Getting Started
 
