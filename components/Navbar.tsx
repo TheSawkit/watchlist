@@ -42,7 +42,7 @@ export default function Navbar() {
             </Link>
             <Link
               href="/signup"
-              className="rounded-(--radius-cinema) bg-red-2 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-red hover:shadow-cinema"
+              className="rounded-(--radius-cinema) bg-red-2 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-red"
             >
               Inscription
             </Link>

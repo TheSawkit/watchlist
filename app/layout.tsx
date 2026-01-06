@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Bebas_Neue } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/Navbar";
+import Navbar from "@/components/Navbar";
 
 const sans = Inter({
   subsets: ["latin"],

@@ -1,7 +1,10 @@
+import CinemaSpotlight from "@/components/ui/cinema-spotlight";
+
 export default function HeroSection() {
   return (
-    <section className="relative px-6 py-20 md:py-32 lg:px-12">
-      <div className="mx-auto max-w-4xl text-center">
+    <section className="relative px-6 py-20 md:py-32 lg:px-12 overflow-hidden">
+      <CinemaSpotlight />
+      <div className="relative z-10 mx-auto max-w-4xl text-center">
         <h1 className="mb-6 font-display text-6xl font-normal tracking-tight text-text md:text-8xl lg:text-9xl">
           SeenIt
         </h1>
@@ -14,7 +17,7 @@ export default function HeroSection() {
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
           <a
             href="/signup"
-            className="rounded-(--radius-cinema) bg-red px-8 py-4 text-lg font-semibold text-white transition-all hover:shadow-cinema hover:bg-red-2"
+            className="rounded-(--radius-cinema) bg-red-2 px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-red"
           >
             Créer un compte
           </a>

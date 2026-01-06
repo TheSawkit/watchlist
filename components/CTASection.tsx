@@ -12,7 +12,7 @@ export default function CTASection() {
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
           <a
             href="/signup"
-            className="rounded-(--radius-cinema) bg-red px-8 py-4 text-lg font-semibold text-white transition-all hover:shadow-cinema hover:bg-red-2"
+            className="rounded-(--radius-cinema) bg-red-2 px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-red"
           >
             Créer un compte gratuitement
           </a>
