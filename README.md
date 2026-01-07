@@ -4,45 +4,57 @@
 
 ## 🎬 Fonctionnalités
 
-- **Suivi complet** : Enregistrez tous les films et séries que vous avez vus
-- **Organisation intuitive** : Classez et organisez votre bibliothèque de contenu
-- **Historique personnel** : Conservez une trace de votre parcours cinématographique
-- **Recherche facile** : Trouvez rapidement ce que vous avez déjà regardé
-- **Statistiques** : Visualisez vos habitudes de visionnage
+- **Authentification complète** : Inscription et connexion sécurisées via Email/Mot de passe (propulsé par Supabase Auth).
+- **Design Cinéma** : Interface utilisateur immersive avec une identité visuelle forte (spotlights, typographie, couleurs).
+- **Suivi complet** : Enregistrez tous les films et séries que vous avez vus.
+- **Organisation intuitive** : Classez et organisez votre bibliothèque de contenu.
+- **Historique personnel** : Conservez une trace de votre parcours cinématographique.
 
 ## 🚀 Démarrage rapide
 
-## Getting Started
+### 1. Prérequis
 
-First, run the development server:
+- Node.js 18+ installé
+- Un compte [Supabase](https://supabase.com/)
+
+### 2. Installation
+
+Clonez le dépôt et installez les dépendances :
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/votre-username/seenit.git
+cd seenit
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Configuration de l'environnement
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Renommez le fichier `.env.example` en `.env.local` (ou créez-le) et ajoutez vos clés Supabase :
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# .env.local
 
-## Learn More
+# URL de votre projet Supabase (Project Settings > API)
+NEXT_PUBLIC_SUPABASE_URL=votre_url_supabase
 
-To learn more about Next.js, take a look at the following resources:
+# Clé publique "anon" (Project Settings > API)
+NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_cle_anon
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Vous pouvez trouver ces clés dans votre tableau de bord Supabase : `Settings` > `API`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. Lancer le serveur de développement
 
-## Deploy on Vercel
+```bash
+pnpm dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Ouvrez [http://localhost:3000](http://localhost:3000) dans votre navigateur.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🛠 Technologies
+
+- **Framework** : Next.js 15 (App Router)
+- **Langage** : TypeScript
+- **Style** : Tailwind CSS 4
+- **Authentification & Base de données** : Supabase
+- **UI** : Composants personnalisés avec un thème cinéma

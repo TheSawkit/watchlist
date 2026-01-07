@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/server";
+import { signout } from "@/app/auth/actions";
 
-export default function Navbar() {
+export default async function Navbar() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-surface/80 backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
@@ -37,16 +44,30 @@ export default function Navbar() {
 
           {/* Auth Buttons */}
           <div className="flex items-center justify-end gap-4">
-            <Button asChild variant="outline">
-              <Link href="/login">Connexion</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/signup">Inscription</Link>
-            </Button>
+            {user ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-muted hidden md:inline-block">
+                  {user.email}
+                </span>
+                <form action={signout}>
+                  <Button variant="outline" type="submit">
+                    Déconnexion
+                  </Button>
+                </form>
+              </div>
+            ) : (
+              <>
+                <Button asChild variant="outline">
+                  <Link href="/login">Connexion</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/signup">Inscription</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
     </nav>
   );
 }
-

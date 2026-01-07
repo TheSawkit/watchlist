@@ -1,3 +1,6 @@
+'use client'
+
+import { useActionState } from 'react'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,11 +19,18 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
+import { login } from "@/app/auth/actions"
+
+const initialState = {
+  error: '',
+}
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [state, formAction, isPending] = useActionState(login, initialState)
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -33,7 +43,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form action={formAction}>
             <FieldGroup>
               <Field>
                 <Button variant="outline" type="button">
@@ -62,6 +72,7 @@ export function LoginForm({
                 <FieldLabel htmlFor="email">E-mail</FieldLabel>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="chuck@exemple.com"
                   required
@@ -78,13 +89,20 @@ export function LoginForm({
                   </a>
                 </div>
                 <Input
-                id="password"
-                type="password"
-                placeholder="********"
-                required />
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="********"
+                  required
+                />
               </Field>
+              {state?.error && (
+                <p className="text-sm text-red-500 text-center">{state.error}</p>
+              )}
               <Field>
-                <Button type="submit">Se connecter</Button>
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? 'Connexion...' : 'Se connecter'}
+                </Button>
                 <FieldDescription className="text-center">
                   Pas encore de compte ? <Link href="/signup">Créer un compte</Link>
                 </FieldDescription>
