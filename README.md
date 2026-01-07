@@ -35,10 +35,10 @@ Renommez le fichier `.env.example` en `.env.local` (ou créez-le) et ajoutez vos
 # .env.local
 
 # URL de votre projet Supabase (Project Settings > API)
-NEXT_PUBLIC_SUPABASE_URL=votre_url_supabase
+NEXT_PUBLIC_SUPABASE_URL=votre_url
 
-# Clé publique "anon" (Project Settings > API)
-NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_cle_anon
+# Clé publique par défaut (Project Settings > API)
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=votre_cle
 ```
 
 Vous pouvez trouver ces clés dans votre tableau de bord Supabase : `Settings` > `API`.
