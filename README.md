@@ -53,7 +53,7 @@ Ouvrez [http://localhost:3000](http://localhost:3000) dans votre navigateur.
 
 ## 🛠 Technologies
 
-- **Framework** : Next.js 15 (App Router)
+- **Framework** : Next.js 16 (App Router)
 - **Langage** : TypeScript
 - **Style** : Tailwind CSS 4
 - **Authentification & Base de données** : Supabase
