@@ -21,30 +21,33 @@ export default async function Navbar() {
           </div>
 
           {/* Navigation Links - Desktop */}
-          <div className="hidden items-center justify-center gap-8 md:flex">
-            <Link
-              href="/"
-              className="text-muted transition-colors hover:text-text"
-            >
-              Accueil
-            </Link>
-            <Link
-              href="/explore"
-              className="text-muted transition-colors hover:text-text"
-            >
-              Explorer
-            </Link>
-            <Link
-              href="/library"
-              className="text-muted transition-colors hover:text-text"
-            >
-              Ma bibliothèque
-            </Link>
-          </div>
+          {user ? (
+            <div className="items-center justify-center gap-8 md:flex">
+              <Link
+                href="/"
+                className="text-muted transition-colors hover:text-text"
+              >
+                Accueil
+              </Link>
+              <Link
+                href="/explore"
+                className="text-muted transition-colors hover:text-text"
+              >
+                Explorer
+              </Link>
+              <Link
+                href="/library"
+                className="text-muted transition-colors hover:text-text"
+              >
+                Ma bibliothèque
+              </Link>
+            </div>
+          ) : (<div></div>)}
 
           {/* Auth Buttons */}
           <div className="flex items-center justify-end gap-4">
             {user ? (
+              // TODO: Replace with dropdown menu with user settings and logout
               <div className="flex items-center gap-4">
                 <span className="text-sm text-muted hidden md:inline-block">
                   {user.user_metadata.full_name}

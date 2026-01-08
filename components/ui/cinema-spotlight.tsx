@@ -25,7 +25,7 @@ export default function CinemaSpotlight({
   height = 500,
   maxWidth,
   intensity = 0.35,
-  position = "top-0",
+  position = "top-16",
 }: CinemaSpotlightProps) {
   const maxWidthValue = maxWidth
     ? typeof maxWidth === "number"

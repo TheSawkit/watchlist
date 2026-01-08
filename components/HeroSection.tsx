@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 export default function HeroSection() {
   return (
     <section className="relative px-6 py-20 md:py-32 lg:px-12 overflow-hidden">
-      <CinemaSpotlight />
+      <CinemaSpotlight position="top-0" />
       <div className="relative z-10 mx-auto max-w-4xl text-center">
         <h1 className="mb-6 font-display text-6xl font-normal tracking-tight text-text md:text-8xl lg:text-9xl">
           ReelMark
