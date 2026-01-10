@@ -1,7 +1,17 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { signout } from "@/app/auth/actions";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LogOut, Settings } from "lucide-react";
 
 export default async function Navbar() {
   const supabase = await createClient();
@@ -22,7 +32,7 @@ export default async function Navbar() {
 
           {/* Navigation Links - Desktop */}
           {user ? (
-            <div className="items-center justify-center gap-8 md:flex">
+            <div className="items-center justify-center gap-8 md:flex hidden">
               <Link
                 href="/"
                 className="text-muted transition-colors hover:text-text"
@@ -47,16 +57,49 @@ export default async function Navbar() {
           {/* Auth Buttons */}
           <div className="flex items-center justify-end gap-4">
             {user ? (
-              // TODO: Replace with dropdown menu with user settings and logout
               <div className="flex items-center gap-4">
-                <span className="text-sm text-muted hidden md:inline-block">
-                  {user.user_metadata.full_name}
-                </span>
-                <form action={signout}>
-                  <Button variant="outline" type="submit">
-                    Déconnexion
-                  </Button>
-                </form>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon" className="rounded-full overflow-hidden">
+                      <Image
+                        src={user.user_metadata.picture?
+                          user.user_metadata.picture:
+                          `https://api.dicebear.com/9.x/initials/svg?seed=${user.user_metadata.full_name?
+                            user.user_metadata.full_name:
+                            user.user_metadata.email.split('@')[0]}&size=128&backgroundType=gradientLinear&backgroundColor=d97706&fontWeight=600&fontFamily=Tahoma&chars=1`}
+                        alt="User avatar"
+                        width={128}
+                        height={128}
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">{user.user_metadata.full_name}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/settings" className="cursor-pointer w-full flex items-center">
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Paramètres</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <form action={signout} className="w-full">
+                        <button type="submit" className="flex w-full items-center text-red-500 hover:text-red-600">
+                          <LogOut className="mr-2 h-4 w-4" />
+                          <span>Déconnexion</span>
+                        </button>
+                      </form>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ) : (
               <>
