@@ -20,6 +20,14 @@ export function InfiniteScrollMovies({ initialMovies, category }: InfiniteScroll
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref)
 
+  // Réinitialiser l'état quand la catégorie ou les films initiaux changent
+  useEffect(() => {
+    setMovies(initialMovies)
+    setPage(2)
+    setLoading(false)
+    setHasMore(true)
+  }, [category, initialMovies])
+
   useEffect(() => {
     const loadMore = async () => {
       if (loading || !hasMore) return

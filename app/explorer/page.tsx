@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import CinemaSpotlight from "@/components/ui/cinema-spotlight"
 import { getPopularMovies, getTopRatedMovies, getUpcomingMovies, getNowPlayingMovies, getTrendingMovies } from "@/lib/tmdb"
 import { MovieSection } from "@/components/MovieSection"
 import { CategoryNav } from "@/components/CategoryNav"
@@ -30,7 +29,6 @@ export default async function ExplorerPage() {
 
   return (
     <div className="container mx-auto py-12 px-6">
-      <CinemaSpotlight />
       <div className="mb-10">
         <h1 className="text-3xl font-bold mb-2">Explorer, {user.user_metadata.full_name || "Cinéphile"}</h1>
         <p className="text-muted">Découvrez des films à ajouter à votre collection.</p>

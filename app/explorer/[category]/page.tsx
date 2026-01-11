@@ -1,5 +1,3 @@
-"use server"
-
 import { createClient } from "@/lib/supabase/server"
 import { redirect, notFound } from "next/navigation"
 import { getPopularMovies, getTopRatedMovies, getUpcomingMovies, getNowPlayingMovies, getTrendingMovies } from "@/lib/tmdb"
@@ -59,7 +57,7 @@ export default async function CategoryPage(props: PageProps) {
 
       <CategoryNav />
       
-      <InfiniteScrollMovies initialMovies={initialMovies} category={category} />
+      <InfiniteScrollMovies key={category} initialMovies={initialMovies} category={category} />
     </div>
   )
 }
