@@ -5,7 +5,7 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   // Le paramètre "next" permet de rediriger l'utilisateur vers une page spécifique après connexion
-  const next = searchParams.get('next') ?? '/dashboard'
+  const next = searchParams.get('next') ?? '/explorer'
 
   if (code) {
     const supabase = await createClient()

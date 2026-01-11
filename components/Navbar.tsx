@@ -40,7 +40,7 @@ export default async function Navbar() {
                 Accueil
               </Link>
               <Link
-                href="/explore"
+                href="/explorer"
                 className="text-muted transition-colors hover:text-text"
               >
                 Explorer
