@@ -55,3 +55,25 @@ body {
   color: var(--text);
   font-family: var(--font-sans);
 }
+
+@keyframes backdropBlur {
+  from {
+    backdrop-filter: blur(0px);
+    opacity: 0;
+  }
+  to {
+    backdrop-filter: blur(4px);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
