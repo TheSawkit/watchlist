@@ -54,7 +54,8 @@ export function MovieSection({ title, movies, categoryUrl }: MovieSectionProps) 
 
       <div
         ref={scrollContainerRef}
-        className="flex gap-4 overflow-x-auto pb-4 -mx-1 px-1 scrollbar-hide snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+        /* TODO: Fix overflow-y-visible for the scroll container. */
+        className="flex gap-4 overflow-x-scroll overflow-y-visible pb-4 -mx-1 px-1 scrollbar-hide snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
       >
         {movies.map((movie, index) => (
           <div
