@@ -1,8 +1,8 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { getPopularMovies, getTopRatedMovies, getUpcomingMovies, getNowPlayingMovies, getTrendingMovies } from "@/lib/tmdb"
-import { MovieSection } from "@/components/MovieSection"
-import { CategoryNav } from "@/components/CategoryNav"
+import { MovieSection } from "@/components/movies/MovieSection"
+import { CategoryNav } from "@/components/navigation/CategoryNav"
 
 export default async function ExplorerPage() {
   const supabase = await createClient()

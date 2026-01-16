@@ -3,8 +3,6 @@ const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 const TMDB_IMAGE_ORIGINAL_URL = "https://image.tmdb.org/t/p/original";
 
-// --- TYPES ---
-
 export interface Movie {
   id: number;
   title: string;
@@ -32,6 +30,7 @@ export interface MovieDetails extends Movie {
   budget: number;
   revenue: number;
   homepage: string;
+  certification?: string;
 }
 
 export interface Cast {
@@ -68,6 +67,37 @@ export interface Video {
 export interface VideoResponse {
   id: number;
   results: Video[];
+}
+
+export interface ReleaseDate {
+  certification: string;
+  release_date: string;
+  type: number;
+}
+
+export interface ReleaseDatesResponse {
+  id: number;
+  results: Array<{
+    iso_3166_1: string;
+    release_dates: ReleaseDate[];
+  }>;
+}
+
+export interface MovieImage {
+  aspect_ratio: number;
+  height: number;
+  iso_639_1: string | null;
+  file_path: string;
+  vote_average: number;
+  vote_count: number;
+  width: number;
+}
+
+export interface MovieImagesResponse {
+  id: number;
+  backdrops: MovieImage[];
+  logos: MovieImage[];
+  posters: MovieImage[];
 }
 
 // --- HELPER FUNCTION ---
@@ -153,7 +183,34 @@ export async function searchMovies(query: string, page: number = 1): Promise<Mov
  * Récupère les détails complets d'un film
  */
 export async function getMovieDetails(id: number): Promise<MovieDetails> {
-  return fetchTMDB<MovieDetails>(`/movie/${id}`);
+  const details = await fetchTMDB<MovieDetails>(`/movie/${id}`);
+
+  try {
+    const releaseDates = await fetchTMDB<ReleaseDatesResponse>(`/movie/${id}/release_dates`);
+
+    const europeanCountries = ["DE", "GB", "ES", "IT", "NL", "BE", "AT", "CH", "PT", "SE", "NO", "DK", "FI", "PL", "CZ", "HU", "RO", "GR"];
+
+    for (const countryCode of europeanCountries) {
+      const countryRelease = releaseDates.results.find((r) => r.iso_3166_1 === countryCode);
+      if (countryRelease && countryRelease.release_dates.length > 0) {
+        const certification = countryRelease.release_dates.find((rd) => rd.certification && rd.certification.trim() !== "");
+        if (certification) {
+          const certValue = certification.certification.trim();
+          if (/^\d+$/.test(certValue)) {
+            details.certification = `+${certValue}`;
+          } else {
+            details.certification = `+${certValue}`;
+          }
+          break;
+        }
+      }
+    }
+  } catch (error) {
+    // Si l'API ne retourne pas de certification, on continue sans
+    console.warn("Could not fetch certification:", error);
+  }
+
+  return details;
 }
 
 /**
@@ -187,13 +244,46 @@ export async function getSimilarMovies(id: number): Promise<Movie[]> {
   return data.results;
 }
 
+/**
+ * Récupère toutes les images disponibles d'un film (backdrops, posters, logos)
+ */
+export async function getMovieImages(id: number): Promise<MovieImagesResponse> {
+  return fetchTMDB<MovieImagesResponse>(`/movie/${id}/images`, {
+    include_image_language: "null,fr,en",
+  });
+}
+
+/**
+ * Sélectionne la meilleure image alternative pour la bannière
+ * Préfère les backdrops avec un bon score, sinon utilise le backdrop principal
+ */
+export function selectHeroImage(
+  images: MovieImagesResponse,
+  defaultBackdrop: string | null
+): string {
+  const sortedBackdrops = [...(images.backdrops || [])]
+    .filter((img) => img.file_path !== defaultBackdrop)
+    .sort((a, b) => {
+      if (b.vote_average !== a.vote_average) {
+        return b.vote_average - a.vote_average;
+      }
+      return b.vote_count - a.vote_count;
+    });
+
+  if (sortedBackdrops.length > 0) {
+    return sortedBackdrops[0].file_path;
+  }
+
+  return defaultBackdrop || "";
+}
+
 // --- UTILS ---
 
 /**
  * Génère l'URL complète d'une image TMDB
  */
 export function getImageUrl(path: string | null, size: "w500" | "original" = "w500") {
-  if (!path) return "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3";
+  if (!path) return "https://images.unsplash.com/vector-1756365681486-615455939f4e?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
   if (size === "original") {
     return `${TMDB_IMAGE_ORIGINAL_URL}${path}`;

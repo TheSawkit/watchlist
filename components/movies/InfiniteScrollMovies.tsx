@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import { useInView } from "@/lib/hooks"
 import { Movie } from "@/lib/tmdb"
-import { MovieGrid } from "@/components/MovieGrid"
+import { MovieGrid } from "@/components/movies/MovieGrid"
 import { Loader2 } from "lucide-react"
 import { fetchMoreMovies } from "@/app/actions/movies"
 

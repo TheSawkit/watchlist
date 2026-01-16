@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect, notFound } from "next/navigation"
 import { getPopularMovies, getTopRatedMovies, getUpcomingMovies, getNowPlayingMovies, getTrendingMovies } from "@/lib/tmdb"
-import { CategoryNav } from "@/components/CategoryNav"
+import { CategoryNav } from "@/components/navigation/CategoryNav"
 import { InfiniteScrollMovies } from "@/components/InfiniteScrollMovies"
 
 type Params = Promise<{ category: string }>

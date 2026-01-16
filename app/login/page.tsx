@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/LoginForm"
+import { LoginForm } from "@/components/auth/LoginForm"
 import CinemaSpotlight from "@/components/ui/cinema-spotlight"
 
 export default function LoginPage() {

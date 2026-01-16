@@ -10,11 +10,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Settings } from "lucide-react";
-import { SignoutButton } from "@/components/SignoutButton";
-import { NavbarMobile } from "@/components/NavbarMobile";
-import { NavLinks } from "@/components/NavLinks";
-import { UserAvatar } from "@/components/UserAvatar";
-import Title from "@/components/Title";
+import { SignoutButton } from "@/components/auth/SignoutButton";
+import { NavbarMobile } from "@/components/navigation/NavbarMobile";
+import { NavLinks } from "@/components/navigation/NavLinks";
+import { UserAvatar } from "@/components/shared/UserAvatar";
+import Title from "@/components/layout/Title";
 
 export default async function Navbar() {
   const supabase = await createClient();

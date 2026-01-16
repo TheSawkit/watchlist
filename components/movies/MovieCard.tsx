@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { getImageUrl, type Movie } from "@/lib/tmdb"
 import { Button } from "@/components/ui/button"
 import { Plus, Star, Info, Eye } from "lucide-react"
@@ -90,9 +91,11 @@ export function MovieCard({ movie, className, isExpanded = false, onToggle }: Mo
               <Plus className="h-4 w-4 fill-current" />
               <span className="hidden md:inline">Ajouter</span>
             </Button>
-            <Button size="sm" variant="outline" className="flex-1 gap-2 border-border/20 bg-surface/40 text-text hover:bg-surface-2/60 hover:text-text backdrop-blur-md cursor-pointer">
-              <Info className="h-4 w-4" />
-              Info
+            <Button size="sm" variant="outline" className="flex-1 gap-2 border-border/20 bg-surface/40 text-text hover:bg-surface-2/60 hover:text-text backdrop-blur-md cursor-pointer" asChild>
+              <Link href={`/movie/${movie.id}`}>
+                <Info className="h-4 w-4" />
+                Info
+              </Link>
             </Button>
           </div>
         </div>

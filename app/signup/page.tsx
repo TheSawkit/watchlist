@@ -1,4 +1,4 @@
-import { SignupForm } from "@/components/SignupForm"
+import { SignupForm } from "@/components/auth/SignupForm"
 import CinemaSpotlight from "@/components/ui/cinema-spotlight"
 
 export default function SignupPage() {

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import CinemaSpotlight from "@/components/ui/cinema-spotlight";
 import { Button } from "@/components/ui/button";
-import Title from "@/components/Title";
+import Title from "@/components/layout/Title";
 
 export default function HeroSection() {
   return (

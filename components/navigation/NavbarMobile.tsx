@@ -5,9 +5,9 @@ import { createPortal } from "react-dom"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Settings, Menu, X } from "lucide-react"
-import { SignoutButton } from "@/components/SignoutButton"
-import { NavLinks } from "@/components/NavLinks"
-import { UserAvatar } from "@/components/UserAvatar"
+import { SignoutButton } from "@/components/auth/SignoutButton"
+import { NavLinks } from "@/components/navigation/NavLinks"
+import { UserAvatar } from "@/components/shared/UserAvatar"
 
 interface NavbarMobileProps {
   user: {

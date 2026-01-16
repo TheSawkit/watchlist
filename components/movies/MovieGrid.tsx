@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Movie } from "@/lib/tmdb"
-import { MovieCard } from "@/components/MovieCard"
+import { MovieCard } from "@/components/movies/MovieCard"
 
 interface MovieGridProps {
   movies: Movie[]
