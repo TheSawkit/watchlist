@@ -33,10 +33,8 @@ export default async function Navbar() {
           ) : null}
 
           <div className="flex justify-center md:justify-start col-start-2 md:col-start-1">
-            <Link href="/" className="font-display text-2xl font-normal text-text">
-              <span className="inline-block transform transition-transform duration-200 hover:scale-105">
-                <Title className="inline-block h-[0.7em] align-baseline mr-[0.03em] text-text" />
-              </span>
+            <Link href="/" className="font-display text-2xl font-normal text-text transform transition-transform duration-200 hover:scale-105">
+              <Title className="inline-block h-[0.7em] align-baseline mr-[0.03em] text-text" />
             </Link>
           </div>
 

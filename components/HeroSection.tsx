@@ -15,9 +15,7 @@ export default function HeroSection() {
             opacity: 0,
           }}
         >
-          <span>
-            <Title className="inline h-[0.7em] w-auto align-baseline text-text" />
-          </span>
+          <Title className="inline-block h-[1em] w-auto text-text" />
         </h1>
         <p
           className="mb-4 text-xl text-muted md:text-2xl"
