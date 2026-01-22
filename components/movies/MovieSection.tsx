@@ -30,7 +30,7 @@ export function MovieSection({ title, movies, categoryUrl }: MovieSectionProps) 
       {movies.map((movie, index) => (
         <div
           key={movie.id}
-          className="flex-none w-[160px] md:w-[200px] snap-start"
+          className="flex-none w-40 md:w-50 snap-start"
           style={{
             animation: `slideUp 0.5s ease-out forwards`,
             animationDelay: `${index * 50}ms`,
@@ -48,7 +48,7 @@ export function MovieSection({ title, movies, categoryUrl }: MovieSectionProps) 
 
       <Link
         href={categoryUrl}
-        className="flex-none w-[160px] md:w-[200px] snap-start flex flex-col items-center justify-center gap-4 rounded-(--radius-cinema) bg-surface-2/30 hover:bg-surface-2/50 border-2 border-dashed border-border/30 hover:border-red-2/50 transition-all group/card cursor-pointer"
+        className="flex-none w-40 md:w-50 snap-start flex flex-col items-center justify-center gap-4 rounded-(--radius-cinema) bg-surface-2/30 hover:bg-surface-2/50 border-2 border-dashed border-border/30 hover:border-red-2/50 transition-all group/card cursor-pointer"
       >
         <div className="rounded-full bg-surface-2 p-4 group-hover/card:bg-red-2 group-hover/card:text-text transition-colors">
           <ArrowRight className="w-6 h-6" />

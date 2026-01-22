@@ -21,7 +21,7 @@ export function MovieGrid({ movies }: MovieGridProps) {
             animationDelay: `${index * 50}ms`,
           }}
         >
-          <MovieCard 
+          <MovieCard
             movie={movie}
             isExpanded={expandedMovieId === movie.id}
             onToggle={() => setExpandedMovieId(expandedMovieId === movie.id ? null : movie.id)}

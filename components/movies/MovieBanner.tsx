@@ -20,7 +20,7 @@ export function MovieBanner({ movie, backdropUrl }: MovieBannerProps) {
   }
 
   return (
-    <div className="relative w-full h-[70vh] min-h-[500px] max-h-[800px] overflow-hidden">
+    <div className="relative w-full h-[70vh] min-h-125 max-h-200 overflow-hidden">
       <div className="absolute inset-0">
         <Image
           src={backdropUrl}

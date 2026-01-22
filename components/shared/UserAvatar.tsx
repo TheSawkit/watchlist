@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Image from "next/image"
 
 interface UserAvatarProps {
@@ -18,19 +17,7 @@ export function UserAvatar({
   size = 128,
   className,
 }: UserAvatarProps) {
-  const [goldColor, setGoldColor] = useState<string>("d97706")
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const goldHex = getComputedStyle(document.documentElement)
-        .getPropertyValue("--gold")
-        .trim()
-        .replace("#", "")
-      if (goldHex) {
-        setGoldColor(goldHex)
-      }
-    }
-  }, [])
+  const goldColor = "d6b25e"
 
   const avatarUrl = picture
     ? picture

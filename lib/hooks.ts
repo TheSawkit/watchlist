@@ -1,4 +1,4 @@
-import { useState, useEffect, MutableRefObject } from "react";
+import { useState, useEffect, RefObject } from "react";
 
 interface Options {
   root?: Element | null;
@@ -7,7 +7,7 @@ interface Options {
 }
 
 export function useInView(
-  ref: MutableRefObject<Element | null>,
+  ref: RefObject<Element | null>,
   options: Options = {}
 ): boolean {
   const [isIntersecting, setIsIntersecting] = useState(false);
@@ -25,7 +25,7 @@ export function useInView(
     return () => {
       observer.unobserve(element);
     };
-  }, [ref, options.root, options.rootMargin, options.threshold]);
+  }, [ref, options.root, options.rootMargin, options.threshold, options]);
 
   return isIntersecting;
 }
