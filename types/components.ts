@@ -11,6 +11,8 @@ export interface FeatureCardProps {
 
 // ─── Movies ──────────────────────────────────────────────
 
+export type Tab = "movies" | "tv"
+
 export interface MovieGridProps {
   movies: Movie[]
 }
@@ -18,8 +20,6 @@ export interface MovieGridProps {
 export interface MovieCardProps {
   movie: Movie
   className?: string
-  isExpanded?: boolean
-  onToggle?: () => void
 }
 
 export interface MovieSectionProps {
@@ -70,11 +70,6 @@ export interface NavLinksProps {
 }
 
 // ─── Shared ──────────────────────────────────────────────
-
-export interface PaginationProps {
-  currentPage: number
-  baseUrl: string
-}
 
 export interface HorizontalScrollProps {
   children: ReactNode

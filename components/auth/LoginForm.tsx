@@ -43,8 +43,8 @@ export function LoginForm({
   }
 
   return (
-    <div 
-      className={cn("flex flex-col gap-6", className)} 
+    <div
+      className={cn("flex flex-col gap-6", className)}
       {...props}
       style={{
         animation: "scaleIn 0.5s ease-out forwards",

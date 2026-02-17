@@ -55,31 +55,26 @@ export function MovieBanner({ movie, backdropUrl }: MovieBannerProps) {
             )}
 
             <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-4">
-              <div className="flex items-center gap-2 bg-surface/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-border/20">
-                <Star className="h-5 w-5 fill-gold text-gold" />
-                <span className="font-semibold text-text">
-                  {movie.vote_average.toFixed(1)}
-                </span>
-              </div>
+              <HeroBadge icon={<Star className="h-5 w-5 fill-gold text-gold" />}>
+                <span className="font-semibold text-text">{movie.vote_average.toFixed(1)}</span>
+              </HeroBadge>
 
               {movie.release_date && (
-                <div className="flex items-center gap-2 bg-surface/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-border/20">
-                  <Calendar className="h-5 w-5 text-muted" />
+                <HeroBadge icon={<Calendar className="h-5 w-5 text-muted" />}>
                   <span className="text-text">{formatDate(movie.release_date)}</span>
-                </div>
+                </HeroBadge>
               )}
 
               {movie.runtime > 0 && (
-                <div className="flex items-center gap-2 bg-surface/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-border/20">
-                  <Clock className="h-5 w-5 text-muted" />
+                <HeroBadge icon={<Clock className="h-5 w-5 text-muted" />}>
                   <span className="text-text">{formatRuntime(movie.runtime)}</span>
-                </div>
+                </HeroBadge>
               )}
 
               {movie.certification && (
-                <div className="bg-surface/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-border/20">
+                <HeroBadge>
                   <span className="font-semibold text-text">{movie.certification}</span>
-                </div>
+                </HeroBadge>
               )}
             </div>
 
@@ -98,6 +93,15 @@ export function MovieBanner({ movie, backdropUrl }: MovieBannerProps) {
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+function HeroBadge({ children, icon }: { children: React.ReactNode; icon?: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2 bg-surface/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-border/20">
+      {icon}
+      {children}
     </div>
   )
 }

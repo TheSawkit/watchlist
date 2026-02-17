@@ -1,12 +1,10 @@
 "use client"
 
-import { useState } from "react"
+
 import { MovieCard } from "@/components/movies/MovieCard"
 import type { MovieGridProps } from "@/types/components"
 
 export function MovieGrid({ movies }: MovieGridProps) {
-  const [expandedMovieId, setExpandedMovieId] = useState<number | null>(null)
-
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
       {movies.map((movie, index) => (
@@ -17,11 +15,7 @@ export function MovieGrid({ movies }: MovieGridProps) {
             animationDelay: `${index * 50}ms`,
           }}
         >
-          <MovieCard
-            movie={movie}
-            isExpanded={expandedMovieId === movie.id}
-            onToggle={() => setExpandedMovieId(expandedMovieId === movie.id ? null : movie.id)}
-          />
+          <MovieCard movie={movie} />
         </div>
       ))}
     </div>

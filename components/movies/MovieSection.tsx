@@ -1,14 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+
 import { MovieCard } from "@/components/movies/MovieCard"
 import { ArrowRight } from "lucide-react"
 import { HorizontalScroll } from "@/components/shared/HorizontalScroll"
 import type { MovieSectionProps } from "@/types/components"
 
 export function MovieSection({ title, movies, categoryUrl }: MovieSectionProps) {
-  const [expandedMovieId, setExpandedMovieId] = useState<number | null>(null)
+
 
   return (
     <HorizontalScroll
@@ -34,8 +34,6 @@ export function MovieSection({ title, movies, categoryUrl }: MovieSectionProps) 
           <MovieCard
             movie={movie}
             className="h-full"
-            isExpanded={expandedMovieId === movie.id}
-            onToggle={() => setExpandedMovieId(expandedMovieId === movie.id ? null : movie.id)}
           />
         </div>
       ))}

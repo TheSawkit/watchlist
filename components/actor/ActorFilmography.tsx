@@ -3,42 +3,9 @@
 import { useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Film, Tv } from "lucide-react"
-import type { ActorFilmographyProps } from "@/types/components"
-import type { Movie } from "@/types/tmdb"
-import type { ActorMovieCredit, ActorTvCredit } from "@/types/tmdb"
+import type { ActorFilmographyProps, Tab } from "@/types/components"
 import { InfiniteScrollMovies } from "@/components/movies/InfiniteScrollMovies"
-
-type Tab = "movies" | "tv"
-
-function creditToMovie(credit: ActorMovieCredit): Movie {
-    return {
-        id: credit.id,
-        title: credit.title,
-        original_title: credit.title,
-        overview: credit.overview,
-        poster_path: credit.poster_path,
-        backdrop_path: credit.backdrop_path,
-        release_date: credit.release_date,
-        vote_average: credit.vote_average,
-        vote_count: 0,
-        popularity: credit.popularity,
-    }
-}
-
-function tvCreditToMovie(credit: ActorTvCredit): Movie {
-    return {
-        id: credit.id,
-        title: credit.name,
-        original_title: credit.name,
-        overview: credit.overview,
-        poster_path: credit.poster_path,
-        backdrop_path: credit.backdrop_path,
-        release_date: credit.first_air_date,
-        vote_average: credit.vote_average,
-        vote_count: 0,
-        popularity: credit.popularity,
-    }
-}
+import { creditToMovie, tvCreditToMovie } from "@/lib/mappers"
 
 export function ActorFilmography({ movies, tvShows }: ActorFilmographyProps) {
     const [activeTab, setActiveTab] = useState<Tab>("movies")
