@@ -1,38 +1,16 @@
 "use client"
 
 import { useEffect, useState } from "react"
-
-interface CinemaSpotlightProps {
-  /**
-   * Hauteur du projecteur en pixels
-   * @default 500
-   */
-  height?: number;
-  /**
-   * Largeur maximale du projecteur en pixels ou pourcentage
-   * Si non spécifié, prend 100% de la largeur du device
-   */
-  maxWidth?: number | string;
-  /**
-   * Intensité de l'opacité (0-1)
-   * @default 0.35
-   */
-  intensity?: number;
-  /**
-   * Position verticale (top offset)
-   * @default "top-0"
-   */
-  position?: string;
-}
+import type { CinemaSpotlightProps } from "@/types/components"
 
 function hexToRgb(hex: string): [number, number, number] | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? [
-        parseInt(result[1], 16),
-        parseInt(result[2], 16),
-        parseInt(result[3], 16),
-      ]
+      parseInt(result[1], 16),
+      parseInt(result[2], 16),
+      parseInt(result[3], 16),
+    ]
     : null;
 }
 

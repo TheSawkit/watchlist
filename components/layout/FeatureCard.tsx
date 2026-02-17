@@ -1,10 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-
-interface FeatureCardProps {
-  icon: string;
-  title: string;
-  description: string;
-}
+import type { FeatureCardProps } from "@/types/components";
 
 export default function FeatureCard({
   icon,

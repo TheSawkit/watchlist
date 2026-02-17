@@ -2,12 +2,8 @@
 
 import Image from "next/image"
 import { getImageUrl } from "@/lib/tmdb"
-import type { Cast } from "@/types/tmdb"
 import { HorizontalScroll } from "@/components/shared/HorizontalScroll"
-
-interface MovieCastProps {
-  cast: Cast[]
-}
+import type { MovieCastProps } from "@/types/components"
 
 export function MovieCast({ cast }: MovieCastProps) {
   if (cast.length === 0) {

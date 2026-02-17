@@ -1,12 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Movie } from "@/types/tmdb"
 import { MovieCard } from "@/components/movies/MovieCard"
-
-interface MovieGridProps {
-  movies: Movie[]
-}
+import type { MovieGridProps } from "@/types/components"
 
 export function MovieGrid({ movies }: MovieGridProps) {
   const [expandedMovieId, setExpandedMovieId] = useState<number | null>(null)

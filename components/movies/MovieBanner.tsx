@@ -1,12 +1,7 @@
 import Image from "next/image"
 import { getImageUrl } from "@/lib/tmdb"
-import type { MovieDetails } from "@/types/tmdb"
+import type { MovieBannerProps } from "@/types/components"
 import { Star, Clock, Calendar } from "lucide-react"
-
-interface MovieBannerProps {
-  movie: MovieDetails
-  backdropUrl: string
-}
 
 export function MovieBanner({ movie, backdropUrl }: MovieBannerProps) {
   const formatRuntime = (minutes: number) => {

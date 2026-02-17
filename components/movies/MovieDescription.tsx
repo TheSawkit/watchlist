@@ -1,7 +1,4 @@
-interface MovieDescriptionProps {
-  description: string
-  tagline?: string
-}
+import type { MovieDescriptionProps } from "@/types/components"
 
 export function MovieDescription({ description }: MovieDescriptionProps) {
   if (!description) {

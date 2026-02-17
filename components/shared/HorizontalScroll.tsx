@@ -1,16 +1,9 @@
 "use client"
 
-import { useRef, ReactNode } from "react"
+import { useRef } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
-interface HorizontalScrollProps {
-  children: ReactNode
-  title?: ReactNode
-  scrollAmount?: number
-  className?: string
-  containerClassName?: string
-}
+import type { HorizontalScrollProps } from "@/types/components"
 
 export function HorizontalScroll({
   children,

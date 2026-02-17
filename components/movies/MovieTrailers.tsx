@@ -1,10 +1,6 @@
 "use client"
 
-import type { Video } from "@/types/tmdb"
-
-interface MovieTrailersProps {
-  trailers: Video[]
-}
+import type { MovieTrailersProps } from "@/types/components"
 
 export function MovieTrailers({ trailers }: MovieTrailersProps) {
   if (trailers.length === 0) {

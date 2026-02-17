@@ -4,14 +4,9 @@ import { getPopularMovies, getTopRatedMovies, getUpcomingMovies, getNowPlayingMo
 import type { Movie } from "@/types/tmdb"
 import { CategoryNav } from "@/components/navigation/CategoryNav"
 import { InfiniteScrollMovies } from "@/components/movies/InfiniteScrollMovies"
+import type { CategoryPageProps } from "@/types/pages"
 
-type Params = Promise<{ category: string }>
-
-interface PageProps {
-  params: Params
-}
-
-export default async function CategoryPage(props: PageProps) {
+export default async function CategoryPage(props: CategoryPageProps) {
   const params = await props.params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

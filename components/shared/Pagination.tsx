@@ -1,11 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-
-interface PaginationProps {
-  currentPage: number
-  baseUrl: string
-}
+import type { PaginationProps } from "@/types/components"
 
 export function Pagination({ currentPage, baseUrl }: PaginationProps) {
   const prevPage = currentPage > 1 ? currentPage - 1 : null

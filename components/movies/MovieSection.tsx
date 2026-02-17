@@ -2,16 +2,10 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Movie } from "@/types/tmdb"
 import { MovieCard } from "@/components/movies/MovieCard"
 import { ArrowRight } from "lucide-react"
 import { HorizontalScroll } from "@/components/shared/HorizontalScroll"
-
-interface MovieSectionProps {
-  title: string
-  movies: Movie[]
-  categoryUrl: string
-}
+import type { MovieSectionProps } from "@/types/components"
 
 export function MovieSection({ title, movies, categoryUrl }: MovieSectionProps) {
   const [expandedMovieId, setExpandedMovieId] = useState<number | null>(null)

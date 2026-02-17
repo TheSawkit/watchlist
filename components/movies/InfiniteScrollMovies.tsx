@@ -6,11 +6,7 @@ import { Movie } from "@/types/tmdb"
 import { MovieGrid } from "@/components/movies/MovieGrid"
 import { Loader2 } from "lucide-react"
 import { fetchMoreMovies } from "@/app/actions/movies"
-
-interface InfiniteScrollMoviesProps {
-  initialMovies: Movie[]
-  category: string
-}
+import type { InfiniteScrollMoviesProps } from "@/types/components"
 
 export function InfiniteScrollMovies({ initialMovies, category }: InfiniteScrollMoviesProps) {
   const [movies, setMovies] = useState<Movie[]>(initialMovies)

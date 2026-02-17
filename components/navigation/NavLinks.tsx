@@ -3,11 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-
-interface NavLinksProps {
-  className?: string
-  onLinkClick?: () => void
-}
+import type { NavLinksProps } from "@/types/components"
 
 export function NavLinks({ className, onLinkClick }: NavLinksProps) {
   const pathname = usePathname()

@@ -4,14 +4,9 @@ import { MovieBanner } from "@/components/movies/MovieBanner"
 import { MovieTrailers } from "@/components/movies/MovieTrailers"
 import { MovieDescription } from "@/components/movies/MovieDescription"
 import { MovieCast } from "@/components/movies/MovieCast"
+import type { MoviePageProps } from "@/types/pages"
 
-type Params = Promise<{ id: string }>
-
-interface PageProps {
-  params: Params
-}
-
-export default async function MoviePage(props: PageProps) {
+export default async function MoviePage(props: MoviePageProps) {
   const params = await props.params
   const movieId = parseInt(params.id)
 
