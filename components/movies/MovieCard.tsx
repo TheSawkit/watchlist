@@ -2,7 +2,8 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { getImageUrl, type Movie } from "@/lib/tmdb"
+import { getImageUrl } from "@/lib/tmdb"
+import type { Movie } from "@/types/tmdb"
 import { Button } from "@/components/ui/button"
 import { Plus, Star, Info, Eye } from "lucide-react"
 import { cn } from "@/lib/utils"

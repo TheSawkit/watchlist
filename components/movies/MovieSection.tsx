@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Movie } from "@/lib/tmdb"
+import { Movie } from "@/types/tmdb"
 import { MovieCard } from "@/components/movies/MovieCard"
 import { ArrowRight } from "lucide-react"
 import { HorizontalScroll } from "@/components/shared/HorizontalScroll"

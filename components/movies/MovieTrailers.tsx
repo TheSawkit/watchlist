@@ -1,6 +1,6 @@
 "use client"
 
-import { Video } from "@/lib/tmdb"
+import type { Video } from "@/types/tmdb"
 
 interface MovieTrailersProps {
   trailers: Video[]

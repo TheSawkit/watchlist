@@ -1,129 +1,47 @@
-const TMDB_API_KEY = process.env.TMDB_API_KEY;
-const TMDB_BASE_URL = "https://api.themoviedb.org/3";
-const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
-const TMDB_IMAGE_ORIGINAL_URL = "https://image.tmdb.org/t/p/original";
+import type {
+  Movie,
+  Genre,
+  MovieDetails,
+  Cast,
+  Crew,
+  Credits,
+  Video,
+  VideoResponse,
+  ReleaseDate,
+  ReleaseDatesResponse,
+  MovieImage,
+  MovieImagesResponse,
+} from "@/types/tmdb"
 
-export interface Movie {
-  id: number;
-  title: string;
-  original_title: string;
-  overview: string;
-  poster_path: string | null;
-  backdrop_path: string | null;
-  release_date: string;
-  vote_average: number;
-  vote_count: number;
-  popularity: number;
-  genre_ids?: number[];
-}
-
-export interface Genre {
-  id: number;
-  name: string;
-}
-
-export interface MovieDetails extends Movie {
-  genres: Genre[];
-  runtime: number;
-  status: string;
-  tagline: string;
-  budget: number;
-  revenue: number;
-  homepage: string;
-  certification?: string;
-}
-
-export interface Cast {
-  id: number;
-  name: string;
-  original_name: string;
-  character: string;
-  profile_path: string | null;
-  order: number;
-}
-
-export interface Crew {
-  id: number;
-  name: string;
-  job: string;
-  department: string;
-  profile_path: string | null;
-}
-
-export interface Credits {
-  id: number;
-  cast: Cast[];
-  crew: Crew[];
-}
-
-export interface Video {
-  id: string;
-  key: string;
-  name: string;
-  site: string; // "YouTube", etc.
-  type: string; // "Trailer", "Teaser", etc.
-}
-
-export interface VideoResponse {
-  id: number;
-  results: Video[];
-}
-
-export interface ReleaseDate {
-  certification: string;
-  release_date: string;
-  type: number;
-}
-
-export interface ReleaseDatesResponse {
-  id: number;
-  results: Array<{
-    iso_3166_1: string;
-    release_dates: ReleaseDate[];
-  }>;
-}
-
-export interface MovieImage {
-  aspect_ratio: number;
-  height: number;
-  iso_639_1: string | null;
-  file_path: string;
-  vote_average: number;
-  vote_count: number;
-  width: number;
-}
-
-export interface MovieImagesResponse {
-  id: number;
-  backdrops: MovieImage[];
-  logos: MovieImage[];
-  posters: MovieImage[];
-}
+const TMDB_API_KEY = process.env.TMDB_API_KEY
+const TMDB_BASE_URL = "https://api.themoviedb.org/3"
+const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
+const TMDB_IMAGE_ORIGINAL_URL = "https://image.tmdb.org/t/p/original"
 
 // --- HELPER FUNCTION ---
 
 async function fetchTMDB<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
   if (!TMDB_API_KEY) {
-    throw new Error("TMDB_API_KEY is not defined.");
+    throw new Error("TMDB_API_KEY is not defined.")
   }
 
   const queryParams = new URLSearchParams({
     api_key: TMDB_API_KEY,
     language: "fr-FR",
     ...params,
-  });
+  })
 
-  const url = `${TMDB_BASE_URL}${endpoint}?${queryParams.toString()}`;
+  const url = `${TMDB_BASE_URL}${endpoint}?${queryParams.toString()}`
 
   const res = await fetch(url, {
     next: { revalidate: 3600 }, // Cache d'une heure par défaut
-  });
+  })
 
   if (!res.ok) {
-    throw new Error(`TMDB API Error: ${res.status} ${res.statusText}`);
+    throw new Error(`TMDB API Error: ${res.status} ${res.statusText}`)
   }
 
-  return res.json();
+  return res.json()
 }
 
 // --- API FUNCTIONS ---

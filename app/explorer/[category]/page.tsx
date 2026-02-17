@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect, notFound } from "next/navigation"
-import { getPopularMovies, getTopRatedMovies, getUpcomingMovies, getNowPlayingMovies, getTrendingMovies, Movie } from "@/lib/tmdb"
+import { getPopularMovies, getTopRatedMovies, getUpcomingMovies, getNowPlayingMovies, getTrendingMovies } from "@/lib/tmdb"
+import type { Movie } from "@/types/tmdb"
 import { CategoryNav } from "@/components/navigation/CategoryNav"
 import { InfiniteScrollMovies } from "@/components/movies/InfiniteScrollMovies"
 

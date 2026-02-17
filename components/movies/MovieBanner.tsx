@@ -1,5 +1,6 @@
 import Image from "next/image"
-import { MovieDetails, getImageUrl } from "@/lib/tmdb"
+import { getImageUrl } from "@/lib/tmdb"
+import type { MovieDetails } from "@/types/tmdb"
 import { Star, Clock, Calendar } from "lucide-react"
 
 interface MovieBannerProps {

@@ -1,14 +1,7 @@
 "use client"
 
 import Image from "next/image"
-
-interface UserAvatarProps {
-  picture?: string
-  fullName?: string
-  email?: string
-  size?: number
-  className?: string
-}
+import type { UserAvatarProps } from "@/types/user"
 
 export function UserAvatar({
   picture,

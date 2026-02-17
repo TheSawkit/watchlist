@@ -1,7 +1,8 @@
 "use client"
 
 import Image from "next/image"
-import { Cast, getImageUrl } from "@/lib/tmdb"
+import { getImageUrl } from "@/lib/tmdb"
+import type { Cast } from "@/types/tmdb"
 import { HorizontalScroll } from "@/components/shared/HorizontalScroll"
 
 interface MovieCastProps {
