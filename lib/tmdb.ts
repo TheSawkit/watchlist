@@ -72,7 +72,7 @@ export async function getTrendingMovies(timeWindow: "day" | "week" = "week", pag
  * Récupère les films à venir
  */
 export async function getUpcomingMovies(page: number = 1): Promise<Movie[]> {
-  const data = await fetchTMDB<{ results: Movie[] }>("/movie/upcoming", { page: page.toString() });
+  const data = await fetchTMDB<{ results: Movie[] }>("/movie/upcoming", { page: page.toString(), region: "FR" }); // TODO: Add region variable with user parameter
   return data.results;
 }
 
@@ -80,7 +80,7 @@ export async function getUpcomingMovies(page: number = 1): Promise<Movie[]> {
  * Récupère les films actuellement au cinéma
  */
 export async function getNowPlayingMovies(page: number = 1): Promise<Movie[]> {
-  const data = await fetchTMDB<{ results: Movie[] }>("/movie/now_playing", { page: page.toString() });
+  const data = await fetchTMDB<{ results: Movie[] }>("/movie/now_playing", { page: page.toString(), region: "FR" }); // TODO: Add region variable with user parameter
   return data.results;
 }
 
