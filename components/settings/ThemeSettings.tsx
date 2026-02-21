@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
     Card,
     CardContent,
@@ -14,7 +14,6 @@ import {
     FieldGroup,
     FieldLabel,
 } from '@/components/ui/field'
-import { useRouter } from 'next/navigation'
 
 const THEMES = [
     { value: 'light' as const, label: '☀️ Clair', description: 'Thème clair classique' },
@@ -23,38 +22,29 @@ const THEMES = [
 ] as const
 
 export function ThemeSettings() {
-    const [isMounted, setIsMounted] = useState(false)
-    const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('light')
-    const router = useRouter()
-
-    useEffect(() => {
+    const [theme, setTheme] = useState<'light' | 'dark' | 'system'>(() => {
         const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null
-        const initialTheme = savedTheme ||
-            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-        setTheme(initialTheme)
-        setIsMounted(true)
-    }, [])
+        return savedTheme || 'light'
+    })
+
+    const applyTheme = (newTheme: 'light' | 'dark' | 'system') => {
+        const html = document.documentElement
+
+        html.classList.remove('light', 'dark')
+
+        if (newTheme === 'system') {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+            html.classList.add(prefersDark ? 'dark' : 'light')
+        } else {
+            html.classList.add(newTheme)
+        }
+    }
 
     const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
         setTheme(newTheme)
         localStorage.setItem('theme', newTheme)
-
-        const root = document.documentElement
-        if (newTheme === 'system') {
-            root.removeAttribute('data-theme')
-            root.classList.remove('light', 'dark')
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-            root.classList.add(prefersDark ? 'dark' : 'light')
-        } else {
-            root.setAttribute('data-theme', newTheme)
-            root.classList.remove('light', 'dark')
-            root.classList.add(newTheme)
-        }
-
-        router.refresh()
+        applyTheme(newTheme)
     }
-
-    if (!isMounted) return null
 
     return (
         <Card>
@@ -73,14 +63,13 @@ export function ThemeSettings() {
                                 <label
                                     key={value}
                                     className="flex items-center gap-3 p-3 border border-border rounded-lg cursor-pointer hover:bg-surface transition-colors"
-                                    onClick={() => handleThemeChange(value)}
                                 >
                                     <input
                                         type="radio"
                                         name="theme"
                                         value={value}
                                         checked={theme === value}
-                                        onChange={(e) => handleThemeChange(e.target.value as 'light' | 'dark' | 'system')}
+                                        onChange={() => handleThemeChange(value)}
                                         className="w-4 h-4"
                                     />
                                     <div className="flex-1">

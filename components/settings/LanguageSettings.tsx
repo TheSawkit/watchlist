@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { useRouter } from 'next/navigation'
@@ -8,18 +8,13 @@ import { useRouter } from 'next/navigation'
 type Language = 'fr' | 'en'
 
 export function LanguageSettings() {
-    const [isMounted, setIsMounted] = useState(false)
-    const [language, setLanguage] = useState<Language>('fr')
+    const [language, setLanguage] = useState<Language>(() => {
+        const savedLanguage = localStorage.getItem('language') as Language | null
+        return savedLanguage || 'fr'
+    })
     const router = useRouter()
 
-    useEffect(() => {
-        const savedLanguage = localStorage.getItem('language') as Language | null
-        const initialLanguage = savedLanguage || 'fr'
-        setLanguage(initialLanguage)
-        setIsMounted(true)
-    }, [])
-
-    if (!isMounted) return null
+    if (typeof window === 'undefined') return null
 
     const handleLanguageChange = (newLanguage: Language) => {
         setLanguage(newLanguage)

@@ -3,6 +3,7 @@ import { Inter, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navigation/Navbar";
 import CinemaSpotlight from "@/components/ui/cinema-spotlight";
+import { ThemeProvider } from "./providers";
 
 const sans = Inter({
   subsets: ["latin"],
@@ -32,9 +33,11 @@ export default function RootLayout({
       <body
         className={`${sans.variable} ${display.variable} antialiased`}
       >
-        <Navbar />
-        <CinemaSpotlight />
-        {children}
+        <ThemeProvider>
+          <Navbar />
+          <CinemaSpotlight />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
