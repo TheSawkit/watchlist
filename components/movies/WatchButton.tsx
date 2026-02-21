@@ -49,7 +49,9 @@ export function WatchButton({
                 )}
             >
                 <Icon className={cn("h-4 w-4", loading && "animate-spin")} />
-                {active ? "Ajouté" : "Ajouter"}
+                {active
+                    ? (status === "watched" ? "Vu" : "Ajouté")
+                    : (status === "watched" ? "Marquer comme vu" : "Ajouter")}
             </button>
         )
     }

@@ -9,7 +9,7 @@ export function NavLinks({ className, onLinkClick }: NavLinksProps) {
   const pathname = usePathname()
 
   const links = [
-    { href: "/", label: "Accueil" },
+    { href: "/dashboard", label: "Accueil" },
     { href: "/explorer", label: "Explorer" },
     { href: "/library", label: "Ma bibliothèque" },
   ]
