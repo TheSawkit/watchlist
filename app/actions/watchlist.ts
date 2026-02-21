@@ -25,6 +25,9 @@ export async function addToWatchlist(
     if (error) throw new Error(error.message)
 
     revalidatePath("/library")
+    revalidatePath("/dashboard")
+    revalidatePath("/")
+    revalidatePath("/movie/[id]", "layout")
 }
 
 export async function removeFromWatchlist(movieId: number): Promise<void> {
@@ -42,6 +45,9 @@ const { error } = await supabase
 if (error) throw new Error(error.message)
 
 revalidatePath("/library")
+revalidatePath("/dashboard")
+revalidatePath("/")
+revalidatePath("/movie/[id]", "layout")
 }
 
 export async function getUserWatchlist(): Promise<WatchlistEntry[]> {
@@ -75,4 +81,20 @@ const { data } = await supabase
     .single()
 
 return (data?.status as WatchStatus) ?? null
+}
+
+export async function getMovieWatchlistEntry(movieId: number): Promise<WatchlistEntry | null> {
+    const supabase = await createClient()
+    const { data: { user }} = await supabase.auth.getUser()
+
+    if (!user) return null
+
+    const { data } = await supabase
+        .from("watchlist")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("movie_id", movieId)
+        .single()
+
+    return data as WatchlistEntry ?? null
 }

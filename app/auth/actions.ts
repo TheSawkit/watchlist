@@ -7,7 +7,6 @@ import { createClient } from '@/lib/supabase/server'
 export async function login(prevState: unknown, formData: FormData) {
   const supabase = await createClient()
 
-  // Récupération des données selon les names des inputs
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 

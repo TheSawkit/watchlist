@@ -6,7 +6,8 @@ import { MovieDescription } from "@/components/movies/MovieDescription"
 import { MovieCast } from "@/components/movies/MovieCast"
 import type { MoviePageProps } from "@/types/pages"
 import { WatchButton } from "@/components/movies/WatchButton"
-import { getMovieWatchlistStatus } from "@/app/actions/watchlist"
+import { getMovieWatchlistEntry } from "@/app/actions/watchlist"
+import { Eye } from "lucide-react"
 
 export default async function MoviePage(props: MoviePageProps) {
   const params = await props.params
@@ -43,7 +44,8 @@ export default async function MoviePage(props: MoviePageProps) {
 
   const heroImagePath = selectHeroImage(images, movieDetails.backdrop_path)
   const heroImageUrl = getImageUrl(heroImagePath, "original")
-  const watchlistStatus = await getMovieWatchlistStatus(movieId)
+  const watchlistEntry = await getMovieWatchlistEntry(movieId)
+  const isWatched = watchlistEntry?.status === "watched"
 
   return (
     <div className="min-h-screen">
@@ -51,24 +53,39 @@ export default async function MoviePage(props: MoviePageProps) {
         movie={movieDetails}
         backdropUrl={heroImageUrl}
         actions={
-          <>
-            <WatchButton
-              movieId={movieDetails.id}
-              movieTitle={movieDetails.title}
-              posterPath={movieDetails.poster_path}
-              status="to_watch"
-              variant="full"
-              initialActive={watchlistStatus === "to_watch"}
-            />
+          <div className="flex items-center gap-4 flex-wrap">
+            {!isWatched && (
+              <WatchButton
+                movieId={movieDetails.id}
+                movieTitle={movieDetails.title}
+                posterPath={movieDetails.poster_path}
+                status="to_watch"
+                variant="full"
+                initialActive={watchlistEntry?.status === "to_watch"}
+              />
+            )}
             <WatchButton
               movieId={movieDetails.id}
               movieTitle={movieDetails.title}
               posterPath={movieDetails.poster_path}
               status="watched"
-              variant="icon"
-              initialActive={watchlistStatus === "watched"}
+              variant="full"
+              initialActive={isWatched}
+              fallbackStatus="to_watch"
             />
-          </>
+            {isWatched && watchlistEntry?.created_at && (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-surface-2/50 border border-border/10 text-muted animate-in fade-in slide-in-from-left-4 duration-500">
+                <Eye className="h-4 w-4" />
+                <span className="text-sm font-medium">
+                  Vu le {new Date(watchlistEntry.created_at).toLocaleDateString("fr-FR", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                  })}
+                </span>
+              </div>
+            )}
+          </div>
         }
       />
 

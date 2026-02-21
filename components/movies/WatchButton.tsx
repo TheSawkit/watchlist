@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Eye, Plus, Check, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { addToWatchlist, removeFromWatchlist } from "@/app/actions/watchlist"
@@ -13,6 +14,7 @@ export function WatchButton({
 }: WatchButtonProps) {
     const [active, setActive] = useState(initialActive)
     const [loading, setLoading] = useState(false)
+    const router = useRouter()
 
     async function handleClick(e: React.MouseEvent) {
         e.preventDefault()
@@ -30,6 +32,7 @@ export function WatchButton({
                 await addToWatchlist(movieId, movieTitle, posterPath, status)
             }
             setActive(!active)
+            router.refresh()
         } finally {
             setLoading(false)
         }
