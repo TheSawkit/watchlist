@@ -3,22 +3,24 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getTranslations } from '@/lib/i18n/server'
 
 export async function updateEmail(prevState: unknown, formData: FormData) {
     const supabase = await createClient()
+    const t = await getTranslations()
 
     const {
         data: { user },
     } = await supabase.auth.getUser()
 
     if (!user) {
-        return { error: 'Non authentifié', success: false }
+        return { error: t.auth.notAuthenticated, success: false }
     }
 
     const newEmail = formData.get('email') as string
 
     if (!newEmail) {
-        return { error: 'L\'adresse e-mail est obligatoire', success: false }
+        return { error: t.settings.profile.newEmail, success: false }
     }
 
     const { error } = await supabase.auth.updateUser({
@@ -29,33 +31,34 @@ export async function updateEmail(prevState: unknown, formData: FormData) {
         return { error: error.message, success: false }
     }
 
-    return { error: undefined, success: true, message: 'Email mis à jour. Veuillez confirmer le nouveau email.' }
+    return { error: undefined, success: true, message: t.settings.profile.confirmNewEmail }
 }
 
 export async function updatePassword(prevState: unknown, formData: FormData) {
     const supabase = await createClient()
+    const t = await getTranslations()
 
     const {
         data: { user },
     } = await supabase.auth.getUser()
 
     if (!user) {
-        return { error: 'Non authentifié', success: false }
+        return { error: t.auth.notAuthenticated, success: false }
     }
 
     const newPassword = formData.get('password') as string
     const confirmPassword = formData.get('confirm-password') as string
 
     if (!newPassword || !confirmPassword) {
-        return { error: 'Tous les champs sont obligatoires', success: false }
+        return { error: t.settings.missingFields, success: false }
     }
 
     if (newPassword !== confirmPassword) {
-        return { error: 'Les mots de passe ne correspondent pas', success: false }
+        return { error: t.settings.password.noMatch, success: false }
     }
 
     if (newPassword.length < 8) {
-        return { error: 'Le mot de passe doit contenir au moins 8 caractères', success: false }
+        return { error: t.settings.password.minChars, success: false }
     }
 
     const { error } = await supabase.auth.updateUser({
@@ -66,25 +69,26 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
         return { error: error.message, success: false }
     }
 
-    return { error: undefined, success: true, message: 'Mot de passe mis à jour avec succès' }
+    return { error: undefined, success: true, message: `${t.settings.password.title}${t.settings.successUpdate}` }
 }
 
 export async function updateProfile(prevState: unknown, formData: FormData) {
     const supabase = await createClient()
+    const t = await getTranslations()
 
     const {
         data: { user },
     } = await supabase.auth.getUser()
 
     if (!user) {
-        return { error: 'Non authentifié', success: false }
+        return { error: t.auth.notAuthenticated, success: false }
     }
 
     const fullName = formData.get('fullName') as string
     const username = formData.get('username') as string
 
     if (!fullName || !username) {
-        return { error: 'Tous les champs sont obligatoires', success: false }
+        return { error: t.settings.missingFields, success: false }
     }
 
     const { error } = await supabase.auth.updateUser({
@@ -99,24 +103,25 @@ export async function updateProfile(prevState: unknown, formData: FormData) {
     }
 
     revalidatePath('/settings')
-    return { error: undefined, success: true, message: 'Profil mis à jour avec succès' }
+    return { error: undefined, success: true, message: `${t.settings.profile.title}${t.settings.successUpdate}` }
 }
 
 export async function updateAvatar(prevState: unknown, formData: FormData) {
     const supabase = await createClient()
+    const t = await getTranslations()
 
     const {
         data: { user },
     } = await supabase.auth.getUser()
 
     if (!user) {
-        return { error: 'Non authentifié', success: false }
+        return { error: t.auth.notAuthenticated, success: false }
     }
 
     const avatarUrl = formData.get('avatarUrl') as string
 
     if (!avatarUrl) {
-        return { error: 'URL d\'avatar invalide', success: false }
+        return { error: t.settings.profile.invalidAvatarUrl, success: false }
     }
 
     const { error } = await supabase.auth.updateUser({
@@ -130,29 +135,33 @@ export async function updateAvatar(prevState: unknown, formData: FormData) {
     }
 
     revalidatePath('/settings')
-    return { error: undefined, success: true, message: 'Photo de profil mise à jour avec succès' }
+    return { error: undefined, success: true, message: `${t.settings.profile.avatar}${t.settings.successUpdate}` }
 }
 
 export async function deleteAccount(prevState: unknown, formData: FormData) {
     const supabase = await createClient()
+    const t = await getTranslations()
 
     const {
         data: { user },
     } = await supabase.auth.getUser()
 
     if (!user) {
-        return { error: 'Non authentifié', success: false }
+        return { error: t.auth.notAuthenticated, success: false }
     }
 
     const confirmation = formData.get('confirmation') as string
+    const expectedWord = t.danger.confirmPlaceholder
 
-    if (confirmation !== 'SUPPRIMER') {
-        return { error: 'Texte de confirmation incorrect. Veuillez taper "SUPPRIMER".', success: false }
+    if (confirmation !== expectedWord) {
+        return { error: t.settings.dangerZone.incorrectConfirmation, success: false }
     }
-
 
     await supabase.auth.signOut()
 
+    // ⚠️ ATTENTION: La suppression du compte n'est PAS implémentée.
+    // L'utilisateur est déconnecté mais son compte existe toujours.
+    console.warn(`[deleteAccount] Account deletion NOT implemented. User ${user.id} was signed out but NOT deleted.`)
     // TODO: Implement account deletion through a Supabase function
     // Example:
     // const { data, error } = await supabase

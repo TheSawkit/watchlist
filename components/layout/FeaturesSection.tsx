@@ -1,77 +1,46 @@
 import FeatureCard from "./FeatureCard";
+import { getTranslations } from "@/lib/i18n/server";
 
-const features = [
-  {
-    icon: "🎬",
-    title: "Suivi complet",
-    description:
-      "Enregistrez tous les films et séries que vous avez vus en un seul endroit. Ne perdez plus jamais le fil de votre parcours cinématographique.",
-  },
-  {
-    icon: "📊",
-    title: "Statistiques détaillées",
-    description:
-      "Visualisez vos habitudes de visionnage, découvrez vos genres préférés et explorez votre historique de manière interactive.",
-  },
-  {
-    icon: "🔍",
-    title: "Recherche rapide",
-    description:
-      "Trouvez instantanément ce que vous avez déjà regardé grâce à notre moteur de recherche puissant et intuitif.",
-  },
-  {
-    icon: "⭐",
-    title: "Notes et avis",
-    description:
-      "Ajoutez vos propres notes et évaluations à chaque contenu pour vous souvenir de ce que vous avez pensé.",
-  },
-  {
-    icon: "📱",
-    title: "Accessible partout",
-    description:
-      "Accédez à votre bibliothèque depuis n'importe quel appareil, que ce soit sur votre ordinateur, tablette ou smartphone.",
-  },
-  {
-    icon: "🎯",
-    title: "Recommandations",
-    description:
-      "Découvrez de nouveaux contenus basés sur ce que vous avez déjà aimé et explorez des suggestions personnalisées.",
-  },
-];
+export default async function FeaturesSection() {
+    const t = await getTranslations();
 
-export default function FeaturesSection() {
-  return (
-    <section className="px-6 py-20 lg:px-12">
-      <div className="mx-auto max-w-6xl">
-        <h2
-          className="mb-12 text-center font-display text-5xl font-normal text-text md:text-6xl"
-          style={{
-            animation: "slideUp 0.6s ease-out forwards",
-            opacity: 0,
-          }}
-        >
-          Pourquoi ReelMark ?
-        </h2>
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              style={{
-                animation: `fadeIn 0.6s ease-out forwards`,
-                animationDelay: `${index * 100}ms`,
-                opacity: 0,
-              }}
-            >
-              <FeatureCard
-                icon={feature.icon}
-                title={feature.title}
-                description={feature.description}
-              />
+    const features = [
+        { icon: "🎬", title: t.features.feature1Title, description: t.features.feature1Desc },
+        { icon: "📊", title: t.features.feature2Title, description: t.features.feature2Desc },
+        { icon: "🔍", title: t.features.feature3Title, description: t.features.feature3Desc },
+        { icon: "⭐", title: t.features.feature4Title, description: t.features.feature4Desc },
+        { icon: "📱", title: t.features.feature5Title, description: t.features.feature5Desc },
+        { icon: "🎯", title: t.features.feature6Title, description: t.features.feature6Desc },
+    ];
+
+    return (
+        <section className="px-6 py-20 lg:px-12">
+            <div className="mx-auto max-w-6xl">
+                <h2
+                    className="mb-12 text-center font-display text-5xl font-normal text-text md:text-6xl"
+                    style={{ animation: "slideUp 0.6s ease-out forwards", opacity: 0 }}
+                >
+                    {t.home.features.title}
+                </h2>
+                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    {features.map((feature, index) => (
+                        <div
+                            key={index}
+                            style={{
+                                animation: `fadeIn 0.6s ease-out forwards`,
+                                animationDelay: `${index * 100}ms`,
+                                opacity: 0,
+                            }}
+                        >
+                            <FeatureCard
+                                icon={feature.icon}
+                                title={feature.title}
+                                description={feature.description}
+                            />
+                        </div>
+                    ))}
+                </div>
             </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+        </section>
+    );
 }
-

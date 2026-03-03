@@ -6,8 +6,10 @@ import { Film, Tv } from "lucide-react"
 import type { ActorFilmographyProps, Tab } from "@/types/components"
 import { InfiniteScrollMovies } from "@/components/movies/InfiniteScrollMovies"
 import { creditToMovie, tvCreditToMovie } from "@/lib/mappers"
+import { useTranslation } from "@/lib/i18n/context"
 
 export function ActorFilmography({ movies, tvShows }: ActorFilmographyProps) {
+    const { t } = useTranslation()
     const [activeTab, setActiveTab] = useState<Tab>("movies")
 
 
@@ -34,7 +36,7 @@ export function ActorFilmography({ movies, tvShows }: ActorFilmographyProps) {
 
     return (
         <section className="space-y-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-text">Filmographie</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-text">{t.movie.filmography}</h2>
 
             {hasMovies && hasTvShows && (
                 <div className="flex gap-2">
@@ -42,13 +44,13 @@ export function ActorFilmography({ movies, tvShows }: ActorFilmographyProps) {
                         active={activeTab === "movies"}
                         onClick={() => setActiveTab("movies")}
                         icon={<Film className="h-4 w-4" />}
-                        label={`Films (${sortedMovies.length})`}
+                        label={`${t.movie.films} (${sortedMovies.length})`}
                     />
                     <TabButton
                         active={activeTab === "tv"}
                         onClick={() => setActiveTab("tv")}
                         icon={<Tv className="h-4 w-4" />}
-                        label={`Séries (${sortedTvShows.length})`}
+                        label={`${t.movie.series} (${sortedTvShows.length})`}
                     />
                 </div>
             )}

@@ -13,19 +13,14 @@ export default async function ActorPage(props: ActorPageProps) {
         notFound()
     }
 
-    let actor
-    let movieCredits
-    let tvCredits
+    let actor, movieCredits, tvCredits
 
     try {
-        const results = await Promise.all([
+        [actor, movieCredits, tvCredits] = await Promise.all([
             getActorDetails(actorId),
             getActorMovieCredits(actorId),
             getActorTvCredits(actorId),
         ])
-        actor = results[0]
-        movieCredits = results[1]
-        tvCredits = results[2]
     } catch (error) {
         console.error("Error fetching actor details:", error)
         notFound()

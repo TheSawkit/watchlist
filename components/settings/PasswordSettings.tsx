@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { updatePassword } from '@/app/settings/actions'
+import { useTranslation } from '@/lib/i18n/context'
 
 const initialState = {
     error: undefined,
@@ -25,21 +26,20 @@ const initialState = {
 }
 
 export function PasswordSettings() {
+    const { t } = useTranslation()
     const [state, formAction, isPending] = useActionState(updatePassword, initialState)
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Mot de passe</CardTitle>
-                <CardDescription>
-                    Modifiez votre mot de passe pour sécuriser votre compte
-                </CardDescription>
+                <CardTitle>{t.settings.password.title}</CardTitle>
+                <CardDescription>{t.settings.password.description}</CardDescription>
             </CardHeader>
             <CardContent>
                 <form action={formAction} className="space-y-6">
                     <FieldGroup>
                         <Field>
-                            <FieldLabel htmlFor="password">Nouveau mot de passe</FieldLabel>
+                            <FieldLabel htmlFor="password">{t.settings.password.newPassword}</FieldLabel>
                             <Input
                                 id="password"
                                 name="password"
@@ -48,12 +48,12 @@ export function PasswordSettings() {
                                 required
                             />
                             <FieldDescription>
-                                Minimum 8 caractères avec une majuscule et un chiffre
+                                {t.settings.password.minChars}
                             </FieldDescription>
                         </Field>
 
                         <Field>
-                            <FieldLabel htmlFor="confirm-password">Confirmer le mot de passe</FieldLabel>
+                            <FieldLabel htmlFor="confirm-password">{t.settings.password.confirmPassword}</FieldLabel>
                             <Input
                                 id="confirm-password"
                                 name="confirm-password"
@@ -70,7 +70,7 @@ export function PasswordSettings() {
                     )}
 
                     <Button type="submit" disabled={isPending}>
-                        {isPending ? 'Mise à jour...' : 'Mettre à jour le mot de passe'}
+                        {isPending ? t.common.updating : t.settings.password.updatePassword}
                     </Button>
                 </form>
             </CardContent>

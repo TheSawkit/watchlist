@@ -2,13 +2,15 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { getImageUrl } from "@/lib/tmdb"
+import { getImageUrl } from "@/lib/tmdb-image"
 import { Star } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { MovieCardProps } from "@/types/components"
 import { WatchButton } from "@/components/movies/WatchButton"
+import { useTranslation } from "@/lib/i18n/context"
 
 export function MovieCard({ movie, className }: MovieCardProps) {
+  const { t } = useTranslation()
   return (
     <Link
       href={`/movie/${movie.id}`}
@@ -67,7 +69,7 @@ export function MovieCard({ movie, className }: MovieCardProps) {
               {movie.title}
             </h3>
             <p className="mt-1 text-xs text-muted line-clamp-2">
-              {movie.overview ? movie.overview : "Aucune description disponible"}
+              {movie.overview ? movie.overview : t.movie.noDescription}
             </p>
           </div>
 

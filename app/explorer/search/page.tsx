@@ -1,6 +1,7 @@
 import { searchMovies } from "@/lib/tmdb"
 import { MovieGrid } from "@/components/movies/MovieGrid"
 import { SearchBar } from "@/components/search/SearchBar"
+import { getTranslations } from "@/lib/i18n/server"
 
 interface SearchPageProps {
     searchParams: Promise<{ q?: string; query?: string }>
@@ -12,6 +13,10 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
 
     const movies = query ? await searchMovies(query) : []
 
+    const t = await getTranslations()
+
+    const foundMessage = `${t.pages.search.found} ${t.pages.search.foundCount.replace("${count}", String(movies.length))}`
+
     return (
         <div className="container mx-auto py-12 px-6">
             <div
@@ -21,11 +26,9 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
                     opacity: 0,
                 }}
             >
-                <h1 className="text-3xl font-bold mb-2">Résultats pour &quot;{query}&quot;</h1>
+                <h1 className="text-3xl font-bold mb-2">{t.pages.search.title} &quot;{query}&quot;</h1>
                 <p className="text-muted">
-                    {movies.length > 0
-                        ? `Nous avons trouvé ${movies.length} films correspondants.`
-                        : "Aucun film trouvé pour cette recherche."}
+                    {movies.length > 0 ? foundMessage : t.pages.search.noResults}
                 </p>
             </div>
 
@@ -37,7 +40,7 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
                 </div>
             ) : (
                 <div className="mt-20 text-center">
-                    <p className="text-xl text-muted italic">Désolé, nous n&apos;avons trouvé aucun résultat.</p>
+                    <p className="text-xl text-muted italic">{t.pages.search.noResultsMessage}</p>
                 </div>
             )}
         </div>

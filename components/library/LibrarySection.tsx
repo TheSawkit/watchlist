@@ -1,10 +1,10 @@
 "use client"
 
 import Link from "next/link"
-
 import { LibraryCard } from "@/components/library/LibraryCard"
 import { ArrowRight } from "lucide-react"
 import { HorizontalScroll } from "@/components/shared/HorizontalScroll"
+import { useTranslation } from "@/lib/i18n/context"
 import type { WatchlistEntry } from "@/types/components"
 
 interface LibrarySectionProps {
@@ -14,6 +14,7 @@ interface LibrarySectionProps {
 }
 
 export function LibrarySection({ title, entries, categoryUrl }: LibrarySectionProps) {
+    const { t } = useTranslation()
 
     return (
         <HorizontalScroll
@@ -21,7 +22,9 @@ export function LibrarySection({ title, entries, categoryUrl }: LibrarySectionPr
             scrollAmount={500}
             title={
                 <Link href={categoryUrl} className="group/title flex items-center gap-2">
-                    <h2 className="text-2xl font-bold group-hover/title:text-red-2 transition-colors">{title}</h2>
+                    <h2 className="text-2xl font-bold group-hover/title:text-red-2 transition-colors">
+                        {title}
+                    </h2>
                     <ArrowRight className="w-5 h-5 opacity-0 -translate-x-2 group-hover/title:opacity-100 group-hover/title:translate-x-0 transition-all duration-300 text-red-2" />
                 </Link>
             }
@@ -36,10 +39,7 @@ export function LibrarySection({ title, entries, categoryUrl }: LibrarySectionPr
                         opacity: 0,
                     }}
                 >
-                    <LibraryCard
-                        entry={entry}
-                        className="h-full"
-                    />
+                    <LibraryCard entry={entry} className="h-full" />
                 </div>
             ))}
 
@@ -50,7 +50,9 @@ export function LibrarySection({ title, entries, categoryUrl }: LibrarySectionPr
                 <div className="rounded-full bg-surface-2 p-4 group-hover/card:bg-red-2 group-hover/card:text-text transition-colors">
                     <ArrowRight className="w-6 h-6" />
                 </div>
-                <span className="font-semibold text-muted group-hover/card:text-text transition-colors">Voir tout</span>
+                <span className="font-semibold text-muted group-hover/card:text-text transition-colors">
+                    {t.common.viewAll}
+                </span>
             </Link>
         </HorizontalScroll>
     )

@@ -1,23 +1,28 @@
-import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { requireAuth } from "@/lib/auth"
 import { getUserWatchlist } from "@/app/actions/watchlist"
 import { LibraryTabs } from "@/components/library/LibraryTabs"
+import { getTranslations } from "@/lib/i18n/server"
 
-export const metadata = {
-    title: 'Ma bibliothèque - Reelmark',
-    description: 'Consultez votre collection de films et séries TV',
+export async function generateMetadata() {
+    const t = await getTranslations()
+    return {
+        title: `${t.pages.library.title} - Reelmark`,
+        description: t.library.inLibrary,
+    }
 }
 
 export default async function LibraryPage() {
-    const supabase = await createClient()
-    const { data: { user }} = await supabase.auth.getUser()
+    await requireAuth()
 
-    if (!user) redirect("/login")
-
+    const t = await getTranslations()
     const watchlist = await getUserWatchlist()
 
-    const toWatch = watchlist.filter(e => e.status === "to_watch")
-    const watched = watchlist.filter(e => e.status === "watched")
+    const toWatch = watchlist.filter(entry => entry.status === "to_watch")
+    const watched = watchlist.filter(entry => entry.status === "watched")
+
+    const isPlural = watchlist.length > 1
+    const filmsCountText = isPlural ? "films" : "film"
+    const inLibraryText = t.library.inLibrary
 
     return (
         <div className="container mx-auto py-12 px-6">
@@ -25,9 +30,9 @@ export default async function LibraryPage() {
                 style={{ animation: "slideUp 0.6s ease-out forwards", opacity: 0 }}
                 className="mb-10"
             >
-                <h1 className="text-3xl font-bold mb-2">Ma bibliothèque</h1>
-                <p className="text-muted">
-                    {watchlist.length} film{watchlist.length > 1 ? "s" : ""} dans votre collection
+                <h1 className="text-3xl font-bold mb-2">{t.pages.library.title}</h1>
+                <p className="text-muted text-sm md:text-base">
+                    {watchlist.length} {filmsCountText} {inLibraryText}
                 </p>
             </div>
 

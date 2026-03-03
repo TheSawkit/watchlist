@@ -19,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { updateProfile, updateAvatar } from '@/app/settings/actions'
 import { User } from '@supabase/supabase-js'
+import { useTranslation } from '@/lib/i18n/context'
 
 const initialState = {
     error: undefined,
@@ -31,6 +32,7 @@ interface ProfileSettingsProps {
 }
 
 export function ProfileSettings({ user }: ProfileSettingsProps) {
+    const { t } = useTranslation()
     const [state, formAction, isPending] = useActionState(updateProfile, initialState)
     const [avatarState, avatarFormAction, isAvatarPending] = useActionState(
         updateAvatar,
@@ -59,16 +61,14 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
         <div className="space-y-6">
             <Card>
                 <CardHeader>
-                    <CardTitle>Profil</CardTitle>
-                    <CardDescription>
-                        Gérez vos informations personnelles
-                    </CardDescription>
+                    <CardTitle>{t.settings.profile.title}</CardTitle>
+                    <CardDescription>{t.settings.profile.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form action={formAction} className="space-y-6">
                         <FieldGroup>
                             <Field>
-                                <FieldLabel>Photo de profil</FieldLabel>
+                                <FieldLabel>{t.settings.profile.avatar}</FieldLabel>
                                 <div className="flex items-start gap-6 mt-4">
                                     <div className="relative">
                                         {avatarPreview ? (
@@ -82,7 +82,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                                         ) : (
                                             <div className="w-20 h-20 rounded-full bg-surface flex items-center justify-center border-2 border-border">
                                                 <span className="text-sm font-medium text-muted">
-                                                    {user?.user_metadata?.full_name?.[0]?.toUpperCase() || 'U'}
+                                                    {user?.user_metadata?.full_name?.[0]?.toUpperCase() || t.common.user[0]}
                                                 </span>
                                             </div>
                                         )}
@@ -95,7 +95,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                                             onChange={handleAvatarChange}
                                         />
                                         <FieldDescription>
-                                            PNG, JPG ou GIF. Taille maximale 5MB
+                                            {t.settings.profile.formatAvatar}
                                         </FieldDescription>
                                         {avatarPreview && avatarPreview !== user?.user_metadata?.avatar_url && (
                                             <>
@@ -109,7 +109,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                                                     }}
                                                     disabled={isAvatarPending}
                                                 >
-                                                    {isAvatarPending ? 'Mise à jour...' : 'Mettre à jour'}
+                                                    {isAvatarPending ? t.common.updating : t.settings.profile.updateAvatar}
                                                 </Button>
                                                 {avatarState.error && (
                                                     <p className="text-sm text-red">{avatarState.error}</p>
@@ -124,29 +124,29 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                             </Field>
 
                             <Field>
-                                <FieldLabel htmlFor="fullName">Nom complet</FieldLabel>
+                                <FieldLabel htmlFor="fullName">{t.settings.profile.fullName}</FieldLabel>
                                 <Input
                                     id="fullName"
                                     name="fullName"
                                     type="text"
                                     defaultValue={user?.user_metadata?.full_name || ''}
-                                    placeholder="Votre nom"
+                                    placeholder={`${t.settings.profile.placeholder}${t.settings.profile.fullName.toLowerCase()}`}
                                 />
                             </Field>
 
                             <Field>
-                                <FieldLabel htmlFor="username">Pseudo</FieldLabel>
+                                <FieldLabel htmlFor="username">{t.settings.profile.username}</FieldLabel>
                                 <Input
                                     id="username"
                                     name="username"
                                     type="text"
                                     defaultValue={user?.user_metadata?.username || ''}
-                                    placeholder="Votre pseudo"
+                                    placeholder={`${t.settings.profile.placeholder}${t.settings.profile.username.toLowerCase()}`}
                                 />
                             </Field>
 
                             <Field>
-                                <FieldLabel htmlFor="email">Adresse e-mail</FieldLabel>
+                                <FieldLabel htmlFor="email">{t.settings.profile.email}</FieldLabel>
                                 <Input
                                     id="email"
                                     name="email"
@@ -156,7 +156,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                                     className="opacity-50"
                                 />
                                 <FieldDescription>
-                                    Votre adresse e-mail ne peut pas être modifiée ici
+                                    {t.settings.profile.warningEmail}
                                 </FieldDescription>
                             </Field>
                         </FieldGroup>
@@ -167,7 +167,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                         )}
 
                         <Button type="submit" disabled={isPending}>
-                            {isPending ? 'Mise à jour...' : 'Enregistrer'}
+                            {isPending ? t.common.updating : t.settings.profile.updateProfile}
                         </Button>
                     </form>
                 </CardContent>

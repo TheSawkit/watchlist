@@ -34,53 +34,53 @@ export async function removeFromWatchlist(movieId: number): Promise<void> {
     const supabase = await createClient()
     const { data: { user }} = await supabase.auth.getUser()
 
-if (!user) throw new Error("Non authentifié")
+    if (!user) throw new Error("Non authentifié")
 
-const { error } = await supabase
-    .from("watchlist")
-    .delete()
-    .eq("user_id", user.id)
-    .eq("movie_id", movieId)
+    const { error } = await supabase
+        .from("watchlist")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("movie_id", movieId)
 
-if (error) throw new Error(error.message)
+    if (error) throw new Error(error.message)
 
-revalidatePath("/library")
-revalidatePath("/dashboard")
-revalidatePath("/")
-revalidatePath("/movie/[id]", "layout")
+    revalidatePath("/library")
+    revalidatePath("/dashboard")
+    revalidatePath("/")
+    revalidatePath("/movie/[id]", "layout")
 }
 
 export async function getUserWatchlist(): Promise<WatchlistEntry[]> {
     const supabase = await createClient()
     const { data: { user }} = await supabase.auth.getUser()
 
-if (!user) return []
+    if (!user) return []
 
-const { data, error } = await supabase
-    .from("watchlist")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false })
+    const { data: entries, error } = await supabase
+        .from("watchlist")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
 
-if (error) throw new Error(error.message)
+    if (error) throw new Error(error.message)
 
-return data ?? []
+    return entries ?? []
 }
 
 export async function getMovieWatchlistStatus(movieId: number): Promise<WatchStatus | null> {
     const supabase = await createClient()
     const { data: { user }} = await supabase.auth.getUser()
 
-if (!user) return null
+    if (!user) return null
 
-const { data } = await supabase
-    .from("watchlist")
-    .select("status")
-    .eq("user_id", user.id)
-    .eq("movie_id", movieId)
-    .single()
+    const { data: statusResult } = await supabase
+        .from("watchlist")
+        .select("status")
+        .eq("user_id", user.id)
+        .eq("movie_id", movieId)
+        .single()
 
-return (data?.status as WatchStatus) ?? null
+    return (statusResult?.status as WatchStatus) ?? null
 }
 
 export async function getMovieWatchlistEntry(movieId: number): Promise<WatchlistEntry | null> {
@@ -89,12 +89,12 @@ export async function getMovieWatchlistEntry(movieId: number): Promise<Watchlist
 
     if (!user) return null
 
-    const { data } = await supabase
+    const { data: entry } = await supabase
         .from("watchlist")
         .select("*")
         .eq("user_id", user.id)
         .eq("movie_id", movieId)
         .single()
 
-    return data as WatchlistEntry ?? null
+    return entry as WatchlistEntry ?? null
 }

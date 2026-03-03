@@ -5,15 +5,21 @@ import { useRouter } from "next/navigation"
 import { Eye, Plus, Check, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { addToWatchlist, removeFromWatchlist } from "@/app/actions/watchlist"
+import { useTranslation } from "@/lib/i18n/context"
 import type { WatchButtonProps } from "@/types/components"
 
-
-
 export function WatchButton({
-    movieId, movieTitle, posterPath, status, initialActive = false, variant = "icon", fallbackStatus
+    movieId,
+    movieTitle,
+    posterPath,
+    status,
+    initialActive = false,
+    variant = "icon",
+    fallbackStatus,
 }: WatchButtonProps) {
     const [active, setActive] = useState(initialActive)
     const [loading, setLoading] = useState(false)
+    const { t } = useTranslation()
     const router = useRouter()
 
     async function handleClick(e: React.MouseEvent) {
@@ -53,8 +59,12 @@ export function WatchButton({
             >
                 <Icon className={cn("h-4 w-4", loading && "animate-spin")} />
                 {active
-                    ? (status === "watched" ? "Vu" : "Ajouté")
-                    : (status === "watched" ? "Marquer comme vu" : "Ajouter")}
+                    ? status === "watched"
+                        ? t.movie.watched
+                        : t.movie.added
+                    : status === "watched"
+                        ? t.movie.markAsWatched
+                        : t.movie.addToList}
             </button>
         )
     }
@@ -62,7 +72,9 @@ export function WatchButton({
     return (
         <button
             onClick={handleClick}
-            title={status === "watched" ? "Marquer comme vu" : "Ajouter à la liste"}
+            title={
+                status === "watched" ? t.movie.markAsWatched : t.movie.addToList
+            }
             className={cn(
                 "h-8 w-8 rounded-full bg-surface/40 backdrop-blur-md border border-border/10",
                 "flex items-center justify-center transition-colors",

@@ -1,18 +1,14 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
-import { getImageUrl } from "@/lib/tmdb"
+import { getImageUrl } from "@/lib/tmdb-image"
 import { WatchButton } from "@/components/movies/WatchButton"
 import { cn } from "@/lib/utils"
 import { Eye, Clock } from "lucide-react"
+import { useTranslation } from "@/lib/i18n/context"
+import { getLocale } from "@/lib/i18n/utils"
 import type { WatchlistEntry } from "@/types/components"
-
-function formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString("fr-FR", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-    })
-}
 
 interface LibraryCardProps {
     entry: WatchlistEntry
@@ -20,7 +16,16 @@ interface LibraryCardProps {
 }
 
 export function LibraryCard({ entry, className }: LibraryCardProps) {
+    const { t, lang } = useTranslation()
     const isWatched = entry.status === "watched"
+
+    const formatDate = (dateString: string): string => {
+        return new Date(dateString).toLocaleDateString(getLocale(lang), {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+        })
+    }
 
     return (
         <Link
@@ -39,28 +44,32 @@ export function LibraryCard({ entry, className }: LibraryCardProps) {
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
                 />
 
-                <div className={cn(
-                    "absolute inset-0 bg-linear-to-t from-surface/90 via-surface/50 to-transparent transition-opacity duration-300",
-                    "opacity-0 group-hover:opacity-100",
-                    "md:group-hover:opacity-100"
-                )} />
+                <div
+                    className={cn(
+                        "absolute inset-0 bg-linear-to-t from-surface/90 via-surface/50 to-transparent transition-opacity duration-300",
+                        "opacity-0 group-hover:opacity-100"
+                    )}
+                />
 
-                <div className={cn(
-                    "absolute inset-x-0 bottom-0 flex flex-col gap-3 p-4 transition-all duration-300 z-10",
-                    "translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100",
-                    "md:group-hover:translate-y-0 md:group-hover:opacity-100"
-                )}>
+                <div
+                    className={cn(
+                        "absolute inset-x-0 bottom-0 flex flex-col gap-3 p-4 transition-all duration-300 z-10",
+                        "translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100"
+                    )}
+                >
                     <div>
                         <h3 className="text-lg font-bold text-text leading-tight line-clamp-2">
                             {entry.movie_title}
                         </h3>
                         <div className="flex items-center gap-1.5 mt-1">
-                            {isWatched
-                                ? <Eye className="h-3 w-3 text-muted shrink-0" />
-                                : <Clock className="h-3 w-3 text-muted shrink-0" />
-                            }
+                            {isWatched ? (
+                                <Eye className="h-3 w-3 text-muted shrink-0" />
+                            ) : (
+                                <Clock className="h-3 w-3 text-muted shrink-0" />
+                            )}
                             <span className="text-xs text-muted leading-tight">
-                                {isWatched ? "Vu le" : "Ajouté le"} {formatDate(entry.created_at)}
+                                {isWatched ? t.movie.watchedOn : t.movie.addedOn}{" "}
+                                {formatDate(entry.created_at)}
                             </span>
                         </div>
                     </div>
@@ -77,11 +86,12 @@ export function LibraryCard({ entry, className }: LibraryCardProps) {
                 </div>
 
                 {!isWatched && (
-                    <div className={cn(
-                        "absolute top-3 left-3 z-10 transition-all duration-300",
-                        "translate-y-0 opacity-0 group-hover:-translate-y-1 group-hover:opacity-100",
-                        "md:group-hover:-translate-y-1 md:group-hover:opacity-100"
-                    )}>
+                    <div
+                        className={cn(
+                            "absolute top-3 left-3 z-10 transition-all duration-300",
+                            "translate-y-0 opacity-0 group-hover:-translate-y-1 group-hover:opacity-100"
+                        )}
+                    >
                         <WatchButton
                             movieId={entry.movie_id}
                             movieTitle={entry.movie_title}

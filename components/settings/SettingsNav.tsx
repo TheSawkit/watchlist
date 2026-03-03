@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n/context'
 
 export type SettingsTab = 'profile' | 'security' | 'appearance' | 'data'
 
@@ -9,14 +10,16 @@ interface SettingsNavProps {
     activeTab: SettingsTab
 }
 
-const TABS: Array<{ id: SettingsTab; label: string; icon: string }> = [
-    { id: 'profile', label: 'Profil', icon: '👤' },
-    { id: 'security', label: 'Sécurité', icon: '🔒' },
-    { id: 'appearance', label: 'Apparence', icon: '🎨' },
-    { id: 'data', label: 'Données', icon: '🗑️' },
-]
-
 export function SettingsNav({ onTabChange, activeTab }: SettingsNavProps) {
+    const { t } = useTranslation()
+
+    const TABS: Array<{ id: SettingsTab; label: string; icon: string }> = [
+        { id: 'profile', label: t.settings.profile.title, icon: '👤' },
+        { id: 'security', label: t.settings.password.title, icon: '🔒' },
+        { id: 'appearance', label: t.settings.theme.title, icon: '🎨' },
+        { id: 'data', label: t.settings.dangerZone.title, icon: '🗑️' },
+    ]
+
     return (
         <nav className="flex lg:flex-col gap-2">
             {TABS.map((tab) => (

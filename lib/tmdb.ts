@@ -13,8 +13,9 @@ import type {
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY
 const TMDB_BASE_URL = "https://api.themoviedb.org/3"
-const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
-const TMDB_IMAGE_ORIGINAL_URL = "https://image.tmdb.org/t/p/original"
+
+
+import { getServerLocale } from "@/lib/i18n/server"
 
 // --- HELPER FUNCTION ---
 
@@ -23,23 +24,23 @@ async function fetchTMDB<T>(endpoint: string, params: Record<string, string> = {
     throw new Error("TMDB_API_KEY is not defined.")
   }
 
+  const locale = await getServerLocale()
+
   const queryParams = new URLSearchParams({
     api_key: TMDB_API_KEY,
-    language: "fr-FR",
+    language: locale, // "fr-FR" or "en-US"
     ...params,
   })
 
   const url = `${TMDB_BASE_URL}${endpoint}?${queryParams.toString()}`
 
-  const res = await fetch(url, {
+  const response = await fetch(url)
 
-  })
-
-  if (!res.ok) {
-    throw new Error(`TMDB API Error: ${res.status} ${res.statusText}`)
+  if (!response.ok) {
+    throw new Error(`TMDB API Error: ${response.status} ${response.statusText}`)
   }
 
-  return res.json()
+  return response.json()
 }
 
 // --- API FUNCTIONS ---
@@ -48,51 +49,55 @@ async function fetchTMDB<T>(endpoint: string, params: Record<string, string> = {
  * Récupère les films populaires du moment
  */
 export async function getPopularMovies(page: number = 1): Promise<Movie[]> {
-  const data = await fetchTMDB<{ results: Movie[] }>("/movie/popular", { page: page.toString() });
-  return data.results;
+  const { results } = await fetchTMDB<{ results: Movie[] }>("/movie/popular", { page: page.toString() });
+  return results;
 }
 
 /**
  * Récupère les films les mieux notés
  */
 export async function getTopRatedMovies(page: number = 1): Promise<Movie[]> {
-  const data = await fetchTMDB<{ results: Movie[] }>("/movie/top_rated", { page: page.toString() });
-  return data.results;
+  const { results } = await fetchTMDB<{ results: Movie[] }>("/movie/top_rated", { page: page.toString() });
+  return results;
 }
 
 /**
  * Récupère les films en tendance (jour ou semaine)
  */
 export async function getTrendingMovies(timeWindow: "day" | "week" = "week", page: number = 1): Promise<Movie[]> {
-  const data = await fetchTMDB<{ results: Movie[] }>(`/trending/movie/${timeWindow}`, { page: page.toString() });
-  return data.results;
+  const { results } = await fetchTMDB<{ results: Movie[] }>(`/trending/movie/${timeWindow}`, { page: page.toString() });
+  return results;
 }
 
 /**
  * Récupère les films à venir
  */
 export async function getUpcomingMovies(page: number = 1): Promise<Movie[]> {
-  const data = await fetchTMDB<{ results: Movie[] }>("/movie/upcoming", { page: page.toString(), region: "FR" }); // TODO: Add region variable with user parameter
-  return data.results;
+  const locale = await getServerLocale()
+  const region = locale.split('-')[1] // 'FR' or 'US'
+  const { results } = await fetchTMDB<{ results: Movie[] }>("/movie/upcoming", { page: page.toString(), region });
+  return results;
 }
 
 /**
  * Récupère les films actuellement au cinéma
  */
 export async function getNowPlayingMovies(page: number = 1): Promise<Movie[]> {
-  const data = await fetchTMDB<{ results: Movie[] }>("/movie/now_playing", { page: page.toString(), region: "FR" }); // TODO: Add region variable with user parameter
-  return data.results;
+  const locale = await getServerLocale()
+  const region = locale.split('-')[1]
+  const { results } = await fetchTMDB<{ results: Movie[] }>("/movie/now_playing", { page: page.toString(), region });
+  return results;
 }
 
 /**
  * Recherche un film par mot-clé
  */
 export async function searchMovies(query: string, page: number = 1): Promise<Movie[]> {
-  const data = await fetchTMDB<{ results: Movie[] }>("/search/movie", {
+  const { results } = await fetchTMDB<{ results: Movie[] }>("/search/movie", {
     query,
     page: page.toString(),
   });
-  return data.results;
+  return results;
 }
 
 /**
@@ -103,30 +108,40 @@ export async function getMovieDetails(id: number): Promise<MovieDetails> {
 
   try {
     const releaseDates = await fetchTMDB<ReleaseDatesResponse>(`/movie/${id}/release_dates`);
-
-    const europeanCountries = ["DE", "GB", "ES", "IT", "NL", "BE", "AT", "CH", "PT", "SE", "NO", "DK", "FI", "PL", "CZ", "HU", "RO", "GR"];
-
-    for (const countryCode of europeanCountries) {
-      const countryRelease = releaseDates.results.find((r) => r.iso_3166_1 === countryCode);
-      if (countryRelease && countryRelease.release_dates.length > 0) {
-        const certification = countryRelease.release_dates.find((rd) => rd.certification && rd.certification.trim() !== "");
-        if (certification) {
-          const certValue = certification.certification.trim();
-          if (/^\d+$/.test(certValue)) {
-            details.certification = `+${certValue}`;
-          } else {
-            details.certification = `+${certValue}`;
-          }
-          break;
-        }
-      }
-    }
+    const locale = await getServerLocale()
+    const userRegion = locale.split('-')[1]
+    details.certification = findLocalCertification(releaseDates, userRegion);
   } catch (error) {
-
     console.warn("Could not fetch certification:", error);
   }
 
   return details;
+}
+
+/**
+ * Cherche la première certification valide parmi les pays européens et US.
+ * Privilégie la région de l'utilisateur. Retourne la certification formatée.
+ */
+function findLocalCertification(releaseDates: ReleaseDatesResponse, userRegion: string): string | undefined {
+  // 1. Essayer la région de l'utilisateur
+  let countryRelease = releaseDates.results.find((release) => release.iso_3166_1 === userRegion);
+  let validCert = countryRelease?.release_dates.find((rd) => rd.certification?.trim());
+  
+  if (validCert) return `+${validCert.certification.trim()}`;
+
+  // 2. Essayer les pays de fallback internationaux
+  const fallbackCountries = ["FR", "US", "GB", "DE", "ES", "IT"];
+  for (const countryCode of fallbackCountries) {
+    if (countryCode === userRegion) continue;
+    
+    countryRelease = releaseDates.results.find((release) => release.iso_3166_1 === countryCode);
+    if (!countryRelease || countryRelease.release_dates.length === 0) continue;
+
+    validCert = countryRelease.release_dates.find((rd) => rd.certification?.trim());
+    if (validCert) return `+${validCert.certification.trim()}`;
+  }
+
+  return undefined;
 }
 
 /**
@@ -140,24 +155,24 @@ export async function getMovieCredits(id: number): Promise<Credits> {
  * Récupère les vidéos (trailers, teasers) d'un film
  */
 export async function getMovieVideos(id: number): Promise<Video[]> {
-  const data = await fetchTMDB<VideoResponse>(`/movie/${id}/videos`);
-  return data.results;
+  const { results } = await fetchTMDB<VideoResponse>(`/movie/${id}/videos`);
+  return results;
 }
 
 /**
  * Récupère des recommandations basées sur un film
  */
 export async function getMovieRecommendations(id: number): Promise<Movie[]> {
-  const data = await fetchTMDB<{ results: Movie[] }>(`/movie/${id}/recommendations`);
-  return data.results;
+  const { results } = await fetchTMDB<{ results: Movie[] }>(`/movie/${id}/recommendations`);
+  return results;
 }
 
 /**
  * Récupère des films similaires
  */
 export async function getSimilarMovies(id: number): Promise<Movie[]> {
-  const data = await fetchTMDB<{ results: Movie[] }>(`/movie/${id}/similar`);
-  return data.results;
+  const { results } = await fetchTMDB<{ results: Movie[] }>(`/movie/${id}/similar`);
+  return results;
 }
 
 /**
@@ -195,17 +210,7 @@ export function selectHeroImage(
 
 // --- UTILS ---
 
-/**
- * Génère l'URL complète d'une image TMDB
- */
-export function getImageUrl(path: string | null, size: "w500" | "original" = "w500") {
-  if (!path) return "https://images.unsplash.com/vector-1756365681486-615455939f4e?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
-  if (size === "original") {
-    return `${TMDB_IMAGE_ORIGINAL_URL}${path}`;
-  }
-  return `${TMDB_IMAGE_BASE_URL}${path}`;
-}
 
 // --- ACTOR API ---
 
@@ -220,14 +225,14 @@ export async function getActorDetails(id: number): Promise<ActorDetails> {
  * Récupère la filmographie cinéma d'un acteur
  */
 export async function getActorMovieCredits(id: number): Promise<ActorMovieCredit[]> {
-  const data = await fetchTMDB<{ cast: ActorMovieCredit[] }>(`/person/${id}/movie_credits`);
-  return data.cast;
+  const { cast } = await fetchTMDB<{ cast: ActorMovieCredit[] }>(`/person/${id}/movie_credits`);
+  return cast;
 }
 
 /**
  * Récupère la filmographie séries TV d'un acteur
  */
 export async function getActorTvCredits(id: number): Promise<ActorTvCredit[]> {
-  const data = await fetchTMDB<{ cast: ActorTvCredit[] }>(`/person/${id}/tv_credits`);
-  return data.cast;
+  const { cast } = await fetchTMDB<{ cast: ActorTvCredit[] }>(`/person/${id}/tv_credits`);
+  return cast;
 }

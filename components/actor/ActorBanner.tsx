@@ -1,13 +1,20 @@
+"use client"
+
 import Image from "next/image"
-import { getImageUrl } from "@/lib/tmdb"
+import { getImageUrl } from "@/lib/tmdb-image"
 import type { ActorBannerProps } from "@/types/components"
 import { MapPin, Calendar, Star } from "lucide-react"
+import { useTranslation } from "@/lib/i18n/context"
+import { getLocale } from "@/lib/i18n/utils"
 
 export function ActorBanner({ actor }: ActorBannerProps) {
+    const { t, lang } = useTranslation()
+    const locale = getLocale(lang)
+
     const formatDate = (dateString: string | null) => {
         if (!dateString) return null
         const date = new Date(dateString)
-        return date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })
+        return date.toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" })
     }
 
     const getAge = (birthday: string | null, deathday: string | null) => {
@@ -46,7 +53,7 @@ export function ActorBanner({ actor }: ActorBannerProps) {
                         </h1>
 
                         <p className="text-lg text-muted mb-6">
-                            {actor.known_for_department === "Acting" ? "Acteur / Actrice" : actor.known_for_department}
+                            {actor.known_for_department === "Acting" ? t.movie.actorActress : actor.known_for_department}
                         </p>
 
                         <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 md:gap-4">
@@ -55,7 +62,7 @@ export function ActorBanner({ actor }: ActorBannerProps) {
                                     <Calendar className="h-4 w-4 text-muted" />
                                     <span className="text-sm text-text">
                                         {formatDate(actor.birthday)}
-                                        {age !== null && ` (${age} ans)`}
+                                        {age !== null && ` (${age} ${t.common.age})`}
                                     </span>
                                 </div>
                             )}

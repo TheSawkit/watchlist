@@ -1,19 +1,17 @@
-import { createClient } from "@/lib/supabase/server"
-import { redirect, notFound } from "next/navigation"
+import { notFound } from "next/navigation"
+import { requireAuth } from "@/lib/auth"
 import { getPopularMovies, getTopRatedMovies, getUpcomingMovies, getNowPlayingMovies, getTrendingMovies } from "@/lib/tmdb"
 import type { Movie } from "@/types/tmdb"
 import { CategoryNav } from "@/components/navigation/CategoryNav"
 import { InfiniteScrollMovies } from "@/components/movies/InfiniteScrollMovies"
+import { getTranslations } from "@/lib/i18n/server"
 import type { CategoryPageProps } from "@/types/pages"
 
 export default async function CategoryPage(props: CategoryPageProps) {
   const params = await props.params
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  await requireAuth()
 
-  if (!user) {
-    redirect("/login")
-  }
+  const t = await getTranslations()
 
   const category = params.category
   let title = ""
@@ -22,23 +20,23 @@ export default async function CategoryPage(props: CategoryPageProps) {
   switch (category) {
     case "popular":
       initialMovies = await getPopularMovies(1)
-      title = "Films Populaires"
+      title = t.pages.categories.popular
       break
     case "top-rated":
       initialMovies = await getTopRatedMovies(1)
-      title = "Les Mieux Notés"
+      title = t.pages.categories.topRated
       break
     case "upcoming":
       initialMovies = await getUpcomingMovies(1)
-      title = "À Venir"
+      title = t.pages.categories.upcoming
       break
     case "now-playing":
       initialMovies = await getNowPlayingMovies(1)
-      title = "Actuellement au Cinéma"
+      title = t.pages.categories.nowPlaying
       break
     case "trending":
       initialMovies = await getTrendingMovies("week", 1)
-      title = "Tendances de la Semaine"
+      title = t.pages.categories.trending
       break
     default:
       notFound()

@@ -14,22 +14,26 @@ import {
     FieldGroup,
     FieldLabel,
 } from '@/components/ui/field'
+import { useTranslation } from '@/lib/i18n/context'
 
-const THEMES = [
-    { value: 'light' as const, label: '☀️ Clair', description: 'Thème clair classique' },
-    { value: 'dark' as const, label: '🌙 Sombre', description: 'Thème sombre pour les yeux' },
-    { value: 'system' as const, label: '💻 Système', description: 'Suivre les paramètres système' },
-] as const
+const THEME_VALUES = ['light', 'dark', 'system'] as const
+type ThemeValue = (typeof THEME_VALUES)[number]
 
 export function ThemeSettings() {
-    const [theme, setTheme] = useState<'light' | 'dark' | 'system'>(() => {
-        const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null
+    const { t } = useTranslation()
+    const [theme, setTheme] = useState<ThemeValue>(() => {
+        const savedTheme = localStorage.getItem('theme') as ThemeValue | null
         return savedTheme || 'light'
     })
 
-    const applyTheme = (newTheme: 'light' | 'dark' | 'system') => {
-        const html = document.documentElement
+    const THEMES: Array<{ value: ThemeValue; label: string; description: string }> = [
+        { value: 'light', label: t.settings.theme.light, description: t.settings.theme.lightDesc },
+        { value: 'dark', label: t.settings.theme.dark, description: t.settings.theme.darkDesc },
+        { value: 'system', label: t.settings.theme.system, description: t.settings.theme.systemDesc },
+    ]
 
+    const applyTheme = (newTheme: ThemeValue) => {
+        const html = document.documentElement
         html.classList.remove('light', 'dark')
 
         if (newTheme === 'system') {
@@ -40,7 +44,7 @@ export function ThemeSettings() {
         }
     }
 
-    const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
+    const handleThemeChange = (newTheme: ThemeValue) => {
         setTheme(newTheme)
         localStorage.setItem('theme', newTheme)
         applyTheme(newTheme)
@@ -49,15 +53,13 @@ export function ThemeSettings() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Apparence</CardTitle>
-                <CardDescription>
-                    Personnalisez l&apos;apparence de l&apos;application
-                </CardDescription>
+                <CardTitle>{t.settings.theme.title}</CardTitle>
+                <CardDescription>{t.settings.theme.description}</CardDescription>
             </CardHeader>
             <CardContent>
                 <FieldGroup>
                     <Field>
-                        <FieldLabel>Thème</FieldLabel>
+                        <FieldLabel>{t.common.theme}</FieldLabel>
                         <div className="space-y-3 mt-4">
                             {THEMES.map(({ value, label, description }) => (
                                 <label

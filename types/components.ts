@@ -43,7 +43,6 @@ export interface MovieBannerProps {
 
 export interface MovieDescriptionProps {
   description: string
-  tagline?: string
 }
 
 export interface MovieTrailersProps {

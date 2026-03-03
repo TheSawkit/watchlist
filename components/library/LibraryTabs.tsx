@@ -4,6 +4,7 @@ import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { LibraryCard } from "@/components/library/LibraryCard"
 import { BookMarked, Eye } from "lucide-react"
+import { useTranslation } from "@/lib/i18n/context"
 import type { WatchlistEntry } from "@/types/components"
 
 interface LibraryTabsProps {
@@ -15,18 +16,19 @@ type Tab = "to_watch" | "watched"
 
 export function LibraryTabs({ toWatch, watched }: LibraryTabsProps) {
     const [activeTab, setActiveTab] = useState<Tab>("to_watch")
+    const { t } = useTranslation()
 
     const tabs = [
-        { id: "to_watch" as Tab, label: "À voir", icon: BookMarked, items: toWatch },
-        { id: "watched" as Tab, label: "Déjà vu", icon: Eye, items: watched },
+        { id: "to_watch" as Tab, label: t.library.toWatch, icon: BookMarked, items: toWatch },
+        { id: "watched" as Tab, label: t.library.watched, icon: Eye, items: watched },
     ]
 
-    const current = tabs.find(t => t.id === activeTab)!
+    const current = tabs.find((tab) => tab.id === activeTab)!
 
     return (
         <div>
             <div className="flex gap-2 mb-8 border-b border-border pb-0">
-                {tabs.map(tab => (
+                {tabs.map((tab) => (
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
@@ -40,12 +42,14 @@ export function LibraryTabs({ toWatch, watched }: LibraryTabsProps) {
                     >
                         <tab.icon className="h-4 w-4" />
                         {tab.label}
-                        <span className={cn(
-                            "ml-1 px-1.5 py-0.5 rounded-full text-xs",
-                            activeTab === tab.id
-                                ? "bg-red/20 text-red"
-                                : "bg-surface-2 text-muted"
-                        )}>
+                        <span
+                            className={cn(
+                                "ml-1 px-1.5 py-0.5 rounded-full text-xs",
+                                activeTab === tab.id
+                                    ? "bg-red/20 text-red"
+                                    : "bg-surface-2 text-muted"
+                            )}
+                        >
                             {tab.items.length}
                         </span>
                     </button>
@@ -58,11 +62,8 @@ export function LibraryTabs({ toWatch, watched }: LibraryTabsProps) {
                     style={{ animation: "fadeIn 0.4s ease-out forwards" }}
                 >
                     <current.icon className="h-12 w-12 mb-4 opacity-30" />
-                    <p className="text-lg font-medium">Aucun film ici</p>
-                    <p className="text-sm mt-1">
-                        {activeTab === "to_watch"
-                            ? "Ajoutez des films à voir depuis Explorer"
-                            : "Marquez des films comme vus"}
+                    <p className="text-lg font-medium">
+                        {activeTab === "to_watch" ? t.library.noMovies : t.library.noWatched}
                     </p>
                 </div>
             ) : (
@@ -71,7 +72,7 @@ export function LibraryTabs({ toWatch, watched }: LibraryTabsProps) {
                     className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
                     style={{ animation: "scaleIn 0.3s ease-out forwards", opacity: 0 }}
                 >
-                    {current.items.map(entry => (
+                    {current.items.map((entry) => (
                         <LibraryCard key={entry.id} entry={entry} />
                     ))}
                 </div>

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getTranslations } from '@/lib/i18n/server'
 
 export async function login(prevState: unknown, formData: FormData) {
   const supabase = await createClient()
@@ -25,6 +26,7 @@ export async function login(prevState: unknown, formData: FormData) {
 
 export async function signup(prevState: unknown, formData: FormData) {
   const supabase = await createClient()
+  const t = await getTranslations()
 
   const email = formData.get('email') as string
   const password = formData.get('password') as string
@@ -32,7 +34,7 @@ export async function signup(prevState: unknown, formData: FormData) {
   const username = formData.get('username') as string
 
   if (password !== confirmPassword) {
-    return { error: 'Les mots de passe ne correspondent pas' }
+    return { error: t.settings.password.noMatch }
   }
 
   const { error } = await supabase.auth.signUp({
