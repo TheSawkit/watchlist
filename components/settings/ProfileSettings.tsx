@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useActionState, useState } from 'react'
+import { useActionState, useState, startTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import {
     Card,
@@ -38,9 +38,19 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
         updateAvatar,
         initialState
     )
+    const [avatarFile, setAvatarFile] = useState<File | null>(null)
     const [avatarPreview, setAvatarPreview] = useState(
         user?.user_metadata?.avatar_url || ''
     )
+    const [fullNameStr, setFullNameStr] = useState(user?.user_metadata?.full_name || '')
+    const [usernameStr, setUsernameStr] = useState(user?.user_metadata?.username || '')
+    const [prevUser, setPrevUser] = useState(user)
+
+    if (user !== prevUser) {
+        setPrevUser(user)
+        setFullNameStr(user?.user_metadata?.full_name || '')
+        setUsernameStr(user?.user_metadata?.username || '')
+    }
 
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -53,6 +63,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
         const reader = new FileReader()
         reader.onload = () => {
             setAvatarPreview(reader.result as string)
+            setAvatarFile(file)
         }
         reader.readAsDataURL(file)
     }
@@ -78,11 +89,12 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                                                 width={80}
                                                 height={80}
                                                 className="rounded-full object-cover border-2 border-border"
+                                                unoptimized
                                             />
                                         ) : (
                                             <div className="w-20 h-20 rounded-full bg-surface flex items-center justify-center border-2 border-border">
                                                 <span className="text-sm font-medium text-muted">
-                                                    {user?.user_metadata?.full_name?.[0]?.toUpperCase() || t.common.user[0]}
+                                                    {user?.user_metadata?.username?.[0]?.toUpperCase() || user?.user_metadata?.full_name?.[0]?.toUpperCase() || t.common.user[0]}
                                                 </span>
                                             </div>
                                         )}
@@ -104,8 +116,14 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                                                     size="sm"
                                                     onClick={() => {
                                                         const formData = new FormData()
-                                                        formData.set('avatarUrl', avatarPreview)
-                                                        avatarFormAction(formData)
+                                                        if (avatarFile) {
+                                                            formData.set('avatarFile', avatarFile)
+                                                        } else {
+                                                            formData.set('avatarUrl', avatarPreview)
+                                                        }
+                                                        startTransition(() => {
+                                                            avatarFormAction(formData)
+                                                        })
                                                     }}
                                                     disabled={isAvatarPending}
                                                 >
@@ -129,18 +147,21 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                                     id="fullName"
                                     name="fullName"
                                     type="text"
-                                    defaultValue={user?.user_metadata?.full_name || ''}
+                                    value={fullNameStr}
+                                    onChange={(e) => setFullNameStr(e.target.value)}
                                     placeholder={`${t.settings.profile.placeholder}${t.settings.profile.fullName.toLowerCase()}`}
                                 />
                             </Field>
 
                             <Field>
-                                <FieldLabel htmlFor="username">{t.settings.profile.username}</FieldLabel>
+                                <FieldLabel htmlFor="username">{t.settings.profile.username} *</FieldLabel>
                                 <Input
                                     id="username"
                                     name="username"
                                     type="text"
-                                    defaultValue={user?.user_metadata?.username || ''}
+                                    required
+                                    value={usernameStr}
+                                    onChange={(e) => setUsernameStr(e.target.value)}
                                     placeholder={`${t.settings.profile.placeholder}${t.settings.profile.username.toLowerCase()}`}
                                 />
                             </Field>

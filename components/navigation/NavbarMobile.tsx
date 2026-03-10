@@ -57,15 +57,15 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
                         </div>
                         <div className="flex items-center gap-4 mb-4">
                             <UserAvatar
-                                picture={user.user_metadata.picture}
-                                fullName={user.user_metadata.full_name}
+                                picture={user.user_metadata.avatar_url || user.user_metadata.picture}
+                                fullName={user.user_metadata.username || user.user_metadata.full_name}
                                 email={user.user_metadata.email}
                                 size={64}
                                 className="rounded-full object-cover"
                             />
                             <div>
                                 <p className="text-sm font-medium text-text">
-                                    {user.user_metadata.full_name || t.common.user}
+                                    {user.user_metadata.username || user.user_metadata.full_name || t.common.user}
                                 </p>
                                 <p className="text-xs text-muted">{user.user_metadata.email || ""}</p>
                             </div>

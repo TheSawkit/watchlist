@@ -34,7 +34,7 @@ export default async function Navbar() {
                             <NavbarMobile
                                 user={
                                     user as {
-                                        user_metadata: { full_name?: string; picture?: string };
+                                        user_metadata: { full_name?: string; username?: string; picture?: string; avatar_url?: string };
                                         email?: string;
                                     }
                                 }
@@ -68,8 +68,8 @@ export default async function Navbar() {
                                             className="rounded-full overflow-hidden border-2 border-transparent data-[state=open]:border-red transition-all duration-200"
                                         >
                                             <UserAvatar
-                                                picture={user.user_metadata.picture}
-                                                fullName={user.user_metadata.full_name}
+                                                picture={user.user_metadata.avatar_url || user.user_metadata.picture}
+                                                fullName={user.user_metadata.username || user.user_metadata.full_name}
                                                 email={user.user_metadata.email}
                                                 size={128}
                                                 className="select-none"
@@ -80,7 +80,7 @@ export default async function Navbar() {
                                         <DropdownMenuLabel>
                                             <div className="flex flex-col space-y-1">
                                                 <p className="text-sm font-medium leading-none">
-                                                    {user.user_metadata.full_name}
+                                                    {user.user_metadata.username || user.user_metadata.full_name}
                                                 </p>
                                                 <p className="text-xs leading-none text-muted">
                                                     {user.email}

@@ -82,7 +82,9 @@ export interface NavbarMobileProps {
   user: {
     user_metadata: {
       full_name?: string
+      username?: string
       picture?: string
+      avatar_url?: string
       email?: string
     }
   }
