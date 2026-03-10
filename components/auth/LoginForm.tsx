@@ -52,12 +52,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     <form action={formAction}>
                         <FieldGroup>
                             <Field>
-                                {/*
-                                    TODO: Add Apple login — requires Apple Developer Program license.
-                                    <Button variant="outline" type="button" onClick={() => handleOAuthLogin('apple')}>
-                                        ...
-                                    </Button>
-                                */}
                                 <Button
                                     variant="outline"
                                     type="button"

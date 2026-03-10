@@ -1,12 +1,8 @@
-// ─── Explorer ────────────────────────────────────────────
-
 export type CategoryPageParams = Promise<{ category: string }>
 
 export interface CategoryPageProps {
   params: CategoryPageParams
 }
-
-// ─── Movie ───────────────────────────────────────────────
 
 export type MoviePageParams = Promise<{ id: string }>
 
@@ -14,7 +10,17 @@ export interface MoviePageProps {
   params: MoviePageParams
 }
 
-// ─── Actor ───────────────────────────────────────────────
+export type TvPageParams = Promise<{ id: string }>
+
+export interface TvPageProps {
+  params: TvPageParams
+}
+
+export type SeasonPageParams = Promise<{ id: string; seasonNumber: string }>
+
+export interface SeasonPageProps {
+  params: SeasonPageParams
+}
 
 export type ActorPageParams = Promise<{ id: string }>
 

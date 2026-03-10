@@ -22,14 +22,12 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${origin}${next}`)
       }
     } else {
-        console.error('❌ OAuth error:', error?.message)
         return NextResponse.redirect(
           `${origin}/auth/auth-code-error?error=${encodeURIComponent(error?.message || 'Unknown error')}`
         )
     }
   }
 
-  console.error('❌ No code in callback URL')
   return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }
 

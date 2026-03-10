@@ -1,5 +1,5 @@
-import { searchMovies } from "@/lib/tmdb"
-import { MovieGrid } from "@/components/movies/MovieGrid"
+import { searchMulti } from "@/lib/tmdb"
+import { MediaGrid } from "@/components/media/MediaGrid"
 import { SearchBar } from "@/components/search/SearchBar"
 import { getTranslations } from "@/lib/i18n/server"
 
@@ -11,11 +11,11 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
     const params = await searchParams
     const query = params.q || params.query || ""
 
-    const movies = query ? await searchMovies(query) : []
+    const results = query ? await searchMulti(query) : []
 
     const t = await getTranslations()
 
-    const foundMessage = `${t.pages.search.found} ${t.pages.search.foundCount.replace("${count}", String(movies.length))}`
+    const foundMessage = `${t.pages.search.found} ${t.pages.search.foundCount.replace("${count}", String(results.length))}`
 
     return (
         <div className="container mx-auto py-12 px-6">
@@ -28,15 +28,15 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
             >
                 <h1 className="text-3xl font-bold mb-2">{t.pages.search.title} &quot;{query}&quot;</h1>
                 <p className="text-muted">
-                    {movies.length > 0 ? foundMessage : t.pages.search.noResults}
+                    {results.length > 0 ? foundMessage : t.pages.search.noResults}
                 </p>
             </div>
 
             <SearchBar />
 
-            {movies.length > 0 ? (
+            {results.length > 0 ? (
                 <div className="mt-8">
-                    <MovieGrid movies={movies} />
+                    <MediaGrid items={results} />
                 </div>
             ) : (
                 <div className="mt-20 text-center">

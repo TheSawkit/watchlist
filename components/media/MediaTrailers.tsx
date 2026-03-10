@@ -1,9 +1,9 @@
 "use client"
 
 import { useTranslation } from "@/lib/i18n/context"
-import type { MovieTrailersProps } from "@/types/components"
+import type { MediaTrailersProps } from "@/types/components"
 
-export function MovieTrailers({ trailers }: MovieTrailersProps) {
+export function MediaTrailers({ trailers }: MediaTrailersProps) {
     const { t } = useTranslation()
 
     if (trailers.length === 0) return null

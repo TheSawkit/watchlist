@@ -159,14 +159,6 @@ export async function deleteAccount(prevState: unknown, formData: FormData) {
 
     await supabase.auth.signOut()
 
-    // ⚠️ ATTENTION: La suppression du compte n'est PAS implémentée.
-    // L'utilisateur est déconnecté mais son compte existe toujours.
-    console.warn(`[deleteAccount] Account deletion NOT implemented. User ${user.id} was signed out but NOT deleted.`)
-    // TODO: Implement account deletion through a Supabase function
-    // Example:
-    // const { data, error } = await supabase
-    //   .rpc('delete_user_account', { user_id: user.id })
-
     revalidatePath('/', 'layout')
     redirect('/login?deleted=true')
 }

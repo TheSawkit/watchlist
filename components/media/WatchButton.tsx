@@ -9,15 +9,18 @@ import { useTranslation } from "@/lib/i18n/context"
 import type { WatchButtonProps } from "@/types/components"
 
 export function WatchButton({
-    movieId,
-    movieTitle,
+    mediaId,
+    mediaTitle,
+    mediaType,
     posterPath,
     status,
     initialActive = false,
     variant = "icon",
     fallbackStatus,
 }: WatchButtonProps) {
-    const [active, setActive] = useState(initialActive)
+    const [optimisticActive, setOptimisticActive] = useState<boolean | null>(null)
+    const active = optimisticActive !== null ? optimisticActive : initialActive
+
     const [loading, setLoading] = useState(false)
     const { t } = useTranslation()
     const router = useRouter()
@@ -30,14 +33,14 @@ export function WatchButton({
         try {
             if (active) {
                 if (fallbackStatus) {
-                    await addToWatchlist(movieId, movieTitle, posterPath, fallbackStatus)
+                    await addToWatchlist(mediaId, mediaTitle, posterPath, fallbackStatus, mediaType)
                 } else {
-                    await removeFromWatchlist(movieId)
+                    await removeFromWatchlist(mediaId)
                 }
             } else {
-                await addToWatchlist(movieId, movieTitle, posterPath, status)
+                await addToWatchlist(mediaId, mediaTitle, posterPath, status, mediaType)
             }
-            setActive(!active)
+            setOptimisticActive(!active)
             router.refresh()
         } finally {
             setLoading(false)

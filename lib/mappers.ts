@@ -1,8 +1,26 @@
-import type { Movie, ActorMovieCredit, ActorTvCredit } from "@/types/tmdb"
+import type { MediaItem, ActorMovieCredit, ActorTvCredit } from "@/types/tmdb"
+import type { WatchlistEntry } from "@/types/components"
 
-export function creditToMovie(credit: ActorMovieCredit): Movie {
+export function watchlistEntryToMediaItem(entry: WatchlistEntry): MediaItem {
+    return {
+        id: entry.media_id,
+        media_type: entry.media_type,
+        title: entry.media_title,
+        original_title: entry.media_title,
+        overview: "",
+        poster_path: entry.poster_path,
+        backdrop_path: null,
+        release_date: "",
+        vote_average: 0,
+        vote_count: 0,
+        popularity: 0,
+    }
+}
+
+export function movieCreditToMediaItem(credit: ActorMovieCredit): MediaItem {
     return {
         id: credit.id,
+        media_type: "movie",
         title: credit.title,
         original_title: credit.title,
         overview: credit.overview,
@@ -15,9 +33,10 @@ export function creditToMovie(credit: ActorMovieCredit): Movie {
     }
 }
 
-export function tvCreditToMovie(credit: ActorTvCredit): Movie {
+export function tvCreditToMediaItem(credit: ActorTvCredit): MediaItem {
     return {
         id: credit.id,
+        media_type: "tv",
         title: credit.name,
         original_title: credit.name,
         overview: credit.overview,

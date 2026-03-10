@@ -21,8 +21,7 @@ export default async function ActorPage(props: ActorPageProps) {
             getActorMovieCredits(actorId),
             getActorTvCredits(actorId),
         ])
-    } catch (error) {
-        console.error("Error fetching actor details:", error)
+    } catch {
         notFound()
     }
 

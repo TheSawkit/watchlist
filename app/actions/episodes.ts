@@ -1,0 +1,195 @@
+"use server"
+
+import { createClient } from "@/lib/supabase/server"
+import { revalidatePath } from "next/cache"
+import { getAuthenticatedUser, getOptionalUser } from "@/lib/supabase/auth-helpers"
+import { getTvShowDetails } from "@/lib/tmdb"
+
+function revalidateEpisodePaths(tvId: number, seasonNumber: number) {
+    revalidatePath(`/tv/${tvId}`)
+    revalidatePath(`/tv/${tvId}/season/${seasonNumber}`)
+    revalidatePath("/library")
+    revalidatePath("/dashboard")
+}
+
+async function syncTvShowWatchlistStatus(
+    supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never,
+    userId: string,
+    tvId: number
+) {
+    let details
+    try {
+        details = await getTvShowDetails(tvId)
+    } catch {
+        return
+    }
+
+    const totalEpisodes = (details.seasons ?? [])
+        .filter((s: { season_number: number }) => s.season_number > 0)
+        .reduce((sum: number, s: { episode_count: number }) => sum + s.episode_count, 0)
+
+    if (totalEpisodes === 0) return
+
+    const { count } = await supabase
+        .from("episode_watches")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("tv_id", tvId)
+
+    const watchedCount = count ?? 0
+    const allWatched = watchedCount >= totalEpisodes
+
+    const { data: entry } = await supabase
+        .from("watchlist")
+        .select("status")
+        .eq("user_id", userId)
+        .eq("media_id", tvId)
+        .eq("media_type", "tv")
+        .single()
+
+    const newStatus = allWatched ? "watched" : "to_watch"
+
+    if (!entry) {
+        await supabase
+            .from("watchlist")
+            .insert({
+                user_id: userId,
+                media_id: tvId,
+                media_title: details.name,
+                poster_path: details.poster_path,
+                status: newStatus,
+                media_type: "tv",
+            })
+        return
+    }
+
+    if (entry.status !== newStatus) {
+        await supabase
+            .from("watchlist")
+            .update({ status: newStatus })
+            .eq("user_id", userId)
+            .eq("media_id", tvId)
+            .eq("media_type", "tv")
+    }
+}
+
+export async function toggleEpisodeWatch(
+    tvId: number,
+    seasonNumber: number,
+    episodeNumber: number
+): Promise<boolean> {
+    const { supabase, userId } = await getAuthenticatedUser()
+
+    const { data: existing } = await supabase
+        .from("episode_watches")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("tv_id", tvId)
+        .eq("season_number", seasonNumber)
+        .eq("episode_number", episodeNumber)
+        .single()
+
+    let result: boolean
+
+    if (existing) {
+        await supabase.from("episode_watches").delete().eq("id", existing.id)
+        result = false
+    } else {
+        const { error } = await supabase.from("episode_watches").insert({
+            user_id: userId,
+            tv_id: tvId,
+            season_number: seasonNumber,
+            episode_number: episodeNumber,
+        })
+        if (error) throw new Error(error.message)
+        result = true
+    }
+
+    await syncTvShowWatchlistStatus(supabase, userId, tvId)
+    revalidateEpisodePaths(tvId, seasonNumber)
+    return result
+}
+
+export async function markSeasonWatched(
+    tvId: number,
+    seasonNumber: number,
+    totalEpisodes: number
+): Promise<void> {
+    const { supabase, userId } = await getAuthenticatedUser()
+
+    const { data: existing } = await supabase
+        .from("episode_watches")
+        .select("episode_number")
+        .eq("user_id", userId)
+        .eq("tv_id", tvId)
+        .eq("season_number", seasonNumber)
+
+    const watchedSet = new Set((existing ?? []).map(e => e.episode_number))
+    const allWatched = watchedSet.size === totalEpisodes
+
+    if (allWatched) {
+        await supabase
+            .from("episode_watches")
+            .delete()
+            .eq("user_id", userId)
+            .eq("tv_id", tvId)
+            .eq("season_number", seasonNumber)
+    } else {
+        const toInsert = []
+        for (let ep = 1; ep <= totalEpisodes; ep++) {
+            if (!watchedSet.has(ep)) {
+                toInsert.push({
+                    user_id: userId,
+                    tv_id: tvId,
+                    season_number: seasonNumber,
+                    episode_number: ep,
+                })
+            }
+        }
+        if (toInsert.length > 0) {
+            const { error } = await supabase.from("episode_watches").insert(toInsert)
+            if (error) throw new Error(error.message)
+        }
+    }
+
+    await syncTvShowWatchlistStatus(supabase, userId, tvId)
+    revalidateEpisodePaths(tvId, seasonNumber)
+}
+
+export async function getSeasonEpisodeWatches(
+    tvId: number,
+    seasonNumber: number
+): Promise<Set<number>> {
+    const { supabase, userId } = await getOptionalUser()
+
+    if (!userId) return new Set()
+
+    const { data: watches } = await supabase
+        .from("episode_watches")
+        .select("episode_number")
+        .eq("user_id", userId)
+        .eq("tv_id", tvId)
+        .eq("season_number", seasonNumber)
+
+    return new Set((watches ?? []).map(w => w.episode_number))
+}
+
+export async function getTvShowWatchProgress(
+    tvId: number
+): Promise<Map<number, number>> {
+    const { supabase, userId } = await getOptionalUser()
+
+    if (!userId) return new Map()
+
+    const { data: watches } = await supabase
+        .from("episode_watches")
+        .select("season_number, episode_number")
+        .eq("user_id", userId)
+        .eq("tv_id", tvId)
+
+    const progress = new Map<number, number>()
+    for (const w of watches ?? []) {
+        progress.set(w.season_number, (progress.get(w.season_number) ?? 0) + 1)
+    }
+    return progress
+}

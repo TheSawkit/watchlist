@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { getImageUrl } from "@/lib/tmdb-image"
+import { getImageUrl } from "@/lib/tmdb/images"
 import type { ActorBannerProps } from "@/types/components"
 import { MapPin, Calendar, Star } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
@@ -86,7 +86,7 @@ export function ActorBanner({ actor }: ActorBannerProps) {
                             <div className="flex items-center gap-2 bg-surface/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-border/20">
                                 <Star className="h-4 w-4 fill-gold text-gold" />
                                 <span className="text-sm font-semibold text-text">
-                                    {actor.popularity.toFixed(0)}
+                                    {(actor.popularity || 0).toFixed(0)}
                                 </span>
                             </div>
                         </div>

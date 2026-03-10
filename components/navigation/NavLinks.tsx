@@ -25,6 +25,7 @@ export function NavLinks({ className, onLinkClick }: NavLinksProps) {
                     key={link.href}
                     href={link.href}
                     onClick={onLinkClick}
+                    aria-current={pathname === link.href ? "page" : undefined}
                     className={cn(
                         "text-muted transition-all duration-300 hover:text-text text-nowrap relative group",
                         !isRow && "px-4 py-2 rounded-md hover:bg-surface-2/50",

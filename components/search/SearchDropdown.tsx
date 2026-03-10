@@ -3,13 +3,13 @@
 import Link from "next/link"
 import Image from "next/image"
 import { PlayCircle } from "lucide-react"
-import { Movie } from "@/types/tmdb"
-import { getImageUrl } from "@/lib/tmdb-image"
+import type { MediaItem } from "@/types/tmdb"
+import { getImageUrl } from "@/lib/tmdb/images"
 import { useTranslation } from "@/lib/i18n/context"
 
 interface SearchDropdownProps {
     query: string
-    results: Movie[]
+    results: MediaItem[]
     isOpen: boolean
     isLoading: boolean
     onClose: () => void
@@ -36,17 +36,17 @@ export function SearchDropdown({ query, results, isOpen, isLoading, onClose }: S
             style={{ boxShadow: "0 20px 50px rgba(0,0,0,0.5), 0 0 20px rgba(220, 38, 38, 0.1)" }}
         >
             <div className="p-2">
-                {results.map((movie) => (
+                {results.map((item) => (
                     <Link
-                        key={movie.id}
-                        href={`/movie/${movie.id}`}
+                        key={item.id}
+                        href={item.media_type === "tv" ? `/tv/${item.id}` : `/movie/${item.id}`}
                         className="flex items-center gap-4 p-2 hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden"
                         onClick={onClose}
                     >
                         <div className="relative w-12 h-18 shrink-0 rounded-lg overflow-hidden shadow-md">
                             <Image
-                                src={getImageUrl(movie.poster_path, "w500")}
-                                alt={movie.title}
+                                src={getImageUrl(item.poster_path, "w500")}
+                                alt={item.title}
                                 fill
                                 className="object-cover group-hover:scale-110 transition-transform duration-500"
                             />
@@ -56,10 +56,10 @@ export function SearchDropdown({ query, results, isOpen, isLoading, onClose }: S
                         </div>
                         <div className="flex flex-col min-w-0">
                             <span className="font-semibold text-text truncate group-hover:text-red transition-colors duration-200">
-                                {movie.title}
+                                {item.title}
                             </span>
                             <span className="text-sm text-muted">
-                                {movie.release_date ? new Date(movie.release_date).getFullYear() : "N/A"}
+                                {item.release_date ? new Date(item.release_date).getFullYear() : "N/A"}
                             </span>
                         </div>
                         <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity pr-2">

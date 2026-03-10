@@ -2,12 +2,12 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { getImageUrl } from "@/lib/tmdb-image"
+import { getImageUrl } from "@/lib/tmdb/images"
 import { HorizontalScroll } from "@/components/shared/HorizontalScroll"
 import { useTranslation } from "@/lib/i18n/context"
-import type { MovieCastProps } from "@/types/components"
+import type { MediaCastProps } from "@/types/components"
 
-export function MovieCast({ cast }: MovieCastProps) {
+export function MediaCast({ cast }: MediaCastProps) {
     const { t } = useTranslation()
 
     if (cast.length === 0) return null

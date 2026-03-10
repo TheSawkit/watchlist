@@ -1,7 +1,5 @@
 import type { ReactNode } from "react"
-import type { Movie, MovieDetails, Cast, Video, ActorDetails, ActorMovieCredit, ActorTvCredit } from "@/types/tmdb"
-
-// ─── Layout ──────────────────────────────────────────────
+import type { MediaItem, MediaType, Cast, Video, ActorDetails, ActorMovieCredit, ActorTvCredit } from "@/types/tmdb"
 
 export interface FeatureCardProps {
   icon: string
@@ -9,71 +7,76 @@ export interface FeatureCardProps {
   description: string
 }
 
-// ─── Movies ──────────────────────────────────────────────
-
-export type Tab = "movies" | "tv"
 export type WatchStatus = "to_watch" | "watched"
 
-export interface MovieGridProps {
-  movies: Movie[]
+export interface MediaGridProps {
+  items: MediaItem[]
 }
 
-export interface MovieCardProps {
-  movie: Movie
+export interface MediaCardProps {
+  media: MediaItem
   className?: string
 }
 
-export interface MovieSectionProps {
+export interface MediaSectionProps {
   title: string
-  movies: Movie[]
+  items: MediaItem[]
   categoryUrl: string
 }
 
-export interface InfiniteScrollMoviesProps {
-  initialMovies: Movie[]
+export interface InfiniteScrollMediaProps {
+  initialItems: MediaItem[]
   category: string
-  clientSideData?: Movie[]
+  mediaType?: MediaType
+  clientSideData?: MediaItem[]
 }
 
-export interface MovieBannerProps {
-  movie: MovieDetails
+export interface MediaBannerProps {
+  title: string
+  tagline?: string
   backdropUrl: string
-  actions?: React.ReactNode
+  posterPath: string | null
+  voteAverage: number
+  releaseDate?: string
+  runtime?: number
+  certification?: string
+  genres?: { id: number; name: string }[]
+  actions?: ReactNode
 }
 
-export interface MovieDescriptionProps {
+export interface MediaDescriptionProps {
   description: string
 }
 
-export interface MovieTrailersProps {
+export interface MediaTrailersProps {
   trailers: Video[]
 }
 
-export interface MovieCastProps {
+export interface MediaCastProps {
   cast: Cast[]
 }
 
 export interface WatchlistEntry {
   id: string
   user_id: string
-  movie_id: number
-  movie_title: string
+  media_id: number
+  media_title: string
+  media_type: MediaType
   poster_path: string | null
   status: WatchStatus
   created_at: string
-  }
-
-export interface WatchButtonProps {
-    movieId: number
-    movieTitle: string
-    posterPath: string | null
-    status: WatchStatus
-    initialActive?: boolean
-    fallbackStatus?: WatchStatus
-    variant?: "icon" | "full"
 }
 
-// ─── Navigation ──────────────────────────────────────────
+export interface WatchButtonProps {
+  mediaId: number
+  mediaTitle: string
+  mediaType: MediaType
+  posterPath: string | null
+  status: WatchStatus
+  initialActive?: boolean
+  fallbackStatus?: WatchStatus
+  variant?: "icon" | "full"
+}
 
 export interface NavbarMobileProps {
   user: {
@@ -90,8 +93,6 @@ export interface NavLinksProps {
   onLinkClick?: () => void
 }
 
-// ─── Shared ──────────────────────────────────────────────
-
 export interface HorizontalScrollProps {
   children: ReactNode
   title?: ReactNode
@@ -100,32 +101,12 @@ export interface HorizontalScrollProps {
   containerClassName?: string
 }
 
-// ─── UI ──────────────────────────────────────────────────
-
 export interface CinemaSpotlightProps {
-  /**
-   * Hauteur du projecteur en pixels
-   * @default 500
-   */
   height?: number
-  /**
-   * Largeur maximale du projecteur en pixels ou pourcentage
-   * Si non spécifié, prend 100% de la largeur du device
-   */
   maxWidth?: number | string
-  /**
-   * Intensité de l'opacité (0-1)
-   * @default 0.35
-   */
   intensity?: number
-  /**
-   * Position verticale (top offset)
-   * @default "top-0"
-   */
   position?: string
 }
-
-// ─── Actor ───────────────────────────────────────────────
 
 export interface ActorBannerProps {
   actor: ActorDetails

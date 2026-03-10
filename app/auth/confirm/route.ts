@@ -26,7 +26,6 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // return the user to an error page with some instructions
   redirectTo.pathname = '/auth/auth-code-error'
   return NextResponse.redirect(redirectTo)
 }

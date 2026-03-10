@@ -4,9 +4,6 @@ import { useEffect } from "react"
 
 type Theme = "light" | "dark" | "system"
 
-/**
- * Applique le thème sauvegardé (localStorage) et écoute les changements de préférence système.
- */
 export function useTheme() {
     useEffect(() => {
         const html = document.documentElement

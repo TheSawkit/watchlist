@@ -15,7 +15,7 @@ interface LanguageContextValue {
 const LanguageContext = createContext<LanguageContextValue>({
     lang: 'en',
     t: translations['en'],
-    setLang: () => {},
+    setLang: () => { },
 })
 
 interface LanguageProviderProps {
@@ -30,11 +30,8 @@ export function LanguageProvider({ children, initialLang }: LanguageProviderProp
     const setLang = useCallback(
         (newLang: Language) => {
             setLangState(newLang)
-            // Persist in localStorage for quick access
             localStorage.setItem('preferred-language', newLang)
-            // Persist in cookie so server components can read it
             document.cookie = `preferred-language=${newLang}; path=/; max-age=31536000; SameSite=Lax`
-            // Refresh server components so they re-render with new language
             router.refresh()
         },
         [router]

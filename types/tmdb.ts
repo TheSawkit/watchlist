@@ -1,3 +1,5 @@
+export type MediaType = "movie" | "tv"
+
 export interface Movie {
   id: number
   title: string
@@ -12,7 +14,7 @@ export interface Movie {
   genre_ids?: number[]
 }
 
-export interface Genre {
+interface Genre {
   id: number
   name: string
 }
@@ -28,6 +30,73 @@ export interface MovieDetails extends Movie {
   certification?: string
 }
 
+export interface TvShow {
+  id: number
+  name: string
+  original_name: string
+  overview: string
+  poster_path: string | null
+  backdrop_path: string | null
+  first_air_date: string
+  vote_average: number
+  vote_count: number
+  popularity: number
+  genre_ids?: number[]
+}
+
+export interface TvShowDetails extends TvShow {
+  genres: Genre[]
+  number_of_seasons: number
+  number_of_episodes: number
+  status: string
+  tagline: string
+  homepage: string
+  seasons: Season[]
+  episode_run_time: number[]
+  certification?: string
+}
+
+export interface Season {
+  id: number
+  name: string
+  overview: string
+  poster_path: string | null
+  season_number: number
+  episode_count: number
+  air_date: string | null
+}
+
+export interface SeasonDetails extends Season {
+  episodes: Episode[]
+}
+
+export interface Episode {
+  id: number
+  name: string
+  overview: string
+  still_path: string | null
+  air_date: string | null
+  episode_number: number
+  season_number: number
+  vote_average: number
+  runtime: number | null
+}
+
+export interface MediaItem {
+  id: number
+  media_type: MediaType
+  title: string
+  original_title: string
+  overview: string
+  poster_path: string | null
+  backdrop_path: string | null
+  release_date: string
+  vote_average: number
+  vote_count: number
+  popularity: number
+  genre_ids?: number[]
+}
+
 export interface Cast {
   id: number
   name: string
@@ -37,7 +106,7 @@ export interface Cast {
   order: number
 }
 
-export interface Crew {
+interface Crew {
   id: number
   name: string
   job: string
@@ -55,8 +124,8 @@ export interface Video {
   id: string
   key: string
   name: string
-  site: string // "YouTube", etc.
-  type: string // "Trailer", "Teaser", etc.
+  site: string
+  type: string
 }
 
 export interface VideoResponse {
@@ -64,7 +133,7 @@ export interface VideoResponse {
   results: Video[]
 }
 
-export interface ReleaseDate {
+interface ReleaseDate {
   certification: string
   release_date: string
   type: number
@@ -78,7 +147,17 @@ export interface ReleaseDatesResponse {
   }>
 }
 
-export interface MovieImage {
+interface ContentRating {
+  iso_3166_1: string
+  rating: string
+}
+
+export interface ContentRatingsResponse {
+  id: number
+  results: ContentRating[]
+}
+
+interface MediaImage {
   aspect_ratio: number
   height: number
   iso_639_1: string | null
@@ -88,14 +167,12 @@ export interface MovieImage {
   width: number
 }
 
-export interface MovieImagesResponse {
+export interface MediaImagesResponse {
   id: number
-  backdrops: MovieImage[]
-  logos: MovieImage[]
-  posters: MovieImage[]
+  backdrops: MediaImage[]
+  logos: MediaImage[]
+  posters: MediaImage[]
 }
-
-// ─── Actor ───────────────────────────────────────────────
 
 export interface ActorDetails {
   id: number
@@ -133,4 +210,11 @@ export interface ActorTvCredit {
   vote_average: number
   popularity: number
   overview: string
+}
+
+interface TMDBPaginatedResponse<T> {
+  page: number
+  results: T[]
+  total_pages: number
+  total_results: number
 }

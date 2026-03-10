@@ -1,15 +1,15 @@
 import { notFound } from "next/navigation"
-import { getMovieDetails, getMovieCredits, getMovieVideos, getMovieImages, selectHeroImage } from "@/lib/tmdb"
-import { getImageUrl } from "@/lib/tmdb-image"
-import { MovieBanner } from "@/components/movies/MovieBanner"
-import { MovieTrailers } from "@/components/movies/MovieTrailers"
-import { MovieDescription } from "@/components/movies/MovieDescription"
-import { MovieCast } from "@/components/movies/MovieCast"
-import type { MoviePageProps } from "@/types/pages"
-import { WatchButton } from "@/components/movies/WatchButton"
-import { getMovieWatchlistEntry } from "@/app/actions/watchlist"
+import { getImageUrl, getMovieDetails, getMovieCredits, getMovieVideos, getMovieImages, selectHeroImage } from "@/lib/tmdb"
+import { MediaBanner } from "@/components/media/MediaBanner"
+import { MediaTrailers } from "@/components/media/MediaTrailers"
+import { MediaDescription } from "@/components/media/MediaDescription"
+import { MediaCast } from "@/components/media/MediaCast"
+import { WatchButton } from "@/components/media/WatchButton"
+import { getMediaWatchlistEntry } from "@/app/actions/watchlist"
 import { Eye } from "lucide-react"
 import { getTranslations, getServerLocale } from "@/lib/i18n/server"
+import { formatDate } from "@/lib/format"
+import type { MoviePageProps } from "@/types/pages"
 
 export default async function MoviePage(props: MoviePageProps) {
   const params = await props.params
@@ -28,8 +28,7 @@ export default async function MoviePage(props: MoviePageProps) {
       getMovieVideos(movieId),
       getMovieImages(movieId),
     ])
-  } catch (error) {
-    console.error("Error fetching movie details:", error)
+  } catch {
     notFound()
   }
 
@@ -39,22 +38,30 @@ export default async function MoviePage(props: MoviePageProps) {
 
   const heroImagePath = selectHeroImage(images, movieDetails.backdrop_path)
   const heroImageUrl = getImageUrl(heroImagePath, "original")
-  const watchlistEntry = await getMovieWatchlistEntry(movieId)
+  const watchlistEntry = await getMediaWatchlistEntry(movieId)
   const isWatched = watchlistEntry?.status === "watched"
   const t = await getTranslations()
   const locale = await getServerLocale()
 
   return (
     <div className="min-h-screen">
-      <MovieBanner
-        movie={movieDetails}
+      <MediaBanner
+        title={movieDetails.title}
+        tagline={movieDetails.tagline}
         backdropUrl={heroImageUrl}
+        posterPath={movieDetails.poster_path}
+        voteAverage={movieDetails.vote_average}
+        releaseDate={movieDetails.release_date}
+        runtime={movieDetails.runtime}
+        certification={movieDetails.certification}
+        genres={movieDetails.genres}
         actions={
           <div className="flex items-center gap-4 flex-wrap">
             {!isWatched && (
               <WatchButton
-                movieId={movieDetails.id}
-                movieTitle={movieDetails.title}
+                mediaId={movieDetails.id}
+                mediaTitle={movieDetails.title}
+                mediaType="movie"
                 posterPath={movieDetails.poster_path}
                 status="to_watch"
                 variant="full"
@@ -62,8 +69,9 @@ export default async function MoviePage(props: MoviePageProps) {
               />
             )}
             <WatchButton
-              movieId={movieDetails.id}
-              movieTitle={movieDetails.title}
+              mediaId={movieDetails.id}
+              mediaTitle={movieDetails.title}
+              mediaType="movie"
               posterPath={movieDetails.poster_path}
               status="watched"
               variant="full"
@@ -74,11 +82,7 @@ export default async function MoviePage(props: MoviePageProps) {
               <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-surface-2/50 border border-border/10 text-muted animate-in fade-in slide-in-from-left-4 duration-500">
                 <Eye className="h-4 w-4" />
                 <span className="text-sm font-medium">
-                  {t.movie.watchedOn} {new Date(watchlistEntry.created_at).toLocaleDateString(locale, {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric"
-                  })}
+                  {t.movie.watchedOn} {formatDate(watchlistEntry.created_at, locale)}
                 </span>
               </div>
             )}
@@ -87,11 +91,11 @@ export default async function MoviePage(props: MoviePageProps) {
       />
 
       <div className="container mx-auto px-6 lg:px-12 py-8 space-y-12">
-        <MovieDescription description={movieDetails.overview} />
+        <MediaDescription description={movieDetails.overview} />
 
-        {trailers.length > 0 && <MovieTrailers trailers={trailers} />}
+        {trailers.length > 0 && <MediaTrailers trailers={trailers} />}
 
-        <MovieCast cast={credits.cast} />
+        <MediaCast cast={credits.cast} />
       </div>
     </div>
   )

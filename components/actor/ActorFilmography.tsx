@@ -3,28 +3,28 @@
 import { useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Film, Tv } from "lucide-react"
-import type { ActorFilmographyProps, Tab } from "@/types/components"
-import { InfiniteScrollMovies } from "@/components/movies/InfiniteScrollMovies"
-import { creditToMovie, tvCreditToMovie } from "@/lib/mappers"
+import type { ActorFilmographyProps } from "@/types/components"
+import { InfiniteScrollMedia } from "@/components/media/InfiniteScrollMedia"
+import { movieCreditToMediaItem, tvCreditToMediaItem } from "@/lib/mappers"
 import { useTranslation } from "@/lib/i18n/context"
+import type { MediaItem } from "@/types/tmdb"
 
 export function ActorFilmography({ movies, tvShows }: ActorFilmographyProps) {
     const { t } = useTranslation()
-    const [activeTab, setActiveTab] = useState<Tab>("movies")
+    const [activeTab, setActiveTab] = useState<"movies" | "tv">("movies")
 
-
-    const sortedMovies = useMemo(() => {
+    const sortedMovies: MediaItem[] = useMemo(() => {
         return [...movies]
             .filter((m) => m.poster_path)
             .sort((a, b) => b.popularity - a.popularity)
-            .map(creditToMovie)
+            .map(movieCreditToMediaItem)
     }, [movies])
 
-    const sortedTvShows = useMemo(() => {
+    const sortedTvShows: MediaItem[] = useMemo(() => {
         return [...tvShows]
             .filter((s) => s.poster_path)
             .sort((a, b) => b.popularity - a.popularity)
-            .map(tvCreditToMovie)
+            .map(tvCreditToMediaItem)
     }, [tvShows])
 
     const hasMovies = sortedMovies.length > 0
@@ -56,15 +56,15 @@ export function ActorFilmography({ movies, tvShows }: ActorFilmographyProps) {
             )}
 
             {activeTab === "movies" && hasMovies && (
-                <InfiniteScrollMovies
-                    initialMovies={sortedMovies.slice(0, 20)}
+                <InfiniteScrollMedia
+                    initialItems={sortedMovies.slice(0, 20)}
                     category="movie"
                     clientSideData={sortedMovies}
                 />
             )}
             {activeTab === "tv" && hasTvShows && (
-                <InfiniteScrollMovies
-                    initialMovies={sortedTvShows.slice(0, 20)}
+                <InfiniteScrollMedia
+                    initialItems={sortedTvShows.slice(0, 20)}
                     category="tv"
                     clientSideData={sortedTvShows}
                 />

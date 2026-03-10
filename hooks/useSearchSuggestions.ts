@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Movie } from "@/types/tmdb"
+import type { MediaItem } from "@/types/tmdb"
 
 export function useSearchSuggestions(query: string) {
-    const [results, setResults] = useState<Movie[]>([])
+    const [results, setResults] = useState<MediaItem[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
 
@@ -21,8 +21,8 @@ export function useSearchSuggestions(query: string) {
                 const data = await response.json()
                 setResults(data.results?.slice(0, 6) || [])
                 setIsOpen(true)
-            } catch (error) {
-                console.error("Search error:", error)
+            } catch {
+                setResults([])
             } finally {
                 setIsLoading(false)
             }
