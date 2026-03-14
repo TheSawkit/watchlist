@@ -32,14 +32,14 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
     const menuContent = isOpen && (
         <>
             <div
-                className="fixed inset-0 z-50 bg-surface/50 backdrop-blur-xs md:hidden"
-                style={{ animation: "backdropBlur 300ms ease-out" }}
+                className="fixed inset-0 z-50 bg-surface/50 backdrop-blur-xs md:hidden cursor-pointer"
+                style={{ animation: "backdropBlur var(--duration-base) ease-out" }}
                 onClick={closeMenu}
             />
 
             <div
-                className="fixed inset-y-0 left-0 z-50 w-80 bg-surface border-r border-border shadow-lg overflow-y-auto md:hidden"
-                style={{ animation: "slideInFromLeft 300ms ease-out" }}
+                className="fixed inset-y-0 left-0 z-50 w-80 bg-surface border-r border-border shadow-navbar overflow-y-auto md:hidden"
+                style={{ animation: "slideInFromLeft var(--duration-base) ease-out" }}
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex flex-col h-full">

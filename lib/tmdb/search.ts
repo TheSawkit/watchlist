@@ -19,6 +19,14 @@ interface TMDBMultiResult {
   genre_ids?: number[]
 }
 
+/**
+ * Searches movies and TV shows via TMDB's multi-search endpoint.
+ * Filters out person results and normalizes the response into `MediaItem` objects.
+ *
+ * @param query - Search string.
+ * @param page - Page number (default: 1).
+ * @returns Filtered and normalized list of matching movies and TV shows.
+ */
 export async function searchMulti(query: string, page: number = 1): Promise<MediaItem[]> {
   const { results } = await fetchTMDB<{ results: TMDBMultiResult[] }>("/search/multi", { query, page: page.toString() })
 
@@ -27,6 +35,12 @@ export async function searchMulti(query: string, page: number = 1): Promise<Medi
     .map(tmdbMultiResultToMediaItem)
 }
 
+/**
+ * Normalizes a TMDB `Movie` object into the app's unified `MediaItem` shape.
+ *
+ * @param movie - Raw TMDB movie object.
+ * @returns Normalized `MediaItem` with `media_type: "movie"`.
+ */
 export function movieToMediaItem(movie: Movie): MediaItem {
   return {
     id: movie.id,
@@ -44,6 +58,12 @@ export function movieToMediaItem(movie: Movie): MediaItem {
   }
 }
 
+/**
+ * Normalizes a TMDB `TvShow` object into the app's unified `MediaItem` shape.
+ *
+ * @param tvShow - Raw TMDB TV show object.
+ * @returns Normalized `MediaItem` with `media_type: "tv"`.
+ */
 export function tvShowToMediaItem(tvShow: TvShow): MediaItem {
   return {
     id: tvShow.id,

@@ -18,11 +18,24 @@ export function InfiniteScrollMedia({ initialItems, category, clientSideData }: 
     const isLoaderVisible = useInView(loaderRef, { rootMargin: "0px 0px 200px 0px" })
     const { t } = useTranslation()
 
+    const prevCategoryRef = useRef(category)
+
     useEffect(() => {
-        setItems(initialItems)
-        setPage(2)
-        setLoading(false)
-        setHasMore(true)
+        if (prevCategoryRef.current !== category) {
+            setItems(initialItems)
+            setPage(2)
+            setLoading(false)
+            setHasMore(true)
+            prevCategoryRef.current = category
+        } else {
+            setItems(prev => prev.map(item => {
+                const refreshed = initialItems.find(i => i.id === item.id && i.media_type === item.media_type)
+                if (refreshed && refreshed.watchlistEntry?.status !== item.watchlistEntry?.status) {
+                    return { ...item, watchlistEntry: refreshed.watchlistEntry }
+                }
+                return item
+            }))
+        }
     }, [category, initialItems])
 
     const loadMore = useCallback(async () => {
@@ -68,7 +81,7 @@ export function InfiniteScrollMedia({ initialItems, category, clientSideData }: 
 
     return (
         <>
-            <MediaGrid items={items} />
+            <MediaGrid items={items} hideRating={category === "upcoming"} />
 
             {hasMore && (
                 <div ref={loaderRef} className="flex justify-center py-8">

@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useActionState, useState, startTransition } from 'react'
+import { useActionState, useState, useRef, startTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import {
     Card,
@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { updateProfile, updateAvatar } from '@/app/settings/actions'
+import { Upload } from 'lucide-react'
 import { User } from '@supabase/supabase-js'
 import { useTranslation } from '@/lib/i18n/context'
 
@@ -38,6 +39,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
         updateAvatar,
         initialState
     )
+    const fileInputRef = useRef<HTMLInputElement>(null)
     const [avatarFile, setAvatarFile] = useState<File | null>(null)
     const [avatarPreview, setAvatarPreview] = useState(
         user?.user_metadata?.avatar_url || ''
@@ -100,12 +102,24 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                                         )}
                                     </div>
                                     <div className="flex-1 space-y-3">
-                                        <Input
+                                        <input
+                                            ref={fileInputRef}
                                             id="avatar-input"
                                             type="file"
                                             accept="image/*"
                                             onChange={handleAvatarChange}
+                                            className="sr-only"
                                         />
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className="gap-2"
+                                        >
+                                            <Upload className="h-4 w-4" />
+                                            {avatarFile ? avatarFile.name : t.settings.profile.avatar}
+                                        </Button>
                                         <FieldDescription>
                                             {t.settings.profile.formatAvatar}
                                         </FieldDescription>

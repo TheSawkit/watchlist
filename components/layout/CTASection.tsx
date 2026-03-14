@@ -17,14 +17,14 @@ export default async function CTASection() {
                 <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
                     <Button
                         asChild
-                        className="px-8 py-4 text-lg transform hover:scale-105 active:scale-95 transition-transform duration-200"
+                        className="px-8 py-4 text-lg transform hover:scale-105 active:scale-95 transition-transform duration-(--duration-fast)"
                     >
                         <Link href="/signup">{t.home.cta.button}</Link>
                     </Button>
                     <Button
                         asChild
                         variant="outline"
-                        className="px-8 py-4 text-lg transform hover:scale-105 active:scale-95 transition-transform duration-200"
+                        className="px-8 py-4 text-lg transform hover:scale-105 active:scale-95 transition-transform duration-(--duration-fast)"
                     >
                         <Link href="/login">{t.home.cta.alreadyHave}</Link>
                     </Button>

@@ -4,6 +4,12 @@ import { getLocale } from './utils'
 
 export { getLocale }
 
+/**
+ * Resolves the user's preferred language on the server.
+ * Priority: cookie > Accept-Language header > default ("en").
+ *
+ * @returns The resolved language ("fr" or "en").
+ */
 export async function getServerLanguage(): Promise<Language> {
     const cookieStore = await cookies()
     const savedLang = cookieStore.get('preferred-language')?.value
@@ -21,14 +27,22 @@ export async function getServerLanguage(): Promise<Language> {
     return 'en'
 }
 
+/**
+ * Returns the full translation object for the server-resolved language.
+ *
+ * @returns Translation object for the active language.
+ */
 export async function getTranslations() {
     const lang = await getServerLanguage()
     return translations[lang]
 }
 
+/**
+ * Returns the BCP 47 locale string for the server-resolved language.
+ *
+ * @returns Locale string e.g. "fr-FR" or "en-US".
+ */
 export async function getServerLocale(): Promise<string> {
     const lang = await getServerLanguage()
     return lang === 'fr' ? 'fr-FR' : 'en-US'
 }
-
-

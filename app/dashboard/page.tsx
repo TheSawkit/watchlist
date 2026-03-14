@@ -11,6 +11,7 @@ import {
     tvShowToMediaItem
 } from "@/lib/tmdb"
 import { MediaSection, LibraryMediaSection } from "@/components/media/MediaSection"
+import { PageLayout, PageHeader } from "@/components/ui/PageLayout"
 import { getTranslations } from "@/lib/i18n/server"
 import { MediaTypeSwitcher } from "@/components/media/MediaTypeSwitcher"
 import type { Movie, TvShow } from "@/types/tmdb"
@@ -64,16 +65,8 @@ export default async function DashboardPage({ searchParams }: Props) {
     const allSections = [...recommendationSections, ...similarSections]
 
     return (
-        <div className="container mx-auto py-12 px-6">
-            <div
-                style={{ animation: "slideUp 0.6s ease-out forwards", opacity: 0 }}
-                className="mb-10"
-            >
-                <h1 className="text-3xl font-bold mb-2">{t.pages.dashboard.welcome}</h1>
-                <p className="text-muted">
-                    {t.pages.dashboard.subtitle}
-                </p>
-            </div>
+        <PageLayout>
+            <PageHeader title={t.pages.dashboard.welcome} subtitle={t.pages.dashboard.subtitle} />
 
             <Suspense fallback={<div className="h-[46px] mb-8" />}>
                 <MediaTypeSwitcher defaultType="movie" />
@@ -99,11 +92,11 @@ export default async function DashboardPage({ searchParams }: Props) {
             {watchlist.filter(entry => entry.media_type === type).length === 0 && (
                 <div className="text-center py-20">
                     <p className="text-muted mb-6">{t.pages.dashboard.emptyLibrary}</p>
-                    <Link href={`/explorer?type=${type}`} className="px-6 py-3 bg-red hover:bg-red-2 text-text font-medium rounded-md transition-colors shadow-cinema">
+                    <Link href={`/explorer?type=${type}`} className="px-6 py-3 bg-primary hover:bg-primary-hover text-text font-medium rounded-md transition-colors shadow-cinema">
                         {t.pages.dashboard.exploreButton}
                     </Link>
                 </div>
             )}
-        </div>
+        </PageLayout>
     )
 }

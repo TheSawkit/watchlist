@@ -1,4 +1,16 @@
 export type MediaType = "movie" | "tv"
+export type WatchStatus = "to_watch" | "watched"
+
+export interface WatchlistEntry {
+  id: string
+  user_id: string
+  media_id: number
+  media_title: string
+  media_type: MediaType
+  poster_path: string | null
+  status: WatchStatus
+  created_at: string
+}
 
 export interface Movie {
   id: number
@@ -80,6 +92,7 @@ export interface Episode {
   season_number: number
   vote_average: number
   runtime: number | null
+  guest_stars?: Cast[]
 }
 
 export interface MediaItem {
@@ -95,6 +108,7 @@ export interface MediaItem {
   vote_count: number
   popularity: number
   genre_ids?: number[]
+  watchlistEntry?: WatchlistEntry
 }
 
 export interface Cast {
@@ -212,9 +226,3 @@ export interface ActorTvCredit {
   overview: string
 }
 
-interface TMDBPaginatedResponse<T> {
-  page: number
-  results: T[]
-  total_pages: number
-  total_results: number
-}

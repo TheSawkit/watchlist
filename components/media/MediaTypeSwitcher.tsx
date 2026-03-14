@@ -31,14 +31,20 @@ export function MediaTypeSwitcher({ defaultType = "movie" }: MediaTypeSwitcherPr
 
     return (
         <div className="flex justify-center mb-8">
-            <div className="inline-flex items-center p-1 bg-surface-2 rounded-xl border border-border/40 shadow-sm">
+            <div className="relative inline-flex items-center p-1 bg-surface/80 backdrop-blur-md rounded-xl border border-border/10 shadow-card-xs isolate">
+                <div 
+                    className={cn(
+                        "absolute top-1 bottom-1 w-[calc(50%-4px)] bg-primary rounded-lg transition-transform duration-(--duration-base) ease-in-out -z-10",
+                        currentType === "movie" ? "translate-x-0" : "translate-x-full"
+                    )}
+                />
                 <button
                     onClick={() => setType("movie")}
                     className={cn(
-                        "flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300",
+                        "flex flex-1 justify-center items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-colors duration-(--duration-base)",
                         currentType === "movie"
-                            ? "bg-red text-text shadow-cinema"
-                            : "text-muted hover:text-text hover:bg-surface/50"
+                            ? "text-white shadow-cinema"
+                            : "text-muted hover:text-text"
                     )}
                 >
                     <Film className="w-4 h-4" />
@@ -47,10 +53,10 @@ export function MediaTypeSwitcher({ defaultType = "movie" }: MediaTypeSwitcherPr
                 <button
                     onClick={() => setType("tv")}
                     className={cn(
-                        "flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300",
+                        "flex flex-1 justify-center items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-colors duration-(--duration-base)",
                         currentType === "tv"
-                            ? "bg-red text-text shadow-cinema"
-                            : "text-muted hover:text-text hover:bg-surface/50"
+                            ? "text-white shadow-cinema"
+                            : "text-muted hover:text-text"
                     )}
                 >
                     <Tv className="w-4 h-4" />

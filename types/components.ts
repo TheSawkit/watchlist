@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import type { MediaItem, MediaType, Cast, Video, ActorDetails, ActorMovieCredit, ActorTvCredit } from "@/types/tmdb"
+import type { MediaItem, MediaType, Cast, Video, ActorDetails, WatchStatus } from "@/types/tmdb"
 
 export interface FeatureCardProps {
   icon: string
@@ -7,21 +7,22 @@ export interface FeatureCardProps {
   description: string
 }
 
-export type WatchStatus = "to_watch" | "watched"
-
 export interface MediaGridProps {
   items: MediaItem[]
+  hideRating?: boolean
 }
 
 export interface MediaCardProps {
   media: MediaItem
   className?: string
+  hideRating?: boolean
 }
 
 export interface MediaSectionProps {
   title: string
   items: MediaItem[]
   categoryUrl: string
+  hideRating?: boolean
 }
 
 export interface InfiniteScrollMediaProps {
@@ -36,7 +37,7 @@ export interface MediaBannerProps {
   tagline?: string
   backdropUrl: string
   posterPath: string | null
-  voteAverage: number
+  voteAverage?: number
   releaseDate?: string
   runtime?: number
   certification?: string
@@ -56,17 +57,6 @@ export interface MediaCastProps {
   cast: Cast[]
 }
 
-export interface WatchlistEntry {
-  id: string
-  user_id: string
-  media_id: number
-  media_title: string
-  media_type: MediaType
-  poster_path: string | null
-  status: WatchStatus
-  created_at: string
-}
-
 export interface WatchButtonProps {
   mediaId: number
   mediaTitle: string
@@ -76,6 +66,7 @@ export interface WatchButtonProps {
   initialActive?: boolean
   fallbackStatus?: WatchStatus
   variant?: "icon" | "full"
+  releaseDate?: string
 }
 
 export interface NavbarMobileProps {
@@ -91,6 +82,7 @@ export interface NavbarMobileProps {
 }
 
 export interface NavLinksProps {
+  orientation?: "horizontal" | "vertical"
   className?: string
   onLinkClick?: () => void
 }
@@ -119,6 +111,6 @@ export interface ActorBioProps {
 }
 
 export interface ActorFilmographyProps {
-  movies: ActorMovieCredit[]
-  tvShows: ActorTvCredit[]
+  movies: MediaItem[]
+  tvShows: MediaItem[]
 }

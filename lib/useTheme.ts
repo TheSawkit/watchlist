@@ -4,6 +4,11 @@ import { useEffect } from "react"
 
 type Theme = "light" | "dark" | "system"
 
+/**
+ * Applies the persisted theme on mount and listens for system preference changes.
+ * Reads the theme from localStorage and syncs it to the `<html>` element's class.
+ * When set to "system", subscribes to `prefers-color-scheme` media query changes.
+ */
 export function useTheme() {
     useEffect(() => {
         const html = document.documentElement

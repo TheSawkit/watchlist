@@ -6,6 +6,7 @@ import { InfiniteScrollMedia } from "@/components/media/InfiniteScrollMedia"
 import { CategoryNav } from "@/components/navigation/CategoryNav"
 import { getTranslations } from "@/lib/i18n/server"
 import { SearchBar } from "@/components/search/SearchBar"
+import { PageLayout, PageHeader } from "@/components/ui/PageLayout"
 import type { CategoryPageProps } from "@/types/pages"
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
@@ -15,13 +16,11 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const t = await getTranslations()
 
   const validCategories = [
-    // Movies
     "popular",
     "top-rated",
     "upcoming",
     "now-playing",
     "trending",
-    // TV Shows
     "tv-popular",
     "tv-top-rated",
     "tv-trending",
@@ -50,21 +49,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const initialItems = await fetchMoreMedia(category, 1)
 
   return (
-    <div className="container mx-auto py-12 px-6">
-      <div
-        className="mb-10"
-        style={{
-          animation: "slideUp 0.6s ease-out forwards",
-          opacity: 0,
-        }}
-      >
-        <h1 className="text-3xl font-bold mb-2">{title}</h1>
-        <p className="text-muted">{t.pages.explorer.subtitle}</p>
-      </div>
+    <PageLayout>
+      <PageHeader title={title} subtitle={t.pages.explorer.subtitle} />
 
       <SearchBar />
 
-      <Suspense fallback={<div className="h-[40px] mb-8" />}>
+      <Suspense fallback={<div className="h-10 mb-8" />}>
         <CategoryNav />
       </Suspense>
 
@@ -74,6 +64,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           category={category}
         />
       </div>
-    </div>
+    </PageLayout>
   )
 }

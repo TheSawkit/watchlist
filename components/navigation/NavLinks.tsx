@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { useTranslation } from "@/lib/i18n/context"
 import type { NavLinksProps } from "@/types/components"
 
-export function NavLinks({ className, onLinkClick }: NavLinksProps) {
+export function NavLinks({ orientation = "vertical", className, onLinkClick }: NavLinksProps) {
     const pathname = usePathname()
     const { t } = useTranslation()
 
@@ -16,10 +16,10 @@ export function NavLinks({ className, onLinkClick }: NavLinksProps) {
         { href: "/library", label: t.navbar.library },
     ]
 
-    const isRow = className?.includes("flex-row")
+    const isHorizontal = orientation === "horizontal"
 
     return (
-        <nav className={cn(isRow ? "flex flex-row gap-8" : "flex flex-col gap-2", className)}>
+        <nav className={cn(isHorizontal ? "flex flex-row gap-8" : "flex flex-col gap-2", className)}>
             {links.map((link, index) => (
                 <Link
                     key={link.href}
@@ -27,15 +27,14 @@ export function NavLinks({ className, onLinkClick }: NavLinksProps) {
                     onClick={onLinkClick}
                     aria-current={pathname === link.href ? "page" : undefined}
                     className={cn(
-                        "text-muted transition-all duration-300 hover:text-text text-nowrap relative group",
-                        !isRow && "px-4 py-2 rounded-md hover:bg-surface-2/50",
-                        pathname === link.href && "text-text",
-                        isRow &&
-                        "after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-red-2 after:w-0 after:transition-all after:duration-300 hover:after:w-full",
-                        isRow && pathname === link.href && "after:w-full"
+                        "text-muted transition-all duration-(--duration-base) hover:text-text-main text-nowrap relative group",
+                        !isHorizontal && "px-4 py-2 rounded-md hover:bg-surface-2",
+                        pathname === link.href && "text-gold font-medium",
+                        isHorizontal && "after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-gold after:w-0 after:transition-all after:duration-(--duration-base) hover:after:w-full",
+                        isHorizontal && pathname === link.href && "after:w-full"
                     )}
                     style={{
-                        animation: `slideUp 0.4s ease-out forwards`,
+                        animation: `slideUp var(--duration-medium) ease-out forwards`,
                         animationDelay: `${index * 100}ms`,
                         opacity: 0,
                     }}

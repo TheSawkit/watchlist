@@ -26,7 +26,7 @@ export default async function Navbar() {
     const t = await getTranslations();
 
     return (
-        <nav className="sticky top-0 z-50 border-b border-border bg-surface/80 backdrop-blur-sm">
+        <nav className="sticky top-0 z-50 border-b border-border-subtle bg-surface/20 backdrop-blur-2xl shadow-navbar">
             <div className="mx-auto max-w-7xl px-6 lg:px-12">
                 <div className="grid grid-cols-3 h-16 items-center">
                     {user ? (
@@ -45,7 +45,7 @@ export default async function Navbar() {
                     <div className="flex justify-center md:justify-start col-start-2 md:col-start-1">
                         <Link
                             href="/"
-                            className="font-display text-2xl font-normal text-text transform transition-transform duration-200 hover:scale-105"
+                            className="font-display text-2xl font-normal text-text-main transform transition-transform duration-(--duration-fast) hover:scale-105 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 flex items-center"
                         >
                             <Title className="inline-block h-[0.7em] align-baseline mr-[0.03em] text-text" />
                         </Link>
@@ -53,7 +53,7 @@ export default async function Navbar() {
 
                     {user ? (
                         <div className="hidden md:flex gap-8 justify-center col-start-2">
-                            <NavLinks className="flex-row gap-8" />
+                            <NavLinks orientation="horizontal" />
                         </div>
                     ) : null}
 
@@ -65,7 +65,7 @@ export default async function Navbar() {
                                         <Button
                                             variant="outline"
                                             size="icon-lg"
-                                            className="rounded-full overflow-hidden border-2 border-transparent data-[state=open]:border-red transition-all duration-200"
+                                            className="rounded-full overflow-hidden border-2 border-transparent data-[state=open]:border-primary transition-all duration-(--duration-fast) focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 min-w-12"
                                         >
                                             <UserAvatar
                                                 picture={user.user_metadata.avatar_url || user.user_metadata.picture}
@@ -82,7 +82,7 @@ export default async function Navbar() {
                                                 <p className="text-sm font-medium leading-none">
                                                     {user.user_metadata.username || user.user_metadata.full_name}
                                                 </p>
-                                                <p className="text-xs leading-none text-muted">
+                                                <p className="text-xs leading-none text-text-muted">
                                                     {user.email}
                                                 </p>
                                             </div>
@@ -108,10 +108,10 @@ export default async function Navbar() {
                             </div>
                         ) : (
                             <div className="flex gap-4 justify-end col-start-3">
-                                <Button asChild variant="outline">
+                                <Button asChild variant="outline" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 border-border text-muted hover:text-text hover:bg-surface-2 border">
                                     <Link href="/login">{t.navbar.login}</Link>
                                 </Button>
-                                <Button asChild>
+                                <Button asChild className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 flex items-center bg-primary hover:bg-primary-hover text-white">
                                     <Link href="/signup">{t.navbar.signup}</Link>
                                 </Button>
                             </div>

@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Film, Tv } from "lucide-react"
 import type { ActorFilmographyProps } from "@/types/components"
 import { InfiniteScrollMedia } from "@/components/media/InfiniteScrollMedia"
-import { movieCreditToMediaItem, tvCreditToMediaItem } from "@/lib/mappers"
 import { useTranslation } from "@/lib/i18n/context"
 import type { MediaItem } from "@/types/tmdb"
 
@@ -17,14 +16,12 @@ export function ActorFilmography({ movies, tvShows }: ActorFilmographyProps) {
         return [...movies]
             .filter((m) => m.poster_path)
             .sort((a, b) => b.popularity - a.popularity)
-            .map(movieCreditToMediaItem)
     }, [movies])
 
     const sortedTvShows: MediaItem[] = useMemo(() => {
         return [...tvShows]
             .filter((s) => s.poster_path)
             .sort((a, b) => b.popularity - a.popularity)
-            .map(tvCreditToMediaItem)
     }, [tvShows])
 
     const hasMovies = sortedMovies.length > 0
@@ -83,7 +80,7 @@ function TabButton({ active, onClick, icon, label }: {
         <Button
             variant={active ? "default" : "outline"}
             className={`gap-2 cursor-pointer ${active
-                ? "bg-red hover:bg-red-2 text-text border-none"
+                ? "bg-primary hover:bg-primary-hover text-text border-none"
                 : "bg-surface-2 text-muted hover:text-text hover:bg-surface border-border/20"
                 }`}
             onClick={onClick}

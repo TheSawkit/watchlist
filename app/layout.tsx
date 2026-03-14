@@ -34,7 +34,7 @@ export default async function RootLayout({
 
     return (
         <html lang={lang}>
-            <body className={`${sans.variable} ${display.variable} antialiased`}>
+            <body className={`${sans.variable} ${display.variable} antialiased bg-app-bg text-text-main`}>
                 <Providers initialLang={lang}>
                     <Navbar />
                     <CinemaSpotlight />

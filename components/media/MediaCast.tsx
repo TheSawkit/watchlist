@@ -4,6 +4,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { getImageUrl } from "@/lib/tmdb/images"
 import { HorizontalScroll } from "@/components/shared/HorizontalScroll"
+import { SectionHeading } from "@/components/ui/SectionHeading"
+import { StaggeredItem } from "@/components/ui/StaggeredItem"
 import { useTranslation } from "@/lib/i18n/context"
 import type { MediaCastProps } from "@/types/components"
 
@@ -15,25 +17,21 @@ export function MediaCast({ cast }: MediaCastProps) {
     return (
         <section className="space-y-6">
             <HorizontalScroll
-                title={
-                    <h2 className="text-2xl md:text-3xl font-bold text-text">
-                        {t.movie.castTitle}
-                    </h2>
-                }
+                title={<SectionHeading>{t.movie.castTitle}</SectionHeading>}
                 scrollAmount={300}
             >
                 {cast.map((actor, index) => (
-                    <Link
+                    <StaggeredItem
                         key={actor.id}
-                        href={`/actor/${actor.id}`}
-                        className="flex-none w-32 md:w-36 snap-start flex flex-col items-center text-center space-y-2 group"
-                        style={{
-                            animation: `slideUp 0.5s ease-out forwards`,
-                            animationDelay: `${index * 30}ms`,
-                            opacity: 0,
-                        }}
+                        index={index}
+                        staggerMs={30}
+                        className="flex-none w-32 md:w-36 snap-start"
                     >
-                        <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden bg-surface border-2 border-border/20 group-hover:scale-105 group-hover:border-red-2/50 transition-all duration-300">
+                    <Link
+                        href={`/actor/${actor.id}`}
+                        className="flex flex-col items-center text-center space-y-2 group w-full"
+                    >
+                        <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden bg-surface/20 backdrop-blur-2xl border border-border/10 border-t-border/20 shadow-card-sm group-hover:scale-105 group-hover:border-gold/30 group-hover:border-t-gold/50 group-hover:shadow-glow-gold transition-all duration-(--duration-base)">
                             <Image
                                 src={getImageUrl(actor.profile_path)}
                                 alt={actor.name}
@@ -43,7 +41,7 @@ export function MediaCast({ cast }: MediaCastProps) {
                             />
                         </div>
                         <div className="space-y-1 w-full">
-                            <p className="font-semibold text-text text-sm md:text-base line-clamp-2 group-hover:text-red-2 transition-colors">
+                            <p className="font-semibold text-text text-sm md:text-base line-clamp-2 group-hover:text-gold transition-colors">
                                 {actor.name}
                             </p>
                             <p className="text-xs md:text-sm text-muted line-clamp-2">
@@ -51,6 +49,7 @@ export function MediaCast({ cast }: MediaCastProps) {
                             </p>
                         </div>
                     </Link>
+                    </StaggeredItem>
                 ))}
             </HorizontalScroll>
         </section>

@@ -6,6 +6,7 @@ import { ProfileSettings } from './ProfileSettings'
 import { PasswordSettings } from './PasswordSettings'
 import { ThemeSettings } from './ThemeSettings'
 import { LanguageSettings } from './LanguageSettings'
+import { RegionalSettings } from './RegionalSettings'
 import { DangerZone } from './DangerZone'
 import { SettingsNav, type SettingsTab } from './SettingsNav'
 
@@ -28,10 +29,15 @@ export function SettingsContent({ user }: SettingsContentProps) {
                 {activeTab === 'appearance' && (
                     <div className="space-y-6">
                         <ThemeSettings />
-                        <LanguageSettings />
                     </div>
                 )}
-                {activeTab === 'data' && <DangerZone />}
+                {activeTab === 'data' && (
+                    <div className="space-y-6">
+                        <LanguageSettings />
+                        <RegionalSettings user={user} />
+                        <DangerZone />
+                    </div>
+                )}
             </main>
         </div>
     )

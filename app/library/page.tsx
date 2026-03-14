@@ -3,6 +3,7 @@ import { requireAuth } from "@/lib/auth"
 import { getUserWatchlist } from "@/app/actions/watchlist"
 import { getTvShowWatchProgress } from "@/app/actions/episodes"
 import { LibraryTabs } from "@/components/library/LibraryTabs"
+import { PageLayout, PageHeader } from "@/components/ui/PageLayout"
 import { getTranslations } from "@/lib/i18n/server"
 import { MediaTypeSwitcher } from "@/components/media/MediaTypeSwitcher"
 import { getTvShowTotalEpisodes } from "@/lib/tmdb"
@@ -64,22 +65,17 @@ export default async function LibraryPage({ searchParams }: Props) {
     const inLibraryText = t.library.inLibrary
 
     return (
-        <div className="container mx-auto py-12 px-6">
-            <div
-                style={{ animation: "slideUp 0.6s ease-out forwards", opacity: 0 }}
-                className="mb-10"
-            >
-                <h1 className="text-3xl font-bold mb-2">{t.pages.library.title}</h1>
-                <p className="text-muted text-sm md:text-base">
-                    {watchlist.length} {filmsCountText} {inLibraryText}
-                </p>
-            </div>
+        <PageLayout>
+            <PageHeader
+                title={t.pages.library.title}
+                subtitle={`${watchlist.length} ${filmsCountText} ${inLibraryText}`}
+            />
 
             <Suspense fallback={<div className="h-11.5 mb-8" />}>
                 <MediaTypeSwitcher defaultType="movie" />
             </Suspense>
 
             <LibraryTabs toWatch={toWatch} watched={watched} tvProgress={tvProgressMap} />
-        </div>
+        </PageLayout>
     )
 }

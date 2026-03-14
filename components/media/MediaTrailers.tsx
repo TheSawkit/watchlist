@@ -1,6 +1,7 @@
 "use client"
 
 import { useTranslation } from "@/lib/i18n/context"
+import { SectionHeading } from "@/components/ui/SectionHeading"
 import type { MediaTrailersProps } from "@/types/components"
 
 export function MediaTrailers({ trailers }: MediaTrailersProps) {
@@ -10,13 +11,13 @@ export function MediaTrailers({ trailers }: MediaTrailersProps) {
 
     return (
         <section className="space-y-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-text">{t.movie.trailers}</h2>
+            <SectionHeading>{t.movie.trailers}</SectionHeading>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {trailers.map((trailer) => (
+                {trailers.slice(0, 3).map((trailer) => (
                     <div
                         key={trailer.id}
-                        className="relative aspect-video bg-surface rounded-lg overflow-hidden border border-border/20"
+                        className="relative aspect-video bg-surface/20 backdrop-blur-2xl rounded-xl overflow-hidden border border-border/10 border-t-border/20 shadow-card transition-all duration-(--duration-base) hover:shadow-glow-gold hover:border-gold/30 hover:border-t-gold/50"
                     >
                         {trailer.site === "YouTube" ? (
                             <iframe
@@ -27,8 +28,8 @@ export function MediaTrailers({ trailers }: MediaTrailersProps) {
                                 className="w-full h-full"
                             />
                         ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-surface text-muted">
-                                <p className="text-sm">{t.movie.unsupportedFormat}</p>
+                            <div className="w-full h-full flex items-center justify-center bg-transparent text-muted">
+                                <p className="text-sm font-medium">{t.movie.unsupportedFormat}</p>
                             </div>
                         )}
                     </div>

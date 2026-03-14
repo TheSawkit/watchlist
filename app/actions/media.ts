@@ -5,31 +5,72 @@ import {
   getPopularTvShows, getTopRatedTvShows, getTrendingTvShows, getAiringTodayTvShows, getOnTheAirTvShows,
   movieToMediaItem, tvShowToMediaItem,
 } from "@/lib/tmdb"
-import type { MediaItem } from "@/types/tmdb"
+import type { MediaItem, WatchlistEntry } from "@/types/tmdb"
+import { getMediaWatchlistEntries } from "./watchlist"
 
+/**
+ * Enriches a list of media items with their corresponding watchlist entries for the current user.
+ * Items without a watchlist entry are returned unchanged.
+ *
+ * @param items - Media items to enrich.
+ * @returns The same items with `watchlistEntry` injected where a match exists.
+ */
+export async function mergeMediaWithWatchlist(items: MediaItem[]): Promise<MediaItem[]> {
+  if (items.length === 0) return []
+
+  const mediaIds = items.map(item => item.id)
+  const watchlistEntries = await getMediaWatchlistEntries(mediaIds)
+
+  return items.map(item => ({
+    ...item,
+    watchlistEntry: watchlistEntries.find((entry: WatchlistEntry) =>
+      entry.media_id === item.id && entry.media_type === item.media_type
+    )
+  }))
+}
+
+/**
+ * Fetches a paginated list of media items for a given category and merges watchlist data.
+ *
+ * @param category - Category slug (e.g. "popular", "tv-trending").
+ * @param page - Page number for pagination.
+ * @returns Enriched media items for the requested category and page.
+ */
 export async function fetchMoreMedia(category: string, page: number): Promise<MediaItem[]> {
+  let items: MediaItem[] = []
+
   switch (category) {
     case "popular":
-      return (await getPopularMovies(page)).map(movieToMediaItem)
+      items = (await getPopularMovies(page)).map(movieToMediaItem)
+      break
     case "top-rated":
-      return (await getTopRatedMovies(page)).map(movieToMediaItem)
+      items = (await getTopRatedMovies(page)).map(movieToMediaItem)
+      break
     case "upcoming":
-      return (await getUpcomingMovies(page)).map(movieToMediaItem)
+      items = (await getUpcomingMovies(page)).map(movieToMediaItem)
+      break
     case "now-playing":
-      return (await getNowPlayingMovies(page)).map(movieToMediaItem)
+      items = (await getNowPlayingMovies(page)).map(movieToMediaItem)
+      break
     case "trending":
-      return (await getTrendingMovies("week", page)).map(movieToMediaItem)
+      items = (await getTrendingMovies("week", page)).map(movieToMediaItem)
+      break
     case "tv-popular":
-      return (await getPopularTvShows(page)).map(tvShowToMediaItem)
+      items = (await getPopularTvShows(page)).map(tvShowToMediaItem)
+      break
     case "tv-top-rated":
-      return (await getTopRatedTvShows(page)).map(tvShowToMediaItem)
+      items = (await getTopRatedTvShows(page)).map(tvShowToMediaItem)
+      break
     case "tv-trending":
-      return (await getTrendingTvShows("week", page)).map(tvShowToMediaItem)
+      items = (await getTrendingTvShows("week", page)).map(tvShowToMediaItem)
+      break
     case "tv-airing-today":
-      return (await getAiringTodayTvShows(page)).map(tvShowToMediaItem)
+      items = (await getAiringTodayTvShows(page)).map(tvShowToMediaItem)
+      break
     case "tv-on-the-air":
-      return (await getOnTheAirTvShows(page)).map(tvShowToMediaItem)
-    default:
-      return []
+      items = (await getOnTheAirTvShows(page)).map(tvShowToMediaItem)
+      break
   }
+
+  return mergeMediaWithWatchlist(items)
 }

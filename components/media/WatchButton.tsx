@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Eye, Plus, Check, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { addToWatchlist, removeFromWatchlist } from "@/app/actions/watchlist"
 import { useTranslation } from "@/lib/i18n/context"
 import type { WatchButtonProps } from "@/types/components"
+import { startTransition } from "react"
 
 export function WatchButton({
     mediaId,
@@ -17,13 +18,23 @@ export function WatchButton({
     initialActive = false,
     variant = "icon",
     fallbackStatus,
+    releaseDate,
 }: WatchButtonProps) {
     const [optimisticActive, setOptimisticActive] = useState<boolean | null>(null)
     const active = optimisticActive !== null ? optimisticActive : initialActive
-
     const [loading, setLoading] = useState(false)
     const { t } = useTranslation()
     const router = useRouter()
+
+    useEffect(() => {
+        setOptimisticActive(null)
+    }, [initialActive])
+
+    const isUnreleased = releaseDate ? new Date(releaseDate) > new Date() : false
+
+    if (status === "watched" && isUnreleased && !active) {
+        return null
+    }
 
     async function handleClick(e: React.MouseEvent) {
         e.preventDefault()
@@ -35,13 +46,16 @@ export function WatchButton({
                 if (fallbackStatus) {
                     await addToWatchlist(mediaId, mediaTitle, posterPath, fallbackStatus, mediaType)
                 } else {
-                    await removeFromWatchlist(mediaId)
+                    await removeFromWatchlist(mediaId, mediaType)
                 }
             } else {
                 await addToWatchlist(mediaId, mediaTitle, posterPath, status, mediaType)
             }
             setOptimisticActive(!active)
-            router.refresh()
+
+            startTransition(() => {
+                router.refresh()
+            })
         } finally {
             setLoading(false)
         }
@@ -54,10 +68,10 @@ export function WatchButton({
             <button
                 onClick={handleClick}
                 className={cn(
-                    "w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                    "flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors border focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 w-full sm:w-auto shrink-0",
                     active
-                        ? "bg-surface-2 text-muted hover:bg-red/20 hover:text-red"
-                        : "bg-red hover:bg-red-2 text-text shadow-cinema"
+                        ? "bg-primary/40 backdrop-blur-2xl text-white border-border/10 border-t-border/20 shadow-glow-red"
+                        : "bg-surface/20 backdrop-blur-2xl text-muted border-border/10 border-t-border/20 hover:text-text hover:bg-surface-2/20 hover:border-border shadow-card-sm"
                 )}
             >
                 <Icon className={cn("h-4 w-4", loading && "animate-spin")} />
@@ -79,9 +93,11 @@ export function WatchButton({
                 status === "watched" ? t.movie.markAsWatched : t.movie.addToList
             }
             className={cn(
-                "h-8 w-8 rounded-full bg-surface/40 backdrop-blur-md border border-border/10",
-                "flex items-center justify-center transition-colors",
-                active ? "bg-red/30 text-red border-red/30" : "text-text hover:bg-surface/60"
+                "h-12 w-12 rounded-full backdrop-blur-2xl border",
+                "flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
+                active
+                    ? "bg-primary/40 text-white border-border/10 border-t-border/20 shadow-glow-red"
+                    : "bg-surface/20 text-muted border-border/10 border-t-border/20 hover:text-text hover:bg-surface-2/20 shadow-card-sm hover:border-border"
             )}
         >
             <Icon className={cn("h-4 w-4", loading && "animate-spin")} />

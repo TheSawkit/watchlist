@@ -6,31 +6,18 @@ import type { ActorBannerProps } from "@/types/components"
 import { MapPin, Calendar, Star } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { getLocale } from "@/lib/i18n/utils"
+import { formatDate, calculateAge } from "@/lib/format"
 
 export function ActorBanner({ actor }: ActorBannerProps) {
     const { t, lang } = useTranslation()
     const locale = getLocale(lang)
 
-    const formatDate = (dateString: string | null) => {
-        if (!dateString) return null
-        const date = new Date(dateString)
-        return date.toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" })
-    }
-
-    const getAge = (birthday: string | null, deathday: string | null) => {
-        if (!birthday) return null
-        const birth = new Date(birthday)
-        const end = deathday ? new Date(deathday) : new Date()
-        const age = Math.floor((end.getTime() - birth.getTime()) / (365.25 * 24 * 60 * 60 * 1000))
-        return age
-    }
-
-    const age = getAge(actor.birthday, actor.deathday)
+    const age = calculateAge(actor.birthday, actor.deathday)
 
     return (
         <div className="relative w-full overflow-hidden">
 
-            <div className="absolute inset-0 bg-linear-to-b from-red/10 via-bg to-bg" />
+            <div className="absolute inset-0 bg-linear-to-b from-primary/10 via-background to-background" />
 
             <div className="relative z-10 container mx-auto px-6 lg:px-12 py-12 md:py-16">
                 <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start">
@@ -61,7 +48,7 @@ export function ActorBanner({ actor }: ActorBannerProps) {
                                 <div className="flex items-center gap-2 bg-surface/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-border/20">
                                     <Calendar className="h-4 w-4 text-muted" />
                                     <span className="text-sm text-text">
-                                        {formatDate(actor.birthday)}
+                                        {formatDate(actor.birthday, locale)}
                                         {age !== null && ` (${age} ${t.common.age})`}
                                     </span>
                                 </div>
@@ -71,7 +58,7 @@ export function ActorBanner({ actor }: ActorBannerProps) {
                                 <div className="flex items-center gap-2 bg-surface/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-border/20">
                                     <Calendar className="h-4 w-4 text-red-2" />
                                     <span className="text-sm text-text">
-                                        † {formatDate(actor.deathday)}
+                                        † {formatDate(actor.deathday, locale)}
                                     </span>
                                 </div>
                             )}

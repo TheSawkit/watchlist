@@ -86,6 +86,7 @@ export async function updateProfile(prevState: unknown, formData: FormData) {
 
     const fullName = formData.get('fullName') as string
     const username = formData.get('username') as string
+    const region = formData.get('region') as string
 
     if (!username) {
         return { error: t.settings.missingFields, success: false }
@@ -96,6 +97,7 @@ export async function updateProfile(prevState: unknown, formData: FormData) {
             full_name: fullName ? fullName : null,
             name: fullName ? fullName : username,
             username: username,
+            region: region ? region.toUpperCase() : undefined,
         },
     })
 

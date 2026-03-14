@@ -34,19 +34,28 @@ export function SearchBar() {
     }
 
     return (
-        <div className="relative w-full max-w-2xl mx-auto mb-12" ref={dropdownRef}>
-            <form onSubmit={handleSearch} className="relative group">
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-muted transition-colors group-focus-within:text-red">
-                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-                </div>
+        <div className="relative w-full max-w-2xl mx-auto mb-6 md:mb-10" ref={dropdownRef}>
+            <form onSubmit={handleSearch} className="relative group flex items-center">
                 <Input
                     type="text"
                     placeholder={t.pages.search.placeholder}
-                    className="pl-10 pr-10 py-6 h-14 bg-surface/50 backdrop-blur-md border-border hover:border-red/50 focus:border-red text-lg shadow-xl transition-all duration-300 rounded-2xl"
+                    className="pl-16 pr-10 py-6 h-14 bg-surface/40 backdrop-blur-xl border-border/10 hover:border-primary/30 focus-visible:border-primary/50 text-lg shadow-card transition-all duration-(--duration-base) rounded-(--radius-xl)"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => query.length >= 2 && setIsOpen(true)}
                 />
+
+                <div className="absolute left-0 inset-y-0 pl-4 flex items-center pointer-events-none group-focus-within:text-red transition-colors duration-(--duration-base)">
+                    {isLoading ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-muted" />
+                    ) : (
+                        <div className="flex items-center gap-3">
+                            <Search className="w-5 h-5 text-muted transition-transform duration-(--duration-base) group-focus-within:scale-110" />
+                            <div className="w-px h-6 bg-border" />
+                        </div>
+                    )}
+                </div>
+
                 {query && (
                     <button
                         type="button"

@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { useTranslation } from "@/lib/i18n/context"
 import type { UserAvatarProps } from "@/types/user"
 
 export function UserAvatar({
@@ -10,6 +11,7 @@ export function UserAvatar({
   size = 128,
   className,
 }: UserAvatarProps) {
+  const { t } = useTranslation()
   const goldColor = "d6b25e"
 
   const avatarUrl = picture
@@ -21,7 +23,7 @@ export function UserAvatar({
   return (
     <Image
       src={avatarUrl}
-      alt="User avatar"
+      alt={t.common.userAvatar}
       width={size}
       height={size}
       className={className}

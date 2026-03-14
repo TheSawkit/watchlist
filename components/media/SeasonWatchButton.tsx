@@ -41,15 +41,15 @@ export function SeasonWatchButton({
     return (
         <button
             onClick={handleClick}
+            disabled={loading}
             className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
-                "border cursor-pointer",
+                "flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-(--duration-base) border focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 w-full sm:w-auto shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-card",
                 allWatched
-                    ? "bg-green-500/20 text-green-400 border-green-500/30 hover:bg-red/20 hover:text-red hover:border-red/30"
-                    : "bg-red hover:bg-red-2 text-text border-transparent shadow-cinema"
+                    ? "bg-primary/40 backdrop-blur-2xl text-white border-border/10 border-t-border/20 shadow-glow-red"
+                    : "bg-surface/20 backdrop-blur-2xl text-rating-gold border-border/10 border-t-border/20 hover:bg-rating-gold/10 hover:border-border hover:shadow-glow-gold hover:text-text shadow-card"
             )}
         >
-            <Icon className={cn("h-4 w-4", loading && "animate-spin")} />
+            <Icon className={cn("h-5 w-5", loading && "animate-spin")} />
             {allWatched
                 ? `${t.movie.seasonComplete} (${watchedCount}/${totalEpisodes})`
                 : `${t.movie.markAllWatched} (${watchedCount}/${totalEpisodes})`}

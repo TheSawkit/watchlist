@@ -25,7 +25,10 @@ export function EpisodeWatchButton({
     const router = useRouter()
     const { t } = useTranslation()
 
-    async function handleToggle() {
+    async function handleToggle(e: React.MouseEvent) {
+        e.preventDefault()
+        e.stopPropagation()
+        
         setLoading(true)
         try {
             const newState = await toggleEpisodeWatch(tvId, seasonNumber, episodeNumber)
@@ -41,15 +44,15 @@ export function EpisodeWatchButton({
     return (
         <button
             onClick={handleToggle}
+            disabled={loading}
             className={cn(
-                "flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all duration-300",
-                "border cursor-pointer",
+                "flex items-center justify-center gap-2 px-4 py-2 rounded-md text-xs font-medium transition-colors border focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-10 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer",
                 watched
-                    ? "bg-green-500/20 text-green-400 border-green-500/30 hover:bg-red/20 hover:text-red hover:border-red/30"
-                    : "bg-surface/50 border-border/30 text-muted hover:bg-red/20 hover:text-red hover:border-red/30"
+                    ? "bg-primary/40 backdrop-blur-2xl text-white border-border/10 border-t-border/20 shadow-glow-red"
+                    : "bg-surface/20 backdrop-blur-2xl text-muted border-border/10 border-t-border/20 hover:text-text hover:bg-surface-2/20 hover:border-border shadow-card-sm"
             )}
         >
-            <Icon className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
+            <Icon className={cn("h-4 w-4", loading && "animate-spin")} />
             {watched ? t.movie.episodeWatched : t.movie.markEpisodeWatched}
         </button>
     )

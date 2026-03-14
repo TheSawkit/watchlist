@@ -13,7 +13,7 @@ interface SeasonCardProps {
     season: Season
     seasonWatched: number
     locale: string
-    labels?: {
+    labels: {
         episodes: string
         completed: string
         watchedProgress: (watched: number, total: number) => React.ReactNode
@@ -25,11 +25,7 @@ export function SeasonCard({
     season,
     seasonWatched,
     locale,
-    labels = {
-        episodes: "épisodes",
-        completed: "✓ Terminée",
-        watchedProgress: (w, t) => `${w}/${t} vus`,
-    },
+    labels,
 }: SeasonCardProps) {
     const seasonTotal = season.episode_count
     const isComplete = seasonWatched === seasonTotal && seasonTotal > 0
@@ -39,10 +35,10 @@ export function SeasonCard({
             <Link
                 href={`/tv/${tvId}/season/${season.season_number}`}
                 className={cn(
-                    "flex gap-4 bg-surface-2 rounded-xl p-4 transition-all duration-300 hover:bg-surface-3 hover:shadow-cinema border cursor-pointer",
+                    "flex gap-4 bg-surface-2 rounded-xl p-4 transition-all duration-(--duration-base) hover:bg-surface-3 hover:shadow-cinema border cursor-pointer",
                     isComplete
-                        ? "border-green-500/30"
-                        : "border-border/10 hover:border-red/30"
+                        ? "border-success/30"
+                        : "border-border/10 hover:border-primary/30"
                 )}
             >
                 <div className="relative w-24 h-36 shrink-0 rounded-lg overflow-hidden bg-surface flex-none">
@@ -51,29 +47,29 @@ export function SeasonCard({
                             src={getImageUrl(season.poster_path, "w342")}
                             alt={season.name}
                             fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="object-cover group-hover:scale-105 transition-transform duration-(--duration-slow)"
                             sizes="96px"
                         />
                     ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-muted">
+                        <div className="w-full h-full flex flex-col items-center justify-center text-muted bg-surface">
                             <span className="text-xs font-semibold text-center px-1">{season.name}</span>
                         </div>
                     )}
 
                     {seasonWatched > 0 && (
-                        <div className="absolute bottom-0 inset-x-0 bg-linear-to-t from-black/80 to-transparent p-1.5">
+                        <div className="absolute bottom-0 inset-x-0 bg-linear-to-t from-surface/80 to-transparent p-1.5">
                             <ProgressBar
                                 watched={seasonWatched}
                                 total={seasonTotal}
-                                className="h-1 bg-white/20 rounded-full"
-                                innerClassName={isComplete ? "bg-green-400" : "bg-gradient-to-r from-red to-gold rounded-full"}
+                                className="h-1 bg-border-subtle rounded-full"
+                                innerClassName={isComplete ? "bg-success" : "bg-linear-to-r from-primary to-gold rounded-full"}
                             />
                         </div>
                     )}
                 </div>
 
                 <div className="flex flex-col flex-1 py-1 min-w-0">
-                    <h3 className="text-lg font-bold text-text group-hover:text-red transition-colors line-clamp-2">
+                    <h3 className="text-lg font-bold text-text group-hover:text-primary transition-colors line-clamp-2">
                         {season.name}
                     </h3>
                     <div className="flex flex-col gap-1 mt-auto">
@@ -90,7 +86,7 @@ export function SeasonCard({
                         {seasonWatched > 0 && (
                             <div className={cn(
                                 "text-xs font-medium mt-1 truncate",
-                                isComplete ? "text-green-400" : "text-muted"
+                                isComplete ? "text-success" : "text-muted"
                             )}>
                                 {isComplete ? labels.completed : labels.watchedProgress(seasonWatched, seasonTotal)}
                             </div>
@@ -100,7 +96,7 @@ export function SeasonCard({
             </Link>
 
             <div className={cn(
-                "absolute top-2 right-2 z-10 transition-all duration-300",
+                "absolute top-2 right-2 z-10 transition-all duration-(--duration-base)",
                 seasonWatched > 0
                     ? "opacity-100"
                     : "opacity-0 group-hover:opacity-100"
@@ -110,6 +106,7 @@ export function SeasonCard({
                     seasonNumber={season.season_number}
                     totalEpisodes={seasonTotal}
                     watchedCount={seasonWatched}
+                    releaseDate={season.air_date ?? undefined}
                 />
             </div>
         </div>

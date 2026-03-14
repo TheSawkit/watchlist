@@ -16,8 +16,7 @@ import {
 } from '@/components/ui/field'
 import { useTranslation } from '@/lib/i18n/context'
 
-const THEME_VALUES = ['light', 'dark', 'system'] as const
-type ThemeValue = (typeof THEME_VALUES)[number]
+type ThemeValue = 'light' | 'dark' | 'system'
 
 export function ThemeSettings() {
     const { t } = useTranslation()

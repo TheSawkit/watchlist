@@ -26,11 +26,11 @@ export function HorizontalScroll({
       {title && (
         <div className="flex items-center justify-between mb-4 px-1">
           {title}
-          <div className="hidden md:flex gap-2 opacity-0 group-hover/section:opacity-100 transition-opacity duration-300">
+          <div className="hidden md:flex gap-2 opacity-0 group-hover/section:opacity-100 transition-opacity duration-(--duration-base)">
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 rounded-full bg-surface/50 backdrop-blur-sm border-border/50 hover:bg-surface hover:text-red-2"
+              className="h-8 w-8 rounded-full bg-background/50 backdrop-blur-sm border-surface-3 hover:bg-surface-2 hover:text-text focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
               onClick={() => scroll('left')}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -38,7 +38,7 @@ export function HorizontalScroll({
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 rounded-full bg-surface/50 backdrop-blur-sm border-border/50 hover:bg-surface hover:text-red-2"
+              className="h-8 w-8 rounded-full bg-background/50 backdrop-blur-sm border-surface-3 hover:bg-surface-2 hover:text-text focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
               onClick={() => scroll('right')}
             >
               <ChevronRight className="h-4 w-4" />

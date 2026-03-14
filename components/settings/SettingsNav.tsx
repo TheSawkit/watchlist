@@ -17,7 +17,7 @@ export function SettingsNav({ onTabChange, activeTab }: SettingsNavProps) {
         { id: 'profile', label: t.settings.profile.title, icon: '👤' },
         { id: 'security', label: t.settings.password.title, icon: '🔒' },
         { id: 'appearance', label: t.settings.theme.title, icon: '🎨' },
-        { id: 'data', label: t.settings.dangerZone.title, icon: '🗑️' },
+        { id: 'data', label: t.settings.dangerZone.title, icon: '📁' },
     ]
 
     return (
@@ -27,9 +27,9 @@ export function SettingsNav({ onTabChange, activeTab }: SettingsNavProps) {
                     key={tab.id}
                     onClick={() => onTabChange(tab.id)}
                     className={cn(
-                        'flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2 lg:py-3 rounded-lg transition-all duration-200 font-medium text-sm whitespace-nowrap lg:whitespace-normal',
+                        'flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2 lg:py-3 rounded-lg transition-all duration-(--duration-fast) font-medium text-sm whitespace-nowrap lg:whitespace-normal cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                         activeTab === tab.id
-                            ? 'bg-red-2 text-black shadow-sm'
+                            ? 'bg-primary-hover text-text shadow-card-xs'
                             : 'text-muted hover:bg-surface-2 active:bg-surface'
                     )}
                 >

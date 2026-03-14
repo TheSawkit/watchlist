@@ -29,14 +29,16 @@ export function CategoryNav() {
     ]
 
     return (
-        <div className="flex overflow-x-scroll overflow-y-visible pb-2 mb-8 gap-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+        <div className="relative mb-8">
+            <div className="absolute right-0 top-0 bottom-2 w-12 bg-linear-to-l from-background to-transparent pointer-events-none z-10 md:hidden" />
+        <div className="flex overflow-x-scroll overflow-y-visible pb-2 gap-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
             <Link
                 href={`/explorer?type=${activeDomain}`}
                 aria-current={pathname === "/explorer" ? "page" : undefined}
                 className={cn(
                     "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors",
                     pathname === "/explorer"
-                        ? "bg-red text-text shadow-lg shadow-red/20"
+                        ? "bg-primary text-text shadow-cinema"
                         : "bg-surface-2 text-muted hover:text-text hover:bg-surface-3"
                 )}
             >
@@ -50,13 +52,14 @@ export function CategoryNav() {
                     className={cn(
                         "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors",
                         pathname === category.href
-                            ? "bg-red text-text shadow-lg shadow-red/20"
+                            ? "bg-primary text-text shadow-cinema"
                             : "bg-surface-2 text-muted hover:text-text hover:bg-surface-3"
                     )}
                 >
                     {category.name}
                 </Link>
             ))}
+        </div>
         </div>
     )
 }

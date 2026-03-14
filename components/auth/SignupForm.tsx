@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,6 +18,7 @@ import {
     FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { SelectInput } from "@/components/ui/SelectInput"
 import Link from "next/link"
 import { signup } from "@/app/auth/actions"
 import { createClient } from "@/lib/supabase/client"
@@ -30,6 +31,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
     const { t } = useTranslation()
     const supabase = createClient()
 
+    const [browserLang] = useState(() => {
+        if (typeof navigator === 'undefined') return 'en'
+        const lang = navigator.language.split('-')[0]
+        return ['fr', 'en'].includes(lang) ? lang : 'en'
+    })
+
     const handleOAuthLogin = async (provider: 'google') => {
         await supabase.auth.signInWithOAuth({
             provider,
@@ -41,15 +48,16 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
         <div
             className={cn("flex flex-col gap-6", className)}
             {...props}
-            style={{ animation: "scaleIn 0.5s ease-out forwards", opacity: 0 }}
+            style={{ animation: "scaleIn var(--duration-slow) ease-out forwards", opacity: 0 }}
         >
-            <Card className="transform transition-all duration-300 hover:shadow-lg">
+            <Card className="transform transition-all duration-(--duration-base) hover:shadow-cinema">
                 <CardHeader className="text-center">
                     <CardTitle className="text-xl">{t.auth.signup.title}</CardTitle>
                     <CardDescription>{t.auth.signup.orEmail}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form action={formAction}>
+                        <input type="hidden" name="language" value={browserLang} />
                         <FieldGroup>
                             <Field>
                                 <Button
@@ -73,7 +81,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                                     id="username"
                                     name="username"
                                     type="text"
-                                    placeholder="chuck_norris"
+                                    placeholder={t.auth.signup.placeholders.username}
                                     required
                                 />
                             </Field>
@@ -83,7 +91,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                                     id="email"
                                     name="email"
                                     type="email"
-                                    placeholder="chuck@example.com"
+                                    placeholder={t.auth.signup.placeholders.email}
                                     required
                                 />
                             </Field>
@@ -95,7 +103,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                                             id="password"
                                             name="password"
                                             type="password"
-                                            placeholder="••••••••"
+                                            placeholder={t.auth.signup.placeholders.password}
                                             required
                                         />
                                     </Field>
@@ -107,12 +115,26 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                                             id="confirm-password"
                                             name="confirm-password"
                                             type="password"
-                                            placeholder="••••••••"
+                                            placeholder={t.auth.signup.placeholders.password}
                                             required
                                         />
                                     </Field>
                                 </Field>
                                 <FieldDescription>{t.settings.password.minChars}</FieldDescription>
+                            </Field>
+                            <Field>
+                                <FieldLabel htmlFor="region">{t.auth.signup.region} *</FieldLabel>
+                                <SelectInput id="region" name="region" required>
+                                    <option value="">{t.settings.region.placeholder}</option>
+                                    <option value="BE">{t.settings.region.be}</option>
+                                    <option value="FR">{t.settings.region.fr}</option>
+                                    <option value="US">{t.settings.region.us}</option>
+                                    <option value="CA">{t.settings.region.ca}</option>
+                                    <option value="GB">{t.settings.region.gb}</option>
+                                    <option value="CH">{t.settings.region.ch}</option>
+                                    <option value="LU">{t.settings.region.lu}</option>
+                                </SelectInput>
+                                <FieldDescription>{t.auth.signup.regionDescription}</FieldDescription>
                             </Field>
                             {state?.error && (
                                 <p className="text-sm text-red-2 text-center">{state.error}</p>

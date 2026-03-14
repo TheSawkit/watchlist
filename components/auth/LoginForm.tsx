@@ -41,9 +41,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         <div
             className={cn("flex flex-col gap-6", className)}
             {...props}
-            style={{ animation: "scaleIn 0.5s ease-out forwards", opacity: 0 }}
+            style={{ animation: "scaleIn var(--duration-slow) ease-out forwards", opacity: 0 }}
         >
-            <Card className="transform transition-all duration-300 hover:shadow-lg">
+            <Card className="transform transition-all duration-(--duration-base) hover:shadow-cinema">
                 <CardHeader className="text-center">
                     <CardTitle className="text-xl">{t.auth.login.title}</CardTitle>
                     <CardDescription>{t.auth.login.description}</CardDescription>
@@ -73,7 +73,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                                     id="email"
                                     name="email"
                                     type="email"
-                                    placeholder="chuck@example.com"
+                                    placeholder={t.auth.login.placeholders.email}
                                     required
                                 />
                             </Field>
@@ -91,7 +91,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                                     id="password"
                                     name="password"
                                     type="password"
-                                    placeholder="••••••••"
+                                    placeholder={t.auth.login.placeholders.password}
                                     required
                                 />
                             </Field>

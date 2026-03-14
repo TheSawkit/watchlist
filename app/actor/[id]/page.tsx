@@ -4,6 +4,8 @@ import { ActorBanner } from "@/components/actor/ActorBanner"
 import { ActorBio } from "@/components/actor/ActorBio"
 import { ActorFilmography } from "@/components/actor/ActorFilmography"
 import type { ActorPageProps } from "@/types/pages"
+import { movieCreditToMediaItem, tvCreditToMediaItem } from "@/lib/mappers"
+import { mergeMediaWithWatchlist } from "@/app/actions/media"
 
 export default async function ActorPage(props: ActorPageProps) {
     const params = await props.params
@@ -25,6 +27,9 @@ export default async function ActorPage(props: ActorPageProps) {
         notFound()
     }
 
+    const mergedMovies = await mergeMediaWithWatchlist(movieCredits.map(movieCreditToMediaItem))
+    const mergedTvShows = await mergeMediaWithWatchlist(tvCredits.map(tvCreditToMediaItem))
+
     return (
         <div className="min-h-screen">
             <ActorBanner actor={actor} />
@@ -32,7 +37,7 @@ export default async function ActorPage(props: ActorPageProps) {
             <div className="container mx-auto px-6 lg:px-12 py-8 space-y-12">
                 <ActorBio biography={actor.biography} />
 
-                <ActorFilmography movies={movieCredits} tvShows={tvCredits} />
+                <ActorFilmography movies={mergedMovies} tvShows={mergedTvShows} />
             </div>
         </div>
     )

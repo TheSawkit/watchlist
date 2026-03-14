@@ -23,6 +23,13 @@ interface LanguageProviderProps {
     initialLang: Language
 }
 
+/**
+ * Provides the active language and translation object to the component tree.
+ * Persists the selected language in both localStorage and a cookie for SSR sync.
+ *
+ * @param children - React subtree to receive the language context.
+ * @param initialLang - Language resolved server-side to hydrate the initial state.
+ */
 export function LanguageProvider({ children, initialLang }: LanguageProviderProps) {
     const [lang, setLangState] = useState<Language>(initialLang)
     const router = useRouter()
@@ -44,6 +51,12 @@ export function LanguageProvider({ children, initialLang }: LanguageProviderProp
     )
 }
 
+/**
+ * Returns the current language, translation object, and language setter from context.
+ * Must be used inside a `LanguageProvider`.
+ *
+ * @returns `{ lang, t, setLang }` from the nearest `LanguageProvider`.
+ */
 export function useTranslation() {
     return useContext(LanguageContext)
 }

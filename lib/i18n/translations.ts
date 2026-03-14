@@ -16,6 +16,12 @@ export const translations = {
             viewAll: 'Voir tout',
             view: 'Voir',
             and: 'et',
+            errorTitle: 'Oups ! Un problème est survenu',
+            errorDescription: 'Une erreur inattendue empêche l\'affichage de cette page. Nous nous en excusons.',
+            errorRetry: 'Réessayer',
+            errorBackHome: 'Retour à l\'accueil',
+            backToExplorer: 'Retour à l\'explorateur',
+            userAvatar: 'Photo de profil',
         },
         navbar: {
             dashboard: 'Tableau de bord',
@@ -96,6 +102,20 @@ export const translations = {
                 french: 'Français',
                 english: 'Anglais',
             },
+            region: {
+                title: 'Région Théâtrale',
+                description: 'Choisissez votre pays pour obtenir les dates de sorties au cinéma locales',
+                label: 'Pays / Région',
+                save: 'Enregistrer la région',
+                placeholder: 'Sélectionnez un pays',
+                be: 'Belgique',
+                fr: 'France',
+                us: 'États-Unis',
+                ca: 'Canada',
+                gb: 'Royaume-Uni',
+                ch: 'Suisse',
+                lu: 'Luxembourg',
+            },
             theme: {
                 title: 'Apparence',
                 description: 'Personnalisez l\'apparence de votre interface',
@@ -133,7 +153,7 @@ export const translations = {
                 updatePassword: 'Mettre à jour le mot de passe',
             },
             dangerZone: {
-                title: 'Zone dangereuse',
+                title: 'Données',
                 description: 'Les actions suivantes ne peuvent pas être annulées',
                 deleteAccount: 'Supprimer le compte',
                 deleteAccountDesc: 'Une fois supprimé, vous ne pourrez pas récupérer vos données',
@@ -153,6 +173,13 @@ export const translations = {
                 alreadyHaveAccount: 'Déjà un compte ?',
                 login: 'Se connecter',
                 google: 'Continuer avec Google',
+                placeholders: {
+                    email: 'chuck@example.com',
+                    password: '••••••••',
+                    username: 'chuck_norris',
+                },
+                region: 'Pays / Région',
+                regionDescription: 'Ceci permet de synchroniser les sorties cinéma avec votre pays local.',
             },
             login: {
                 title: 'Connectez-vous à votre compte',
@@ -165,6 +192,10 @@ export const translations = {
                 signup: 'S\'inscrire',
                 google: 'Continuer avec Google',
                 forgotPassword: 'Mot de passe oublié ?',
+                placeholders: {
+                    email: 'chuck@example.com',
+                    password: '••••••••',
+                }
             },
             errors: {
                 authentication: 'Oups ! Erreur d\'authentification',
@@ -219,6 +250,7 @@ export const translations = {
             markAllWatched: 'Tout marquer comme vu',
             episodeWatched: 'Vu',
             markEpisodeWatched: 'Marquer vu',
+            notRated: 'N/A',
         },
         pages: {
             dashboard: {
@@ -307,6 +339,12 @@ export const translations = {
             viewAll: 'View all',
             view: 'View',
             and: 'and',
+            errorTitle: 'Oops! Something went wrong',
+            errorDescription: 'An unexpected error prevents this page from displaying. We apologize for the inconvenience.',
+            errorRetry: 'Try again',
+            errorBackHome: 'Back to home',
+            backToExplorer: 'Back to explorer',
+            userAvatar: 'User avatar',
         },
         navbar: {
             dashboard: 'Dashboard',
@@ -387,6 +425,20 @@ export const translations = {
                 french: 'French',
                 english: 'English',
             },
+            region: {
+                title: 'Theatrical Region',
+                description: 'Choose your country to get local cinema release dates',
+                label: 'Country / Region',
+                save: 'Save region',
+                placeholder: 'Select a country',
+                be: 'Belgium',
+                fr: 'France',
+                us: 'United States',
+                ca: 'Canada',
+                gb: 'United Kingdom',
+                ch: 'Switzerland',
+                lu: 'Luxembourg',
+            },
             theme: {
                 title: 'Appearance',
                 description: 'Customize the appearance of your interface',
@@ -424,7 +476,7 @@ export const translations = {
                 updatePassword: 'Update Password',
             },
             dangerZone: {
-                title: 'Danger Zone',
+                title: 'Account Data',
                 description: 'The following actions cannot be undone',
                 deleteAccount: 'Delete account',
                 deleteAccountDesc: 'Once deleted, you cannot recover your data',
@@ -444,6 +496,13 @@ export const translations = {
                 alreadyHaveAccount: 'Already have an account?',
                 login: 'Login',
                 google: 'Continue with Google',
+                placeholders: {
+                    email: 'chuck@example.com',
+                    password: '••••••••',
+                    username: 'chuck_norris',
+                },
+                region: 'Country / Region',
+                regionDescription: 'This synchronizes cinema releases with your local country.',
             },
             login: {
                 title: 'Login to your account',
@@ -456,6 +515,10 @@ export const translations = {
                 signup: 'Sign up',
                 google: 'Continue with Google',
                 forgotPassword: 'Forgot password?',
+                placeholders: {
+                    email: 'chuck@example.com',
+                    password: '••••••••',
+                }
             },
             errors: {
                 authentication: 'Oops! Authentication error',
@@ -510,6 +573,7 @@ export const translations = {
             markAllWatched: 'Mark all as watched',
             episodeWatched: 'Watched',
             markEpisodeWatched: 'Mark watched',
+            notRated: 'N/A',
         },
         pages: {
             dashboard: {

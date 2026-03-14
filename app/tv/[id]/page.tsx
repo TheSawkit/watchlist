@@ -7,6 +7,7 @@ import { MediaCast } from "@/components/media/MediaCast"
 import { WatchButton } from "@/components/media/WatchButton"
 import { SeasonCard } from "@/components/media/SeasonCard"
 import { ProgressBar } from "@/components/shared/ProgressBar"
+import { SectionHeading } from "@/components/ui/SectionHeading"
 import { getMediaWatchlistEntry } from "@/app/actions/watchlist"
 import { getTvShowWatchProgress } from "@/app/actions/episodes"
 import { getServerLocale, getTranslations } from "@/lib/i18n/server"
@@ -65,7 +66,7 @@ export default async function TvShowPage(props: TvPageProps) {
                 certification={tvDetails.certification}
                 genres={tvDetails.genres}
                 actions={
-                    <div className="flex items-center gap-4 flex-wrap">
+                    <div className="flex flex-row items-center gap-3">
                         <WatchButton
                             mediaId={tvDetails.id}
                             mediaTitle={tvDetails.name}
@@ -74,10 +75,11 @@ export default async function TvShowPage(props: TvPageProps) {
                             status={watchlistEntry?.status === "watched" ? "watched" : "to_watch"}
                             variant="full"
                             initialActive={!!watchlistEntry}
+                            releaseDate={tvDetails.first_air_date}
                         />
 
                         {totalWatched > 0 && (
-                            <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-surface/60 backdrop-blur-md border border-border/20">
+                            <div className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-md bg-surface/30 backdrop-blur-md border border-border/10">
                                 <div className="flex flex-col gap-1">
                                     <span className="text-xs font-medium text-muted">
                                         {totalWatched}/{totalEpisodes} {t.movie.episodes}
@@ -85,8 +87,8 @@ export default async function TvShowPage(props: TvPageProps) {
                                     <ProgressBar
                                         watched={totalWatched}
                                         total={totalEpisodes}
-                                        className="w-32 h-1.5 bg-surface-2 rounded-full"
-                                        innerClassName="bg-gradient-to-r from-red to-gold rounded-full"
+                                        className="w-24 sm:w-32 h-1.5 bg-surface-3 rounded-full"
+                                        innerClassName="bg-linear-to-r from-primary to-gold rounded-full"
                                     />
                                 </div>
                                 <span className="text-sm font-bold text-text">{overallPercent}%</span>
@@ -101,7 +103,7 @@ export default async function TvShowPage(props: TvPageProps) {
 
                 {standardSeasons.length > 0 && (
                     <section className="space-y-6">
-                        <h2 className="text-2xl md:text-3xl font-bold text-text">{t.movie.seasons}</h2>
+                        <SectionHeading>{t.movie.seasons}</SectionHeading>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {standardSeasons.map((season: Season) => {
                                 const seasonWatched = watchProgress.get(season.season_number) ?? 0

@@ -3,6 +3,17 @@
 import { useState, useEffect } from "react"
 import type { MediaItem } from "@/types/tmdb"
 
+/**
+ * Fetches live search suggestions from the internal `/api/search` route,
+ * debounced by 300ms to reduce API calls while typing.
+ * Resets results when the query is shorter than 2 characters.
+ *
+ * @param query - Current search input value.
+ * @returns `{ results, isLoading, isOpen, setIsOpen, setResults }`
+ *
+ * @example
+ * const { results, isLoading, isOpen, setIsOpen } = useSearchSuggestions(query)
+ */
 export function useSearchSuggestions(query: string) {
     const [results, setResults] = useState<MediaItem[]>([])
     const [isLoading, setIsLoading] = useState(false)

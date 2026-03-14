@@ -73,6 +73,15 @@ async function syncTvShowWatchlistStatus(
     }
 }
 
+/**
+ * Toggles the watched state of a single episode for the authenticated user.
+ * Also syncs the parent TV show's watchlist status after the change.
+ *
+ * @param tvId - TMDB TV show ID.
+ * @param seasonNumber - Season number (1-based).
+ * @param episodeNumber - Episode number within the season.
+ * @returns `true` if the episode was marked watched, `false` if unmarked.
+ */
 export async function toggleEpisodeWatch(
     tvId: number,
     seasonNumber: number,
@@ -110,6 +119,15 @@ export async function toggleEpisodeWatch(
     return result
 }
 
+/**
+ * Marks all episodes in a season as watched, or unmarks them all if every episode
+ * is already watched (toggle behavior).
+ * Also syncs the parent TV show's watchlist status after the change.
+ *
+ * @param tvId - TMDB TV show ID.
+ * @param seasonNumber - Season number (1-based).
+ * @param totalEpisodes - Total number of episodes in the season.
+ */
 export async function markSeasonWatched(
     tvId: number,
     seasonNumber: number,
@@ -156,6 +174,14 @@ export async function markSeasonWatched(
     revalidateEpisodePaths(tvId, seasonNumber)
 }
 
+/**
+ * Returns the set of watched episode numbers for a given season.
+ * Returns an empty set for unauthenticated users.
+ *
+ * @param tvId - TMDB TV show ID.
+ * @param seasonNumber - Season number (1-based).
+ * @returns Set of watched episode numbers.
+ */
 export async function getSeasonEpisodeWatches(
     tvId: number,
     seasonNumber: number
@@ -174,6 +200,14 @@ export async function getSeasonEpisodeWatches(
     return new Set((watches ?? []).map(w => w.episode_number))
 }
 
+/**
+ * Returns a map of season number → watched episode count for a TV show.
+ * Used to display progress indicators per season.
+ * Returns an empty map for unauthenticated users.
+ *
+ * @param tvId - TMDB TV show ID.
+ * @returns Map where keys are season numbers and values are watched episode counts.
+ */
 export async function getTvShowWatchProgress(
     tvId: number
 ): Promise<Map<number, number>> {

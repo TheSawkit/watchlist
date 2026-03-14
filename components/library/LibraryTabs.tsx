@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { MediaCard } from "@/components/media/MediaCard"
 import { BookMarked, Eye } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
-import type { WatchlistEntry } from "@/types/components"
+import type { WatchlistEntry } from "@/types/tmdb"
 import { watchlistEntryToMediaItem } from "@/lib/mappers"
 
 interface LibraryTabsProps {
@@ -38,10 +38,10 @@ export function LibraryTabs({ toWatch, watched, tvProgress = {} }: LibraryTabsPr
                         aria-controls={`panel-${tab.id}`}
                         onClick={() => setActiveTab(tab.id)}
                         className={cn(
-                            "flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-200",
-                            "border-b-2 -mb-px",
+                            "flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-(--duration-fast) cursor-pointer",
+                            "border-b-2 -mb-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded-sm",
                             activeTab === tab.id
-                                ? "border-red text-text"
+                                ? "border-primary text-text"
                                 : "border-transparent text-muted hover:text-text hover:border-border"
                         )}
                     >
@@ -51,7 +51,7 @@ export function LibraryTabs({ toWatch, watched, tvProgress = {} }: LibraryTabsPr
                             className={cn(
                                 "ml-1 px-1.5 py-0.5 rounded-full text-xs",
                                 activeTab === tab.id
-                                    ? "bg-red/20 text-red"
+                                    ? "bg-primary/20 text-primary"
                                     : "bg-surface-2 text-muted"
                             )}
                         >
@@ -66,7 +66,7 @@ export function LibraryTabs({ toWatch, watched, tvProgress = {} }: LibraryTabsPr
                     role="tabpanel"
                     id={`panel-${activeTab}`}
                     className="flex flex-col items-center justify-center py-24 text-muted"
-                    style={{ animation: "fadeIn 0.4s ease-out forwards" }}
+                    style={{ animation: "fadeIn var(--duration-medium) ease-out forwards" }}
                 >
                     <current.icon className="h-12 w-12 mb-4 opacity-30" />
                     <p className="text-lg font-medium">
@@ -78,8 +78,8 @@ export function LibraryTabs({ toWatch, watched, tvProgress = {} }: LibraryTabsPr
                     key={activeTab}
                     role="tabpanel"
                     id={`panel-${activeTab}`}
-                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
-                    style={{ animation: "scaleIn 0.3s ease-out forwards", opacity: 0 }}
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6"
+                    style={{ animation: "scaleIn var(--duration-base) ease-out forwards", opacity: 0 }}
                 >
                     {current.items.map((entry) => {
                         const mediaItem = watchlistEntryToMediaItem(entry)

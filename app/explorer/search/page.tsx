@@ -22,7 +22,7 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
             <div
                 className="mb-10"
                 style={{
-                    animation: "slideUp 0.6s ease-out forwards",
+                    animation: "slideUp var(--duration-slower) ease-out forwards",
                     opacity: 0,
                 }}
             >

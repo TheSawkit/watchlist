@@ -1,4 +1,5 @@
 import FeatureCard from "./FeatureCard";
+import { StaggeredItem } from "@/components/ui/StaggeredItem";
 import { getTranslations } from "@/lib/i18n/server";
 
 export default async function FeaturesSection() {
@@ -18,26 +19,25 @@ export default async function FeaturesSection() {
             <div className="mx-auto max-w-6xl">
                 <h2
                     className="mb-12 text-center font-display text-5xl font-normal text-text md:text-6xl"
-                    style={{ animation: "slideUp 0.6s ease-out forwards", opacity: 0 }}
+                    style={{ animation: "slideUp var(--duration-slower) ease-out forwards", opacity: 0 }}
                 >
                     {t.home.features.title}
                 </h2>
                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                     {features.map((feature, index) => (
-                        <div
+                        <StaggeredItem
                             key={index}
-                            style={{
-                                animation: `fadeIn 0.6s ease-out forwards`,
-                                animationDelay: `${index * 100}ms`,
-                                opacity: 0,
-                            }}
+                            index={index}
+                            staggerMs={100}
+                            animation="fadeIn"
+                            duration="var(--duration-slower)"
                         >
                             <FeatureCard
                                 icon={feature.icon}
                                 title={feature.title}
                                 description={feature.description}
                             />
-                        </div>
+                        </StaggeredItem>
                     ))}
                 </div>
             </div>

@@ -13,7 +13,7 @@ export function ProgressBar({ watched, total, className, innerClassName }: Progr
     return (
         <div className={cn("overflow-hidden", className)}>
             <div
-                className={cn("h-full bg-red transition-all duration-500 ease-out", innerClassName)}
+                className={cn("h-full bg-red transition-all duration-(--duration-slow) ease-out", innerClassName)}
                 style={{ width: `${percentage}%` }}
             />
         </div>

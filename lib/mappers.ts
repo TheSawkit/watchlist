@@ -1,6 +1,12 @@
-import type { MediaItem, ActorMovieCredit, ActorTvCredit } from "@/types/tmdb"
-import type { WatchlistEntry } from "@/types/components"
+import type { MediaItem, ActorMovieCredit, ActorTvCredit, WatchlistEntry } from "@/types/tmdb"
 
+/**
+ * Converts a watchlist entry into a minimal `MediaItem` for display in media card grids.
+ * Fields not stored in the watchlist (overview, vote_average, etc.) default to empty values.
+ *
+ * @param entry - Watchlist entry from the database.
+ * @returns Normalized `MediaItem` usable by `MediaCard` and related components.
+ */
 export function watchlistEntryToMediaItem(entry: WatchlistEntry): MediaItem {
     return {
         id: entry.media_id,
@@ -17,6 +23,12 @@ export function watchlistEntryToMediaItem(entry: WatchlistEntry): MediaItem {
     }
 }
 
+/**
+ * Converts an actor's movie credit into a `MediaItem`.
+ *
+ * @param credit - Movie credit from the TMDB actor credits endpoint.
+ * @returns Normalized `MediaItem` with `media_type: "movie"`.
+ */
 export function movieCreditToMediaItem(credit: ActorMovieCredit): MediaItem {
     return {
         id: credit.id,
@@ -33,6 +45,12 @@ export function movieCreditToMediaItem(credit: ActorMovieCredit): MediaItem {
     }
 }
 
+/**
+ * Converts an actor's TV show credit into a `MediaItem`.
+ *
+ * @param credit - TV credit from the TMDB actor credits endpoint.
+ * @returns Normalized `MediaItem` with `media_type: "tv"`.
+ */
 export function tvCreditToMediaItem(credit: ActorTvCredit): MediaItem {
     return {
         id: credit.id,

@@ -56,7 +56,7 @@ export default async function MoviePage(props: MoviePageProps) {
         certification={movieDetails.certification}
         genres={movieDetails.genres}
         actions={
-          <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex flex-row items-center gap-3">
             {!isWatched && (
               <WatchButton
                 mediaId={movieDetails.id}
@@ -77,9 +77,10 @@ export default async function MoviePage(props: MoviePageProps) {
               variant="full"
               initialActive={isWatched}
               fallbackStatus="to_watch"
+              releaseDate={movieDetails.release_date}
             />
             {isWatched && watchlistEntry?.created_at && (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-surface-2/50 border border-border/10 text-muted animate-in fade-in slide-in-from-left-4 duration-500">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-surface-2 border border-border text-muted animate-in fade-in slide-in-from-left-4 duration-(--duration-slow)">
                 <Eye className="h-4 w-4" />
                 <span className="text-sm font-medium">
                   {t.movie.watchedOn} {formatDate(watchlistEntry.created_at, locale)}

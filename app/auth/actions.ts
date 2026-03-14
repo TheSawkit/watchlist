@@ -32,9 +32,15 @@ export async function signup(prevState: unknown, formData: FormData) {
   const password = formData.get('password') as string
   const confirmPassword = formData.get('confirm-password') as string
   const username = formData.get('username') as string
+  const region = formData.get('region') as string
+  const language = (formData.get('language') as string) || 'en'
 
   if (password !== confirmPassword) {
     return { error: t.settings.password.noMatch }
+  }
+
+  if (!region) {
+    return { error: t.settings.missingFields }
   }
 
   const { error } = await supabase.auth.signUp({
@@ -43,6 +49,9 @@ export async function signup(prevState: unknown, formData: FormData) {
     options: {
       data: {
         full_name: username,
+        username: username,
+        region: region.toUpperCase(),
+        language: ['fr', 'en'].includes(language) ? language : 'en',
       },
     },
   })

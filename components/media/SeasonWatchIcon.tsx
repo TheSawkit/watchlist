@@ -12,6 +12,7 @@ interface SeasonWatchIconProps {
     seasonNumber: number
     totalEpisodes: number
     watchedCount: number
+    releaseDate?: string
 }
 
 export function SeasonWatchIcon({
@@ -19,12 +20,18 @@ export function SeasonWatchIcon({
     seasonNumber,
     totalEpisodes,
     watchedCount,
+    releaseDate,
 }: SeasonWatchIconProps) {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const { t } = useTranslation()
 
+    const isUnreleased = releaseDate ? new Date(releaseDate) > new Date() : false
     const allWatched = watchedCount === totalEpisodes && totalEpisodes > 0
+
+    if (isUnreleased && !allWatched) {
+        return null
+    }
 
     async function handleClick(e: React.MouseEvent) {
         e.preventDefault()
@@ -46,9 +53,9 @@ export function SeasonWatchIcon({
             title={allWatched ? t.movie.markUnwatched : t.movie.markSeasonWatched}
             className={cn(
                 "h-8 w-8 rounded-full backdrop-blur-md border",
-                "flex items-center justify-center transition-all duration-300 cursor-pointer",
+                "flex items-center justify-center transition-all duration-(--duration-base) cursor-pointer",
                 allWatched
-                    ? "bg-green-500/30 text-green-400 border-green-500/30 hover:bg-red/30 hover:text-red hover:border-red/30"
+                    ? "bg-success/30 text-success border-success/30 hover:bg-red/30 hover:text-red hover:border-red/30"
                     : "bg-surface/40 text-text border-border/10 hover:bg-red/30 hover:text-red hover:border-red/30"
             )}
         >
