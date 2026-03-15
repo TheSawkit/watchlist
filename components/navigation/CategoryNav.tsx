@@ -31,15 +31,15 @@ export function CategoryNav() {
     return (
         <div className="relative mb-8">
             <div className="absolute right-0 top-0 bottom-2 w-12 bg-linear-to-l from-background to-transparent pointer-events-none z-10 md:hidden" />
-        <div className="flex overflow-x-scroll overflow-y-visible pb-2 gap-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+        <div className="flex overflow-x-scroll overflow-y-visible pb-2 gap-3 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
             <Link
                 href={`/explorer?type=${activeDomain}`}
                 aria-current={pathname === "/explorer" ? "page" : undefined}
                 className={cn(
-                    "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors",
+                    "px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-[var(--duration-fast)] ease-[var(--ease-apple)]",
                     pathname === "/explorer"
-                        ? "bg-primary text-text shadow-cinema"
-                        : "bg-surface-2 text-muted hover:text-text hover:bg-surface-3"
+                        ? "bg-primary text-white shadow-cinema ring-2 ring-primary/40"
+                        : "bg-glass-bg text-muted hover:text-text hover:bg-glass-bg-hover"
                 )}
             >
                 {t.explorer.overview}
@@ -50,10 +50,10 @@ export function CategoryNav() {
                     href={category.href}
                     aria-current={pathname === category.href ? "page" : undefined}
                     className={cn(
-                        "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors",
+                        "px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-[var(--duration-fast)] ease-[var(--ease-apple)]",
                         pathname === category.href
-                            ? "bg-primary text-text shadow-cinema"
-                            : "bg-surface-2 text-muted hover:text-text hover:bg-surface-3"
+                            ? "bg-primary text-white shadow-cinema ring-2 ring-primary/40"
+                            : "bg-glass-bg text-muted hover:text-text hover:bg-glass-bg-hover"
                     )}
                 >
                     {category.name}

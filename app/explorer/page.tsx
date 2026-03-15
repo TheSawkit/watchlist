@@ -1,4 +1,5 @@
 import { Suspense } from "react"
+import type { Metadata } from "next"
 import { requireAuth } from "@/lib/auth"
 import {
   getPopularMovies, getTopRatedMovies, getTrendingMovies, getUpcomingMovies,
@@ -13,6 +14,25 @@ import { PageLayout, PageHeader } from "@/components/ui/PageLayout"
 import { getTranslations } from "@/lib/i18n/server"
 import { MediaTypeSwitcher } from "@/components/media/MediaTypeSwitcher"
 import type { Movie, TvShow } from "@/types/tmdb"
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations()
+
+  return {
+    title: t.metadata.explorerTitle,
+    description: t.metadata.explorerDescription,
+    openGraph: {
+      title: t.metadata.explorerTitle,
+      description: t.metadata.explorerDescription,
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: t.metadata.explorerTitle,
+      description: t.metadata.explorerDescription,
+    },
+  }
+}
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>

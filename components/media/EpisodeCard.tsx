@@ -22,6 +22,19 @@ interface EpisodeCardProps {
     }
 }
 
+/**
+ * Card displaying a TV episode with still image, metadata, and watch button.
+ * Allows expanding description text in a modal overlay. Shows watched status visually.
+ *
+ * @param props - EpisodeCardProps configuration
+ * @param props.tvId - TV show ID for action handlers
+ * @param props.seasonNumber - Season number containing this episode
+ * @param props.episode - Episode details (name, overview, rating, dates, etc.)
+ * @param props.isWatched - Whether the episode has been marked as watched
+ * @param props.locale - Locale string for date formatting
+ * @param props.labels - Optional custom text labels for fallback messages
+ * @returns Card with episode details and expandable description modal
+ */
 export function EpisodeCard({
     tvId,
     seasonNumber,
@@ -119,18 +132,21 @@ export function EpisodeCard({
             {isExpanded && (
                 <div
                     onClick={() => setIsExpanded(false)}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby={`episode-title-${episode.episode_number}`}
                     className="absolute inset-0 z-30 bg-surface/40 backdrop-blur-3xl border border-border/10 border-t-border/20 flex flex-col p-6 animate-in fade-in duration-(--duration-base) cursor-pointer"
                 >
                     <div className="flex justify-between items-start mb-4 gap-4">
-                        <h3 className="text-lg font-bold text-text-main leading-tight">{episode.name}</h3>
+                        <h3 id={`episode-title-${episode.episode_number}`} className="text-lg font-bold text-text-main leading-tight">{episode.name}</h3>
                         <button
                             onClick={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation()
                                 setIsExpanded(false)
                             }}
+                            aria-label={t.common.close}
                             className="h-8 w-8 flex items-center justify-center shrink-0 rounded-full bg-border-subtle hover:bg-border text-muted hover:text-text-main transition-colors cursor-pointer"
-                            aria-label="Fermer"
                         >
                             ✕
                         </button>

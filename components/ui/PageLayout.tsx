@@ -13,7 +13,7 @@ interface PageLayoutProps {
  */
 export function PageLayout({ children, className }: PageLayoutProps) {
   return (
-    <div className={cn("container mx-auto py-12 px-6 lg:px-12", className)}>
+    <div className={cn("container mx-auto py-12 md:py-16 lg:py-20 px-6 lg:px-12", className)}>
       {children}
     </div>
   )
@@ -34,11 +34,11 @@ interface PageHeaderProps {
 export function PageHeader({ title, subtitle }: PageHeaderProps) {
   return (
     <div
-      className="mb-10"
-      style={{ animation: "slideUp var(--duration-slower) ease-out forwards", opacity: 0 }}
+      className="mb-12 md:mb-16"
+      style={{ animation: "slideUp var(--duration-slower) var(--ease-apple) forwards", opacity: 0 }}
     >
-      <h1 className="text-3xl font-bold mb-2 text-text-main">{title}</h1>
-      {subtitle && <p className="text-muted">{subtitle}</p>}
+      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 text-text-main tracking-tight">{title}</h1>
+      {subtitle && <p className="text-muted text-lg">{subtitle}</p>}
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 import { getImageUrl, getTvShowDetails, getTvShowCredits, getTvShowVideos, getTvShowImages, selectHeroImage } from "@/lib/tmdb"
 import { MediaBanner } from "@/components/media/MediaBanner"
 import { MediaTrailers } from "@/components/media/MediaTrailers"
@@ -13,6 +14,62 @@ import { getTvShowWatchProgress } from "@/app/actions/episodes"
 import { getServerLocale, getTranslations } from "@/lib/i18n/server"
 import type { TvPageProps } from "@/types/pages"
 import type { Season } from "@/types/tmdb"
+
+/**
+ * Generates metadata for TV show detail page for SEO and social sharing.
+ * Fetches TV show data and constructs OpenGraph and Twitter card information.
+ *
+ * @param props - Route parameters
+ * @param props.params - Promise resolving to { id: string } TV show ID
+ * @returns Metadata object with title, description, OpenGraph, and Twitter card data
+ */
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const tvId = parseInt(id)
+  const t = await getTranslations()
+
+  if (isNaN(tvId)) {
+    return {
+      title: "ReelMark",
+      description: t.metadata.defaultTvDescription,
+    }
+  }
+
+  try {
+    const tvDetails = await getTvShowDetails(tvId)
+    const posterImage = tvDetails.poster_path
+      ? `https://image.tmdb.org/t/p/w500${tvDetails.poster_path}`
+      : undefined
+    const backdropImage = tvDetails.backdrop_path
+      ? `https://image.tmdb.org/t/p/w1280${tvDetails.backdrop_path}`
+      : undefined
+
+    const images = backdropImage ? [{ url: backdropImage, width: 1280, height: 720 }] : []
+    const watchDescription = tvDetails.overview || t.metadata.watchShowOn.replace("${title}", tvDetails.name)
+
+    return {
+      title: `${tvDetails.name} - ReelMark`,
+      description: watchDescription,
+      openGraph: {
+        title: `${tvDetails.name} - ReelMark`,
+        description: watchDescription,
+        type: "video.tv_show",
+        images: images.length > 0 ? images : undefined,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${tvDetails.name} - ReelMark`,
+        description: watchDescription,
+        images: images.length > 0 ? [images[0].url] : undefined,
+      },
+    }
+  } catch {
+    return {
+      title: "ReelMark",
+      description: t.metadata.defaultTvDescription,
+    }
+  }
+}
 
 export default async function TvShowPage(props: TvPageProps) {
     const params = await props.params
@@ -54,7 +111,7 @@ export default async function TvShowPage(props: TvPageProps) {
     const overallPercent = totalEpisodes > 0 ? Math.round((totalWatched / totalEpisodes) * 100) : 0
 
     return (
-        <div className="min-h-screen">
+        <main className="min-h-screen">
             <MediaBanner
                 title={tvDetails.name}
                 tagline={tvDetails.tagline}
@@ -98,7 +155,7 @@ export default async function TvShowPage(props: TvPageProps) {
                 }
             />
 
-            <div className="container mx-auto px-6 lg:px-12 py-8 space-y-12">
+            <div className="container mx-auto px-6 lg:px-12 py-12 md:py-16 space-y-14 md:space-y-16">
                 <MediaDescription description={tvDetails.overview} />
 
                 {standardSeasons.length > 0 && (
@@ -130,6 +187,6 @@ export default async function TvShowPage(props: TvPageProps) {
 
                 <MediaCast cast={credits.cast} />
             </div>
-        </div>
+        </main>
     )
 }

@@ -1,8 +1,28 @@
+import type { Metadata } from "next"
 import { SignupForm } from "@/components/auth/SignupForm"
 import CinemaSpotlight from "@/components/ui/cinema-spotlight"
-
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
+import { getTranslations } from "@/lib/i18n/server"
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations()
+
+  return {
+    title: t.metadata.signupTitle,
+    description: t.metadata.signupDescription,
+    openGraph: {
+      title: t.metadata.signupTitle,
+      description: t.metadata.signupDescription,
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: t.metadata.signupTitle,
+      description: t.metadata.signupDescription,
+    },
+  }
+}
 
 export default async function SignupPage() {
   const supabase = await createClient()

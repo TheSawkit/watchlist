@@ -89,6 +89,9 @@ export function WatchButton({
     return (
         <button
             onClick={handleClick}
+            aria-label={
+                status === "watched" ? t.movie.markAsWatched : t.movie.addToList
+            }
             title={
                 status === "watched" ? t.movie.markAsWatched : t.movie.addToList
             }

@@ -2,6 +2,7 @@ import { searchMulti } from "@/lib/tmdb"
 import { MediaGrid } from "@/components/media/MediaGrid"
 import { SearchBar } from "@/components/search/SearchBar"
 import { getTranslations } from "@/lib/i18n/server"
+import { Search as SearchIcon } from "lucide-react"
 
 interface SearchPageProps {
     searchParams: Promise<{ q?: string; query?: string }>
@@ -39,8 +40,12 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
                     <MediaGrid items={results} />
                 </div>
             ) : (
-                <div className="mt-20 text-center">
-                    <p className="text-xl text-muted italic">{t.pages.search.noResultsMessage}</p>
+                <div className="mt-24 flex flex-col items-center justify-center py-16 px-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-muted/10 mb-6">
+                        <SearchIcon className="w-12 h-12 text-muted/50" />
+                    </div>
+                    <h2 className="text-2xl font-semibold text-text mb-2">{t.pages.search.noResults}</h2>
+                    <p className="text-lg text-muted max-w-md">{t.pages.search.noResultsMessage}</p>
                 </div>
             )}
         </div>

@@ -17,6 +17,16 @@ import { UserAvatar } from "@/components/shared/UserAvatar";
 import Title from "@/components/layout/Title";
 import { getTranslations } from "@/lib/i18n/server";
 
+/**
+ * App navigation header with logo, links, and user menu.
+ * Displays authenticated user avatar with dropdown menu, or login/signup buttons.
+ * Responsive layout: mobile menu on small screens, horizontal links on desktop.
+ *
+ * @returns Navigation header with authentication-aware UI
+ * @example
+ * // Used as main app navbar in layout
+ * <Navbar />
+ */
 export default async function Navbar() {
     const supabase = await createClient();
     const {
@@ -26,9 +36,10 @@ export default async function Navbar() {
     const t = await getTranslations();
 
     return (
-        <nav className="sticky top-0 z-50 border-b border-border-subtle bg-surface/20 backdrop-blur-2xl shadow-navbar">
-            <div className="mx-auto max-w-7xl px-6 lg:px-12">
-                <div className="grid grid-cols-3 h-16 items-center">
+        <header>
+            <nav className="sticky top-0 z-50 border-b border-border-subtle bg-surface/30 backdrop-blur-3xl backdrop-saturate-150 shadow-navbar">
+                <div className="mx-auto max-w-7xl px-6 lg:px-12">
+                    <div className="grid grid-cols-3 h-16 items-center">
                     {user ? (
                         <div className="flex items-center md:hidden justify-start col-start-1">
                             <NavbarMobile
@@ -119,6 +130,7 @@ export default async function Navbar() {
                     </div>
                 </div>
             </div>
-        </nav>
+            </nav>
+        </header>
     );
 }

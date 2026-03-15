@@ -80,7 +80,7 @@ function TabButton({ active, onClick, icon, label }: {
         <Button
             variant={active ? "default" : "outline"}
             className={`gap-2 cursor-pointer ${active
-                ? "bg-primary hover:bg-primary-hover text-text border-none"
+                ? "bg-primary hover:bg-primary-hover text-white border-none"
                 : "bg-surface-2 text-muted hover:text-text hover:bg-surface border-border/20"
                 }`}
             onClick={onClick}

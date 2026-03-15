@@ -16,7 +16,7 @@ interface SectionHeadingProps {
  */
 export function SectionHeading({ children, className }: SectionHeadingProps) {
   return (
-    <h2 className={cn("text-xl font-bold text-text-main flex items-center gap-2", className)}>
+    <h2 className={cn("text-xl font-bold text-text-main flex items-center gap-3 tracking-tight", className)}>
       <div className="w-1 h-6 bg-primary rounded-full shrink-0" aria-hidden="true" />
       {children}
     </h2>

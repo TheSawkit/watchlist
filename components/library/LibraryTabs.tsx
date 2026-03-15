@@ -38,7 +38,7 @@ export function LibraryTabs({ toWatch, watched, tvProgress = {} }: LibraryTabsPr
                         aria-controls={`panel-${tab.id}`}
                         onClick={() => setActiveTab(tab.id)}
                         className={cn(
-                            "flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-(--duration-fast) cursor-pointer",
+                            "flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-[var(--duration-fast)] ease-[var(--ease-apple)] cursor-pointer",
                             "border-b-2 -mb-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded-sm",
                             activeTab === tab.id
                                 ? "border-primary text-text"
@@ -65,12 +65,19 @@ export function LibraryTabs({ toWatch, watched, tvProgress = {} }: LibraryTabsPr
                 <div
                     role="tabpanel"
                     id={`panel-${activeTab}`}
-                    className="flex flex-col items-center justify-center py-24 text-muted"
+                    className="flex flex-col items-center justify-center py-32 animate-in fade-in slide-in-from-bottom-4 duration-500"
                     style={{ animation: "fadeIn var(--duration-medium) ease-out forwards" }}
                 >
-                    <current.icon className="h-12 w-12 mb-4 opacity-30" />
-                    <p className="text-lg font-medium">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted/10 mb-6">
+                        <current.icon className="h-10 w-10 text-muted/50" />
+                    </div>
+                    <p className="text-xl font-semibold text-text mb-2">
                         {activeTab === "to_watch" ? t.library.noMovies : t.library.noWatched}
+                    </p>
+                    <p className="text-muted max-w-sm text-center">
+                        {activeTab === "to_watch"
+                            ? "Browse and add movies to your watchlist"
+                            : "Titles you watch will appear here"}
                     </p>
                 </div>
             ) : (

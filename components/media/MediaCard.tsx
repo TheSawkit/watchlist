@@ -18,6 +18,19 @@ interface Props extends MediaCardProps {
     tvProgress?: { watched: number; total: number }
 }
 
+/**
+ * Clickable media card showing poster with hover overlays and metadata.
+ * Displays rating, description/date info, and interactive WatchButton.
+ * Shows progress bar for TV shows and watch status indicators.
+ *
+ * @param props - Props configuration
+ * @param props.media - Media item details (title, poster, rating, etc.)
+ * @param props.className - Additional CSS classes for styling
+ * @param props.watchlistEntry - Optional watchlist data for the media item
+ * @param props.hideRating - If true, hides the rating badge on card
+ * @param props.tvProgress - Optional TV show progress { watched episodes, total episodes }
+ * @returns Linked card component with media poster and overlay controls
+ */
 export function MediaCard({ media, className, watchlistEntry, hideRating, tvProgress }: Props) {
     const { t, lang } = useTranslation()
     const locale = getLocale(lang)
@@ -29,7 +42,9 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
         <Link
             href={href}
             className={cn(
-                "group relative overflow-hidden rounded-poster bg-surface border border-card-border transition-all duration-(--duration-base) block focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 hover:border-gold/50 hover:shadow-glow-gold-sm hover:bg-primary/10",
+                "group relative overflow-hidden rounded-poster bg-surface border border-card-border block focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12",
+                "transition-all duration-(--duration-medium) ease-[var(--ease-apple)]",
+                "hover:scale-[1.03] hover:border-gold/40 hover:shadow-poster hover:z-10",
                 className
             )}
         >

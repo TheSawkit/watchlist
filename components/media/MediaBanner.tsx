@@ -10,6 +10,23 @@ import { getLocale } from "@/lib/i18n/utils"
 import { formatDate, formatRuntime } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
+/**
+ * Large hero banner component displaying media details with parallax backdrop effect.
+ * Shows title, poster, metadata badges, and action buttons in a sticky header on scroll.
+ *
+ * @param props - MediaBannerProps configuration
+ * @param props.title - Media title
+ * @param props.tagline - Optional tagline or motto
+ * @param props.backdropUrl - Full backdrop image URL for parallax background
+ * @param props.posterPath - Poster image path
+ * @param props.voteAverage - IMDb-style rating score
+ * @param props.releaseDate - Release/air date
+ * @param props.runtime - Duration in minutes for movies or minutes per episode for TV
+ * @param props.certification - Content rating (PG, R, etc.)
+ * @param props.genres - Array of genre objects with id and name
+ * @param props.actions - Optional React nodes for action buttons (WatchButton, etc.)
+ * @returns Hero banner with scroll-aware sticky header
+ */
 export function MediaBanner({
     title,
     tagline,
@@ -59,11 +76,12 @@ export function MediaBanner({
                 "fixed top-16 inset-x-0 z-40 transition-all duration-(--duration-base) ease-in-out",
                 scrolled ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
             )}>
-                <div className="bg-surface/20 backdrop-blur-2xl border-b border-border/10 shadow-card">
+                <div className="bg-surface/30 backdrop-blur-3xl backdrop-saturate-150 border-b border-border/10 shadow-card">
                     <div className="container mx-auto px-4 h-16 sm:h-20 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-4 flex-1 min-w-0">
                             <button
                                 onClick={() => window.history.back()}
+                                aria-label={t.common.goBack}
                                 className="h-10 w-10 shrink-0 flex items-center justify-center rounded-full bg-surface/10 hover:bg-surface/20 text-text transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
                             >
                                 <ArrowLeft className="h-5 w-5" />
@@ -127,6 +145,7 @@ export function MediaBanner({
                     <div className="w-full justify-start mb-6 md:mb-8 z-20 hidden md:flex">
                         <button
                             onClick={() => window.history.back()}
+                            aria-label={t.common.goBack}
                             className="h-10 w-10 flex items-center justify-center rounded-full bg-surface/20 backdrop-blur-2xl border border-border/10 border-t-border/20 hover:bg-surface-2/20 shrink-0 text-text transition-colors cursor-pointer shadow-card-xs focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
                         >
                             <ArrowLeft className="h-5 w-5" />
@@ -184,11 +203,11 @@ export function MediaBanner({
                             </div>
 
                             {genres && genres.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mb-6">
+                                <div className="flex flex-wrap gap-2.5 mb-6">
                                     {genres.map((genre) => (
                                         <span
                                             key={genre.id}
-                                            className="bg-primary/20 text-primary px-3 py-1.5 rounded-full text-sm font-medium border border-primary/30 backdrop-blur-sm"
+                                            className="bg-glass-bg-hover text-text px-3.5 py-1.5 rounded-full text-sm font-medium border border-glass-border-hover backdrop-blur-xl"
                                         >
                                             {genre.name}
                                         </span>
@@ -217,7 +236,7 @@ function HeroBadge({
     icon?: React.ReactNode
 }) {
     return (
-        <div className="flex items-center gap-2 bg-surface/20 backdrop-blur-2xl px-3 py-1.5 rounded-full border border-border/10 border-t-border/20 shadow-card">
+        <div className="flex items-center gap-2 bg-glass-bg-hover backdrop-blur-2xl backdrop-saturate-150 px-4 py-2 rounded-full border border-glass-border-hover shadow-card-sm">
             {icon}
             {children}
         </div>

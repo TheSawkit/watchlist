@@ -50,6 +50,7 @@ export function SeasonWatchIcon({
     return (
         <button
             onClick={handleClick}
+            aria-label={allWatched ? t.movie.markUnwatched : t.movie.markSeasonWatched}
             title={allWatched ? t.movie.markUnwatched : t.movie.markSeasonWatched}
             className={cn(
                 "h-8 w-8 rounded-full backdrop-blur-md border",

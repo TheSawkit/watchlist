@@ -22,8 +22,8 @@ export function SearchDropdown({ query, results, isOpen, isLoading, onClose }: S
 
     if (query.length >= 2 && !isLoading && results.length === 0) {
         return (
-            <div className="absolute top-full mt-2 w-full bg-surface/80 backdrop-blur-xl border border-border rounded-(--radius-xl) p-8 text-center shadow-card z-50 animate-in fade-in slide-in-from-top-2 duration-(--duration-fast)">
-                <p className="text-muted italic text-lg">{t.pages.search.noResults} &quot;{query}&quot;</p>
+            <div className="absolute top-full mt-2 w-full bg-glass-bg backdrop-blur-xl border border-glass-border rounded-(--radius-xl) p-8 text-center shadow-card z-50 animate-in fade-in slide-in-from-top-2 duration-[var(--duration-fast)] ease-[var(--ease-apple)]">
+                <p className="text-muted text-base">{t.pages.search.noResults} &quot;{query}&quot;</p>
             </div>
         )
     }
@@ -32,14 +32,14 @@ export function SearchDropdown({ query, results, isOpen, isLoading, onClose }: S
 
     return (
         <div
-            className="absolute top-full mt-2 w-full bg-surface/80 backdrop-blur-xl border border-border rounded-(--radius-xl) shadow-search-dropdown overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-(--duration-fast)"
+            className="absolute top-full mt-2 w-full bg-glass-bg backdrop-blur-xl border border-glass-border rounded-(--radius-xl) shadow-search-dropdown overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-[var(--duration-fast)] ease-[var(--ease-apple)]"
         >
             <div className="p-2">
                 {results.map((item) => (
                     <Link
                         key={item.id}
                         href={item.media_type === "tv" ? `/tv/${item.id}` : `/movie/${item.id}`}
-                        className="flex items-center gap-4 p-2 hover:bg-surface-2 rounded-xl transition-all group relative overflow-hidden"
+                        className="flex items-center gap-4 p-2 hover:bg-glass-bg-hover rounded-xl transition-all duration-[var(--duration-fast)] ease-[var(--ease-apple)] group relative overflow-hidden"
                         onClick={onClose}
                     >
                         <div className="relative w-12 h-18 shrink-0 rounded-lg overflow-hidden shadow-card-xs">
@@ -54,7 +54,7 @@ export function SearchDropdown({ query, results, isOpen, isLoading, onClose }: S
                             </div>
                         </div>
                         <div className="flex flex-col min-w-0">
-                            <span className="font-semibold text-text truncate group-hover:text-red transition-colors duration-(--duration-fast)">
+                            <span className="font-semibold text-text truncate group-hover:text-red transition-colors duration-[var(--duration-fast)] ease-[var(--ease-apple)]">
                                 {item.title}
                             </span>
                             <span className="text-sm text-muted">
