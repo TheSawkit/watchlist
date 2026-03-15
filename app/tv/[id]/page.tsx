@@ -24,51 +24,48 @@ import type { Season } from "@/types/tmdb"
  * @returns Metadata object with title, description, OpenGraph, and Twitter card data
  */
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  const { id } = await params
-  const tvId = parseInt(id)
-  const t = await getTranslations()
+    const { id } = await params
+    const tvId = parseInt(id)
+    const t = await getTranslations()
 
-  if (isNaN(tvId)) {
-    return {
-      title: "ReelMark",
-      description: t.metadata.defaultTvDescription,
+    if (isNaN(tvId)) {
+        return {
+            title: "ReelMark",
+            description: t.metadata.defaultTvDescription,
+        }
     }
-  }
 
-  try {
-    const tvDetails = await getTvShowDetails(tvId)
-    const posterImage = tvDetails.poster_path
-      ? `https://image.tmdb.org/t/p/w500${tvDetails.poster_path}`
-      : undefined
-    const backdropImage = tvDetails.backdrop_path
-      ? `https://image.tmdb.org/t/p/w1280${tvDetails.backdrop_path}`
-      : undefined
+    try {
+        const tvDetails = await getTvShowDetails(tvId)
+        const backdropImage = tvDetails.backdrop_path
+            ? `https://image.tmdb.org/t/p/w1280${tvDetails.backdrop_path}`
+            : undefined
 
-    const images = backdropImage ? [{ url: backdropImage, width: 1280, height: 720 }] : []
-    const watchDescription = tvDetails.overview || t.metadata.watchShowOn.replace("${title}", tvDetails.name)
+        const images = backdropImage ? [{ url: backdropImage, width: 1280, height: 720 }] : []
+        const watchDescription = tvDetails.overview || t.metadata.watchShowOn.replace("${title}", tvDetails.name)
 
-    return {
-      title: `${tvDetails.name} - ReelMark`,
-      description: watchDescription,
-      openGraph: {
-        title: `${tvDetails.name} - ReelMark`,
-        description: watchDescription,
-        type: "video.tv_show",
-        images: images.length > 0 ? images : undefined,
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${tvDetails.name} - ReelMark`,
-        description: watchDescription,
-        images: images.length > 0 ? [images[0].url] : undefined,
-      },
+        return {
+            title: `${tvDetails.name} - ReelMark`,
+            description: watchDescription,
+            openGraph: {
+                title: `${tvDetails.name} - ReelMark`,
+                description: watchDescription,
+                type: "video.tv_show",
+                images: images.length > 0 ? images : undefined,
+            },
+            twitter: {
+                card: "summary_large_image",
+                title: `${tvDetails.name} - ReelMark`,
+                description: watchDescription,
+                images: images.length > 0 ? [images[0].url] : undefined,
+            },
+        }
+    } catch {
+        return {
+            title: "ReelMark",
+            description: t.metadata.defaultTvDescription,
+        }
     }
-  } catch {
-    return {
-      title: "ReelMark",
-      description: t.metadata.defaultTvDescription,
-    }
-  }
 }
 
 export default async function TvShowPage(props: TvPageProps) {

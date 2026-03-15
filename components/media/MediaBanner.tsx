@@ -126,8 +126,7 @@ export function MediaBanner({
 
             <div className="relative w-full -mt-16 min-h-[70vh] md:min-h-[80vh] flex flex-col justify-end pt-32 pb-12 overflow-hidden">
                 <div
-                    className="absolute inset-x-0 -top-[10%] h-[120%] -z-10 will-change-transform"
-                    style={{ transform: `translateY(${scrollY * 0.3}px)` }}
+                    className="absolute inset-x-0 -top-[10%] h-full -z-10"
                 >
                     <Image
                         src={backdropUrl}
@@ -137,7 +136,7 @@ export function MediaBanner({
                         priority
                         sizes="100vw"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-app-bg via-app-bg/80 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-app-bg via-app-bg/40 to-transparent" />
                     <div className="absolute inset-0 bg-linear-to-r from-app-bg via-app-bg/40 to-transparent" />
                 </div>
 
@@ -175,7 +174,7 @@ export function MediaBanner({
                             )}
 
                             <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-4">
-                                <HeroBadge icon={<Star className="h-5 w-5 fill-gold text-gold" />}>
+                                <HeroBadge icon={<Star className="h-5 w-5 fill-rating-gold text-rating-gold" />}>
                                     <span className="font-semibold text-text">
                                         {voteAverage && voteAverage > 0 ? voteAverage.toFixed(1) : t.movie.notRated}
                                     </span>

@@ -12,7 +12,8 @@
   --color-text:             var(--text);
   --color-muted:            var(--muted);
 
-  --color-gold:             #F5C518;
+  --color-gold:             var(--gold);
+  --color-gold-bright:      #F5C518;
   --color-success:          #4ADE80;
   --color-red:              #B9090B;
   --color-red-2:            #8B0000;
@@ -33,8 +34,10 @@
   --color-card-bg:          var(--surface);
   --color-text-main:        var(--text);
   --color-text-muted:       var(--muted);
-  --color-rating-gold:      #F5C518;
+  --color-rating-gold:      var(--rating-gold);
   --color-card-border:      var(--border-card);
+  --color-poster-overlay:   var(--poster-overlay);
+  --color-poster-overlay-heavy: var(--poster-overlay-heavy);
 
   --radius-sm:              0.25rem;
   --radius-md:              0.5rem;
@@ -99,6 +102,10 @@
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-border-hover: rgba(255, 255, 255, 0.15);
   --selection-bg: rgba(185, 9, 11, 0.3);
+  --gold: #F5C518;
+  --rating-gold: #F5C518;
+  --poster-overlay: rgba(10, 10, 10, 0.6);
+  --poster-overlay-heavy: rgba(10, 10, 10, 0.85);
 
   --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.5);
   --shadow-card-sm: 0 4px 16px rgba(0, 0, 0, 0.5);
@@ -116,32 +123,36 @@
 :root.light {
   --bg: #F5F5F7;
   --surface: #FFFFFF;
-  --surface-2: #F0F0F2;
-  --surface-3: #E8E8EC;
+  --surface-2: #EFEFF1;
+  --surface-3: #E5E5EA;
   --text: #1D1D1F;
-  --muted: #6E6E73;
+  --muted: #48484A;
   --border: rgba(0, 0, 0, 0.06);
   --border-subtle: rgba(0, 0, 0, 0.04);
-  --border-card: rgba(185, 9, 11, 0.1);
+  --border-card: rgba(0, 0, 0, 0.05);
   --spotlight: rgba(185, 9, 11, 0.04);
 
-  --glass-bg: rgba(0, 0, 0, 0.04);
-  --glass-bg-hover: rgba(0, 0, 0, 0.07);
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --glass-border-hover: rgba(0, 0, 0, 0.12);
-  --selection-bg: rgba(185, 9, 11, 0.15);
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-bg-hover: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-border-hover: rgba(255, 255, 255, 0.7);
+  --selection-bg: rgba(185, 9, 11, 0.2);
+  --gold: #92400E;
+  --rating-gold: #92400E;
+  --poster-overlay: rgba(0, 0, 0, 0.55);
+  --poster-overlay-heavy: rgba(0, 0, 0, 0.8);
 
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04), 0 12px 40px rgba(0, 0, 0, 0.06);
-  --shadow-card-sm: 0 1px 4px rgba(0, 0, 0, 0.03), 0 6px 20px rgba(0, 0, 0, 0.05);
-  --shadow-card-xs: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.04);
-  --shadow-glow-gold: 0 4px 24px rgba(185, 9, 11, 0.06);
-  --shadow-glow-gold-sm: 0 0 16px rgba(185, 9, 11, 0.05);
-  --shadow-glow-red: 0 8px 28px rgba(185, 9, 11, 0.15);
-  --shadow-cinema: 0 0 30px rgba(185, 9, 11, 0.08);
-  --shadow-poster: 0 4px 20px rgba(0, 0, 0, 0.1);
-  --shadow-navbar: 0 1px 0px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.06);
+  --shadow-card-sm: 0 1px 2px rgba(0, 0, 0, 0.03), 0 4px 16px rgba(0, 0, 0, 0.05);
+  --shadow-card-xs: 0 0.5px 1px rgba(0, 0, 0, 0.02), 0 2px 10px rgba(0, 0, 0, 0.04);
+  --shadow-glow-gold: 0 4px 20px rgba(146, 64, 14, 0.08);
+  --shadow-glow-gold-sm: 0 0 16px rgba(146, 64, 14, 0.06);
+  --shadow-glow-red: 0 4px 24px rgba(185, 9, 11, 0.1);
+  --shadow-cinema: 0 0 30px rgba(185, 9, 11, 0.05);
+  --shadow-poster: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-navbar: 0 0.5px 0 rgba(0, 0, 0, 0.04), 0 4px 20px rgba(0, 0, 0, 0.04);
   --shadow-text: none;
-  --shadow-search-dropdown: 0 8px 40px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-search-dropdown: 0 4px 20px rgba(0, 0, 0, 0.05), 0 20px 60px rgba(0, 0, 0, 0.08);
 }
 
 html {

@@ -34,9 +34,6 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   try {
     const movieDetails = await getMovieDetails(movieId)
-    const posterImage = movieDetails.poster_path
-      ? `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`
-      : undefined
     const backdropImage = movieDetails.backdrop_path
       ? `https://image.tmdb.org/t/p/w1280${movieDetails.backdrop_path}`
       : undefined

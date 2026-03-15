@@ -37,7 +37,7 @@ export default async function Navbar() {
 
     return (
         <header>
-            <nav className="sticky top-0 z-50 border-b border-border-subtle bg-surface/30 backdrop-blur-3xl backdrop-saturate-150 shadow-navbar">
+            <nav className="fixed w-full top-0 z-50 border-b border-border-subtle bg-surface/30 backdrop-blur-3xl backdrop-saturate-150 shadow-navbar">
                 <div className="mx-auto max-w-7xl px-6 lg:px-12">
                     <div className="grid grid-cols-3 h-16 items-center">
                     {user ? (

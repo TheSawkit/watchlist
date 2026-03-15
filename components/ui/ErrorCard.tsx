@@ -28,7 +28,7 @@ export function ErrorCard({ reset, icon: Icon, backHref = "/explorer" }: ErrorCa
   return (
     <div className="min-h-[70vh] flex items-center justify-center p-6">
       <div className="max-w-md w-full text-center space-y-6 bg-glass-bg p-8 rounded-(--radius-xl) border border-glass-border shadow-cinema backdrop-blur-sm animate-in fade-in scale-in duration-500">
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold/15 text-gold mb-2">
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold-bright/15 text-gold mb-2">
           <Icon className="w-10 h-10" />
         </div>
 

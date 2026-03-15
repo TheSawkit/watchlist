@@ -22,13 +22,13 @@ export function ThemeSettings() {
     const { t } = useTranslation()
     const [theme, setTheme] = useState<ThemeValue>(() => {
         const savedTheme = localStorage.getItem('theme') as ThemeValue | null
-        return savedTheme || 'light'
+        return savedTheme || 'system'
     })
 
     const THEMES: Array<{ value: ThemeValue; label: string; description: string }> = [
-        { value: 'light', label: t.settings.theme.light, description: t.settings.theme.lightDesc },
-        { value: 'dark', label: t.settings.theme.dark, description: t.settings.theme.darkDesc },
         { value: 'system', label: t.settings.theme.system, description: t.settings.theme.systemDesc },
+        { value: 'dark', label: t.settings.theme.dark, description: t.settings.theme.darkDesc },
+        { value: 'light', label: t.settings.theme.light, description: t.settings.theme.lightDesc },
     ]
 
     const applyTheme = (newTheme: ThemeValue) => {

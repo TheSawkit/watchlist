@@ -58,7 +58,7 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
                 />
 
                 <div className={cn(
-                    "absolute inset-0 bg-linear-to-t from-surface via-surface/40 to-transparent transition-opacity duration-(--duration-base)",
+                    "absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-(--duration-base)",
                     "opacity-0 group-hover:opacity-100",
                 )} />
 
@@ -102,7 +102,7 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
                         "absolute top-3 right-3 z-10 transition-all duration-(--duration-base) pointer-events-none",
                         "translate-y-0 group-hover:-translate-y-1",
                     )}>
-                        <div className="flex items-center gap-1.5 rounded-md bg-surface/60 px-2 py-1 text-xs font-mono font-bold text-gold backdrop-blur-md border border-border/10 shadow-card-sm transition-colors group-hover:bg-surface/80">
+                        <div className="flex items-center gap-1.5 rounded-md bg-poster-overlay px-2 py-1 text-xs font-mono font-bold text-gold-bright backdrop-blur-md border border-white/10 shadow-card-sm transition-colors group-hover:bg-poster-overlay-heavy">
                             <Star className="h-3 w-3 fill-current drop-shadow-text" />
                             <span className="drop-shadow-text">
                                 {media.vote_average > 0 ? media.vote_average.toFixed(1) : t.movie.notRated}
@@ -116,7 +116,7 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
                     "translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100",
                 )}>
                     <div>
-                        <h3 className="text-lg font-bold text-text leading-tight line-clamp-2">
+                        <h3 className="text-lg font-bold text-white leading-tight line-clamp-2">
                             {media.title}
                         </h3>
 
