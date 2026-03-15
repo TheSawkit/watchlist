@@ -49,7 +49,7 @@ export function HorizontalScroll({
 
       <div
         ref={scrollContainerRef}
-        className={`flex gap-4 overflow-x-scroll overflow-y-visible pb-4 -mx-1 px-1 scrollbar-hide snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] ${containerClassName}`}
+        className={`flex gap-4 overflow-x-scroll pb-4 pt-2 -mx-2 px-2 -mt-2 scrollbar-hide snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] ${containerClassName}`}
       >
         {children}
       </div>

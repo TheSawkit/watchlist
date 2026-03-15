@@ -13,14 +13,18 @@ export function ActorFilmography({ movies, tvShows }: ActorFilmographyProps) {
     const [activeTab, setActiveTab] = useState<"movies" | "tv">("movies")
 
     const sortedMovies: MediaItem[] = useMemo(() => {
+        const seen = new Set<number>()
         return [...movies]
             .filter((m) => m.poster_path)
+            .filter((m) => { if (seen.has(m.id)) return false; seen.add(m.id); return true })
             .sort((a, b) => b.popularity - a.popularity)
     }, [movies])
 
     const sortedTvShows: MediaItem[] = useMemo(() => {
+        const seen = new Set<number>()
         return [...tvShows]
             .filter((s) => s.poster_path)
+            .filter((s) => { if (seen.has(s.id)) return false; seen.add(s.id); return true })
             .sort((a, b) => b.popularity - a.popularity)
     }, [tvShows])
 

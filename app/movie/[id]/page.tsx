@@ -7,6 +7,7 @@ import { MediaDescription } from "@/components/media/MediaDescription"
 import { MediaCast } from "@/components/media/MediaCast"
 import { WatchButton } from "@/components/media/WatchButton"
 import { getMediaWatchlistEntry } from "@/app/actions/watchlist"
+import { filterAvailableVideos } from "@/lib/youtube"
 import { Eye } from "lucide-react"
 import { getTranslations, getServerLocale } from "@/lib/i18n/server"
 import { formatDate } from "@/lib/format"
@@ -86,9 +87,11 @@ export default async function MoviePage(props: MoviePageProps) {
     notFound()
   }
 
-  const trailers = videos.filter(
-    (video) => video.type === "Trailer" || video.type === "Teaser"
-  )
+  const candidateTrailers = videos
+    .filter((video) => video.site === "YouTube" && (video.type === "Trailer" || video.type === "Teaser"))
+    .sort((a, b) => (b.official ? 1 : 0) - (a.official ? 1 : 0))
+
+  const trailers = await filterAvailableVideos(candidateTrailers)
 
   const heroImagePath = selectHeroImage(images, movieDetails.backdrop_path)
   const heroImageUrl = getImageUrl(heroImagePath, "original")

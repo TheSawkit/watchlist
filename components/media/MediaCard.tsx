@@ -42,13 +42,13 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
         <Link
             href={href}
             className={cn(
-                "group relative overflow-hidden rounded-poster bg-surface border border-card-border block focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12",
+                "group relative rounded-poster bg-surface border border-card-border block focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12",
                 "transition-all duration-(--duration-medium) ease-[var(--ease-apple)]",
                 "hover:scale-[1.03] hover:border-gold/40 hover:shadow-poster hover:z-10",
                 className
             )}
         >
-            <div className="relative aspect-2/3 w-full overflow-hidden bg-surface">
+            <div className="relative aspect-2/3 w-full overflow-hidden rounded-poster bg-surface">
                 <Image
                     src={getImageUrl(media.poster_path)}
                     alt={media.title}

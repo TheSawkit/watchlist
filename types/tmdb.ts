@@ -140,6 +140,8 @@ export interface Video {
   name: string
   site: string
   type: string
+  official: boolean
+  published_at: string
 }
 
 export interface VideoResponse {

@@ -11,6 +11,7 @@ import { ProgressBar } from "@/components/shared/ProgressBar"
 import { SectionHeading } from "@/components/ui/SectionHeading"
 import { getMediaWatchlistEntry } from "@/app/actions/watchlist"
 import { getTvShowWatchProgress } from "@/app/actions/episodes"
+import { filterAvailableVideos } from "@/lib/youtube"
 import { getServerLocale, getTranslations } from "@/lib/i18n/server"
 import type { TvPageProps } from "@/types/pages"
 import type { Season } from "@/types/tmdb"
@@ -89,9 +90,11 @@ export default async function TvShowPage(props: TvPageProps) {
         notFound()
     }
 
-    const trailers = videos.filter(
-        (video) => video.type === "Trailer" || video.type === "Teaser"
-    )
+    const candidateTrailers = videos
+        .filter((video) => video.site === "YouTube" && (video.type === "Trailer" || video.type === "Teaser"))
+        .sort((a, b) => (b.official ? 1 : 0) - (a.official ? 1 : 0))
+
+    const trailers = await filterAvailableVideos(candidateTrailers)
 
     const heroImagePath = selectHeroImage(images, tvDetails.backdrop_path)
     const heroImageUrl = getImageUrl(heroImagePath, "original")
