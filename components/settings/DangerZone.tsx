@@ -84,6 +84,17 @@ export function DangerZone() {
                                     {t.danger.additionalWarning}
                                 </FieldDescription>
                             </Field>
+                            <Field>
+                                <FieldLabel htmlFor="delete-password">
+                                    {t.settings.dangerZone.confirmPassword}
+                                </FieldLabel>
+                                <Input
+                                    id="delete-password"
+                                    name="password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                />
+                            </Field>
                         </FieldGroup>
 
                         {state.error && (

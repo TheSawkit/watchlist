@@ -29,8 +29,9 @@ export function useSearchSuggestions(query: string) {
             setIsLoading(true)
             try {
                 const response = await fetch(`/api/search?query=${encodeURIComponent(query)}`)
-                const data = await response.json()
-                setResults(data.results?.slice(0, 6) || [])
+                if (!response.ok) throw new Error(`Search failed: ${response.status}`)
+                const data: { results?: MediaItem[] } = await response.json()
+                setResults(Array.isArray(data.results) ? data.results.slice(0, 6) : [])
                 setIsOpen(true)
             } catch {
                 setResults([])

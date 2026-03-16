@@ -108,6 +108,7 @@ export interface MediaItem {
   vote_count: number
   popularity: number
   genre_ids?: number[]
+  character?: string
   watchlistEntry?: WatchlistEntry
 }
 

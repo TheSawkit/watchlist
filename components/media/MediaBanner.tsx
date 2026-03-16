@@ -42,16 +42,9 @@ export function MediaBanner({
     const { t, lang } = useTranslation()
     const locale = getLocale(lang)
     const [scrolled, setScrolled] = useState(false)
-    const [scrollY, setScrollY] = useState(0)
-
     const bottomRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        const handleScroll = () => {
-            setScrollY(window.scrollY)
-        }
-        window.addEventListener("scroll", handleScroll, { passive: true })
-
         const observer = new IntersectionObserver(
             ([entry]) => {
                 setScrolled(!entry.isIntersecting)
@@ -65,7 +58,6 @@ export function MediaBanner({
         }
 
         return () => {
-            window.removeEventListener("scroll", handleScroll)
             if (currentRef) observer.unobserve(currentRef)
         }
     }, [])
@@ -126,7 +118,7 @@ export function MediaBanner({
 
             <div className="relative w-full -mt-16 min-h-[70vh] md:min-h-[80vh] flex flex-col justify-end pt-32 pb-12 overflow-hidden">
                 <div
-                    className="absolute inset-x-0 -top-[10%] h-full -z-10"
+                    className="absolute inset-x-0 top-0 h-full -z-10"
                 >
                     <Image
                         src={backdropUrl}

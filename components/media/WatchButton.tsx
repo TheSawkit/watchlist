@@ -1,13 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Eye, Plus, Check, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { addToWatchlist, removeFromWatchlist } from "@/app/actions/watchlist"
 import { useTranslation } from "@/lib/i18n/context"
 import type { WatchButtonProps } from "@/types/components"
-import { startTransition } from "react"
 
 export function WatchButton({
     mediaId,
@@ -24,7 +22,6 @@ export function WatchButton({
     const active = optimisticActive !== null ? optimisticActive : initialActive
     const [loading, setLoading] = useState(false)
     const { t } = useTranslation()
-    const router = useRouter()
 
     useEffect(() => {
         setOptimisticActive(null)
@@ -52,10 +49,6 @@ export function WatchButton({
                 await addToWatchlist(mediaId, mediaTitle, posterPath, status, mediaType)
             }
             setOptimisticActive(!active)
-
-            startTransition(() => {
-                router.refresh()
-            })
         } finally {
             setLoading(false)
         }
@@ -68,10 +61,10 @@ export function WatchButton({
             <button
                 onClick={handleClick}
                 className={cn(
-                    "flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors border focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 w-full sm:w-auto shrink-0",
+                    "flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all border focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-11 w-full shrink-0",
                     active
-                        ? "bg-primary/40 backdrop-blur-2xl text-white border-border/10 border-t-border/20 shadow-glow-red"
-                        : "bg-surface/20 backdrop-blur-2xl text-muted border-border/10 border-t-border/20 hover:text-text hover:bg-surface-2/20 hover:border-border shadow-card-sm"
+                        ? "bg-primary/50 backdrop-blur-2xl text-white border-white/10 shadow-glow-red"
+                        : "bg-white/15 backdrop-blur-2xl text-white/90 border-white/10 hover:bg-white/25 hover:text-white shadow-card-sm"
                 )}
             >
                 <Icon className={cn("h-4 w-4", loading && "animate-spin")} />

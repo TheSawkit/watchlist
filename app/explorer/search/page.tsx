@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { searchMulti } from "@/lib/tmdb"
 import { MediaGrid } from "@/components/media/MediaGrid"
 import { SearchBar } from "@/components/search/SearchBar"
@@ -6,6 +7,14 @@ import { Search as SearchIcon } from "lucide-react"
 
 interface SearchPageProps {
     searchParams: Promise<{ q?: string; query?: string }>
+}
+
+export async function generateMetadata({ searchParams }: SearchPageProps): Promise<Metadata> {
+    const params = await searchParams
+    const query = params.q || params.query || ""
+    return {
+        title: query ? `"${query}" — ReelMark` : "Search — ReelMark",
+    }
 }
 
 export default async function SearchResultsPage({ searchParams }: SearchPageProps) {

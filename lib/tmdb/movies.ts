@@ -7,18 +7,18 @@ import type {
   ReleaseDatesResponse,
   MediaImagesResponse,
 } from "@/types/tmdb"
-import { fetchTMDB, getUserRegion } from "./client"
+import { fetchTMDB, getUserRegion, clampPage, getMergeRegions, getImageLanguageFilter } from "./client"
 import { findLocalCertification } from "./certifications"
 
 /** @returns Paginated list of popular movies. */
 export async function getPopularMovies(page: number = 1): Promise<Movie[]> {
-  const { results } = await fetchTMDB<{ results: Movie[] }>("/movie/popular", { page: page.toString() })
+  const { results } = await fetchTMDB<{ results: Movie[] }>("/movie/popular", { page: clampPage(page).toString() })
   return results
 }
 
 /** @returns Paginated list of top-rated movies. */
 export async function getTopRatedMovies(page: number = 1): Promise<Movie[]> {
-  const { results } = await fetchTMDB<{ results: Movie[] }>("/movie/top_rated", { page: page.toString() })
+  const { results } = await fetchTMDB<{ results: Movie[] }>("/movie/top_rated", { page: clampPage(page).toString() })
   return results
 }
 
@@ -27,7 +27,7 @@ export async function getTopRatedMovies(page: number = 1): Promise<Movie[]> {
  * @returns Paginated list of trending movies.
  */
 export async function getTrendingMovies(timeWindow: "day" | "week" = "week", page: number = 1): Promise<Movie[]> {
-  const { results } = await fetchTMDB<{ results: Movie[] }>(`/trending/movie/${timeWindow}`, { page: page.toString() })
+  const { results } = await fetchTMDB<{ results: Movie[] }>(`/trending/movie/${timeWindow}`, { page: clampPage(page).toString() })
   return results
 }
 
@@ -40,7 +40,7 @@ export async function getUpcomingMovies(page: number = 1): Promise<Movie[]> {
   const today = new Date().toISOString().split("T")[0]
 
   const { results } = await fetchTMDB<{ results: Movie[] }>("/discover/movie", {
-    page: page.toString(),
+    page: clampPage(page).toString(),
     region,
     "release_date.gte": today,
     "sort_by": "popularity.desc",
@@ -57,23 +57,27 @@ export async function getUpcomingMovies(page: number = 1): Promise<Movie[]> {
  */
 export async function getNowPlayingMovies(page: number = 1): Promise<Movie[]> {
   const region = await getUserRegion()
+  const mergeRegions = getMergeRegions(region)
 
-  if (region === "BE") {
-    const [beResponse, frResponse] = await Promise.all([
-      fetchTMDB<{ results: Movie[] }>("/movie/now_playing", { page: page.toString(), region: "BE" }),
-      fetchTMDB<{ results: Movie[] }>("/movie/now_playing", { page: page.toString(), region: "FR" }),
-    ])
+  if (mergeRegions) {
+    const responses = await Promise.all(
+      mergeRegions.map((r) =>
+        fetchTMDB<{ results: Movie[] }>("/movie/now_playing", { page: clampPage(page).toString(), region: r })
+      )
+    )
 
     const movieMap = new Map<number, Movie>()
-    for (const movie of [...beResponse.results, ...frResponse.results]) {
-      movieMap.set(movie.id, movie)
+    for (const response of responses) {
+      for (const movie of response.results) {
+        movieMap.set(movie.id, movie)
+      }
     }
 
     return Array.from(movieMap.values()).sort((a, b) => b.popularity - a.popularity)
   }
 
   const { results } = await fetchTMDB<{ results: Movie[] }>("/movie/now_playing", {
-    page: page.toString(),
+    page: clampPage(page).toString(),
     region,
   })
 
@@ -82,7 +86,7 @@ export async function getNowPlayingMovies(page: number = 1): Promise<Movie[]> {
 
 /** @returns Paginated list of movies matching the search query. */
 export async function searchMovies(query: string, page: number = 1): Promise<Movie[]> {
-  const { results } = await fetchTMDB<{ results: Movie[] }>("/search/movie", { query, page: page.toString() })
+  const { results } = await fetchTMDB<{ results: Movie[] }>("/search/movie", { query, page: clampPage(page).toString() })
   return results
 }
 
@@ -100,7 +104,8 @@ export async function getMovieDetails(id: number): Promise<MovieDetails> {
     const releaseDates = await fetchTMDB<ReleaseDatesResponse>(`/movie/${id}/release_dates`)
     const userRegion = await getUserRegion()
     details.certification = findLocalCertification(releaseDates, userRegion)
-  } catch {
+  } catch (error) {
+    console.warn(`[tmdb/movies] Certification fetch failed for movie ${id}:`, error)
     details.certification = undefined
   }
 
@@ -146,7 +151,8 @@ export async function getSimilarMovies(id: number): Promise<Movie[]> {
 
 /** @returns Available backdrop and poster images for the given movie. */
 export async function getMovieImages(id: number): Promise<MediaImagesResponse> {
+  const imageLanguage = await getImageLanguageFilter()
   return fetchTMDB<MediaImagesResponse>(`/movie/${id}/images`, {
-    include_image_language: "null,fr,en",
+    include_image_language: imageLanguage,
   })
 }

@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n/server'
+import { validateEmail, validatePassword, validateUsername, validateRegion, validateAvatarFile } from '@/lib/validators'
 
 export async function updateEmail(prevState: unknown, formData: FormData) {
     const supabase = await createClient()
@@ -17,7 +18,7 @@ export async function updateEmail(prevState: unknown, formData: FormData) {
         return { error: t.auth.notAuthenticated, success: false }
     }
 
-    const newEmail = formData.get('email') as string
+    const newEmail = validateEmail(formData.get('email'))
 
     if (!newEmail) {
         return { error: t.settings.profile.newEmail, success: false }
@@ -46,8 +47,8 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
         return { error: t.auth.notAuthenticated, success: false }
     }
 
-    const newPassword = formData.get('password') as string
-    const confirmPassword = formData.get('confirm-password') as string
+    const newPassword = validatePassword(formData.get('password'))
+    const confirmPassword = formData.get('confirm-password')
 
     if (!newPassword || !confirmPassword) {
         return { error: t.settings.missingFields, success: false }
@@ -55,10 +56,6 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
 
     if (newPassword !== confirmPassword) {
         return { error: t.settings.password.noMatch, success: false }
-    }
-
-    if (newPassword.length < 8) {
-        return { error: t.settings.password.minChars, success: false }
     }
 
     const { error } = await supabase.auth.updateUser({
@@ -84,9 +81,9 @@ export async function updateProfile(prevState: unknown, formData: FormData) {
         return { error: t.auth.notAuthenticated, success: false }
     }
 
-    const fullName = formData.get('fullName') as string
-    const username = formData.get('username') as string
-    const region = formData.get('region') as string
+    const fullName = validateUsername(formData.get('fullName'))
+    const username = validateUsername(formData.get('username'))
+    const region = validateRegion(formData.get('region'))
 
     if (!username) {
         return { error: t.settings.missingFields, success: false }
@@ -94,10 +91,10 @@ export async function updateProfile(prevState: unknown, formData: FormData) {
 
     const { error } = await supabase.auth.updateUser({
         data: {
-            full_name: fullName ? fullName : null,
-            name: fullName ? fullName : username,
-            username: username,
-            region: region ? region.toUpperCase() : undefined,
+            full_name: fullName ?? null,
+            name: fullName ?? username,
+            username,
+            region: region ?? undefined,
         },
     })
 
@@ -131,7 +128,12 @@ export async function updateAvatar(prevState: unknown, formData: FormData) {
     let finalAvatarUrl = avatarUrl || ''
 
     if (avatarFile && avatarFile.size > 0) {
-        const fileExt = avatarFile.name.split('.').pop()
+        const validation = validateAvatarFile(avatarFile)
+        if (!validation.valid) {
+            return { error: validation.error, success: false }
+        }
+
+        const fileExt = avatarFile.name.split('.').pop()!.toLowerCase()
         const fileName = `${user.id}-${Date.now()}.${fileExt}`
 
         const buffer = await avatarFile.arrayBuffer()
@@ -176,11 +178,25 @@ export async function deleteAccount(prevState: unknown, formData: FormData) {
         return { error: t.auth.notAuthenticated, success: false }
     }
 
-    const confirmation = formData.get('confirmation') as string
+    const confirmation = formData.get('confirmation')
+    const password = formData.get('password')
     const expectedWord = t.danger.confirmPlaceholder
 
-    if (confirmation !== expectedWord) {
+    if (typeof confirmation !== 'string' || confirmation !== expectedWord) {
         return { error: t.settings.dangerZone.incorrectConfirmation, success: false }
+    }
+
+    if (typeof password !== 'string' || !password) {
+        return { error: t.settings.dangerZone.confirmPassword, success: false }
+    }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email!,
+        password,
+    })
+
+    if (signInError) {
+        return { error: t.settings.dangerZone.confirmPassword, success: false }
     }
 
     await supabase.auth.signOut()

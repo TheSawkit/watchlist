@@ -68,7 +68,8 @@ export function InfiniteScrollMedia({ initialItems, category, clientSideData }: 
                 return [...prev, ...uniqueItems]
             })
             setPage((prev) => prev + 1)
-        } catch {
+        } catch (error) {
+            console.warn('[InfiniteScroll] Load failed:', error)
             return
         } finally {
             setLoading(false)
@@ -84,8 +85,9 @@ export function InfiniteScrollMedia({ initialItems, category, clientSideData }: 
             <MediaGrid items={items} hideRating={category === "upcoming"} />
 
             {hasMore && (
-                <div ref={loaderRef} className="flex justify-center py-8">
-                    <Loader2 className="w-8 h-8 animate-spin text-red-2" />
+                <div ref={loaderRef} className="flex justify-center py-8" role="status" aria-live="polite">
+                    <Loader2 className="w-8 h-8 animate-spin text-red-2" aria-hidden="true" />
+                    <span className="sr-only">{t.common.loading}</span>
                 </div>
             )}
 

@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import Image from "next/image"
-import { Clock, Calendar, Star } from "lucide-react"
+import { Clock, Calendar, Star, X } from "lucide-react"
 import { getImageUrl } from "@/lib/tmdb/images"
 import { formatDate, formatRuntime } from "@/lib/format"
 import { EpisodeWatchButton } from "@/components/media/EpisodeWatchButton"
@@ -45,6 +45,25 @@ export function EpisodeCard({
 }: EpisodeCardProps) {
     const { t } = useTranslation()
     const [isExpanded, setIsExpanded] = useState(false)
+    const dialogRef = useRef<HTMLDivElement>(null)
+    const triggerRef = useRef<HTMLButtonElement>(null)
+
+    const handleEscape = useCallback((e: KeyboardEvent) => {
+        if (e.key === 'Escape') setIsExpanded(false)
+    }, [])
+
+    useEffect(() => {
+        if (!isExpanded) {
+            triggerRef.current?.focus()
+            return
+        }
+
+        document.addEventListener('keydown', handleEscape)
+        const closeButton = dialogRef.current?.querySelector<HTMLButtonElement>('[data-close]')
+        closeButton?.focus()
+
+        return () => document.removeEventListener('keydown', handleEscape)
+    }, [isExpanded, handleEscape])
 
     const noImage = labels?.noImage ?? t.movie.noImage
     const noDescription = labels?.noDescription ?? t.movie.noDescription
@@ -78,7 +97,7 @@ export function EpisodeCard({
                     "absolute top-2 right-2 bg-surface/20 backdrop-blur-2xl px-2 py-1 rounded border border-border/10 border-t-border/20 shadow-card-sm",
                     "flex items-center gap-1 text-xs font-bold text-gold"
                 )}>
-                    <Star className="h-3 w-3 fill-current" />
+                    <Star className="h-3 w-3 fill-current" aria-hidden="true" />
                     <span>{(episode.vote_average || 0).toFixed(1)}</span>
                 </div>
             </div>
@@ -90,13 +109,13 @@ export function EpisodeCard({
                 <div className="flex items-center gap-4 text-xs text-muted mb-3 font-medium">
                     {episode.air_date && (
                         <span className="flex items-center gap-1.5">
-                            <Calendar className="w-3.5 h-3.5" />
+                            <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
                             {formatDate(episode.air_date, locale)}
                         </span>
                     )}
                     {episode.runtime && episode.runtime > 0 ? (
                         <span className="flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5" />
+                            <Clock className="w-3.5 h-3.5" aria-hidden="true" />
                             {formatRuntime(episode.runtime)}
                         </span>
                     ) : null}
@@ -108,6 +127,7 @@ export function EpisodeCard({
                     </p>
                     {episode.overview && episode.overview.length > 120 && (
                         <button
+                            ref={triggerRef}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setIsExpanded(true)
@@ -131,6 +151,7 @@ export function EpisodeCard({
 
             {isExpanded && (
                 <div
+                    ref={dialogRef}
                     onClick={() => setIsExpanded(false)}
                     role="dialog"
                     aria-modal="true"
@@ -140,6 +161,7 @@ export function EpisodeCard({
                     <div className="flex justify-between items-start mb-4 gap-4">
                         <h3 id={`episode-title-${episode.episode_number}`} className="text-lg font-bold text-text-main leading-tight">{episode.name}</h3>
                         <button
+                            data-close
                             onClick={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation()
@@ -148,7 +170,7 @@ export function EpisodeCard({
                             aria-label={t.common.close}
                             className="h-8 w-8 flex items-center justify-center shrink-0 rounded-full bg-border-subtle hover:bg-border text-muted hover:text-text-main transition-colors cursor-pointer"
                         >
-                            ✕
+                            <X className="h-4 w-4" aria-hidden="true" />
                         </button>
                     </div>
                     <div

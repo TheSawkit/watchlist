@@ -42,6 +42,7 @@ export function movieCreditToMediaItem(credit: ActorMovieCredit): MediaItem {
         vote_average: credit.vote_average,
         vote_count: 0,
         popularity: credit.popularity,
+        character: credit.character || undefined,
     }
 }
 
@@ -64,5 +65,6 @@ export function tvCreditToMediaItem(credit: ActorTvCredit): MediaItem {
         vote_average: credit.vote_average,
         vote_count: 0,
         popularity: credit.popularity,
+        character: credit.character || undefined,
     }
 }

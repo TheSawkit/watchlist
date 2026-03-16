@@ -20,7 +20,7 @@ export type TMDBImageSize =
  * @returns Full image URL.
  */
 export function getImageUrl(path: string | null, size: TMDBImageSize = "w500") {
-  if (!path) return "https://images.unsplash.com/vector-1756365681486-615455939f4e?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  if (!path) return "/poster-placeholder.svg"
 
   return `${TMDB_IMAGE_BASE_URL}${size}${path}`
 }

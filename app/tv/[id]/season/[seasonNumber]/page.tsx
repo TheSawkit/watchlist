@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
@@ -9,6 +10,27 @@ import { EpisodeCard } from "@/components/media/EpisodeCard"
 import { ProgressBar } from "@/components/shared/ProgressBar"
 import { SectionHeading } from "@/components/ui/SectionHeading"
 import type { SeasonPageProps } from "@/types/pages"
+
+export async function generateMetadata({ params: paramsPromise }: SeasonPageProps): Promise<Metadata> {
+    const params = await paramsPromise
+    const tvId = parseInt(params.id)
+    const seasonNumber = parseInt(params.seasonNumber)
+
+    if (isNaN(tvId) || isNaN(seasonNumber)) return { title: "Season — ReelMark" }
+
+    try {
+        const [tvDetails, seasonDetails] = await Promise.all([
+            getTvShowDetails(tvId),
+            getSeasonDetails(tvId, seasonNumber),
+        ])
+        return {
+            title: `${seasonDetails.name} — ${tvDetails.name} — ReelMark`,
+            description: seasonDetails.overview || `${seasonDetails.name} of ${tvDetails.name}`,
+        }
+    } catch {
+        return { title: "Season — ReelMark" }
+    }
+}
 
 export default async function SeasonPage(props: SeasonPageProps) {
     const params = await props.params

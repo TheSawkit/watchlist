@@ -83,6 +83,7 @@ export default async function DashboardPage({ searchParams }: Props) {
     })).filter(section => section.items.length > 0)
 
     const allSections = [...recommendationSections, ...similarSections]
+    const isEmpty = watchlist.filter(entry => entry.media_type === type).length === 0
 
     return (
         <PageLayout>
@@ -100,16 +101,16 @@ export default async function DashboardPage({ searchParams }: Props) {
                 />
             )}
 
-            {allSections.map((section, index) => (
+            {allSections.map((section) => (
                 <MediaSection
-                    key={index}
+                    key={section.title}
                     title={section.title}
                     items={section.items}
                     categoryUrl="/explorer"
                 />
             ))}
 
-            {watchlist.filter(entry => entry.media_type === type).length === 0 && (
+            {isEmpty && (
                 <div className="text-center py-20">
                     <p className="text-muted mb-6">{t.pages.dashboard.emptyLibrary}</p>
                     <Link href={`/explorer?type=${type}`} className="px-6 py-3 bg-primary hover:bg-primary-hover text-white font-medium rounded-md transition-colors shadow-cinema">

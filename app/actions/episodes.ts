@@ -20,7 +20,8 @@ async function syncTvShowWatchlistStatus(
     let details
     try {
         details = await getTvShowDetails(tvId)
-    } catch {
+    } catch (error) {
+        console.warn(`[episodes] Failed to sync TV show ${tvId} watchlist status:`, error)
         return
     }
 

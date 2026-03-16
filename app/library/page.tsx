@@ -36,25 +36,18 @@ export default async function LibraryPage({ searchParams }: Props) {
     const tvProgressMap: Record<number, { watched: number; total: number }> = {}
     if (type === "tv") {
         const tvIds = watchlist.map(entry => entry.media_id)
-        const progressPromises = tvIds.map(async (tvId) => {
-            const progress = await getTvShowWatchProgress(tvId)
-            const watchedCount = Array.from(progress.values()).reduce((sum, count) => sum + count, 0)
-            return { tvId, watchedCount }
-        })
-        const progressResults = await Promise.all(progressPromises)
-
-        const totalPromises = tvIds.map(async (tvId) => {
-            const total = await getTvShowTotalEpisodes(tvId)
-            return { tvId, total }
-        })
-        const totalResults = await Promise.all(totalPromises)
-
-        for (const { tvId, watchedCount } of progressResults) {
-            const totalEntry = totalResults.find(t => t.tvId === tvId)
-            tvProgressMap[tvId] = {
-                watched: watchedCount,
-                total: totalEntry?.total ?? 0,
-            }
+        const results = await Promise.all(
+            tvIds.map(async (tvId) => {
+                const [progress, total] = await Promise.all([
+                    getTvShowWatchProgress(tvId),
+                    getTvShowTotalEpisodes(tvId),
+                ])
+                const watched = Array.from(progress.values()).reduce((sum, count) => sum + count, 0)
+                return { tvId, watched, total }
+            })
+        )
+        for (const { tvId, watched, total } of results) {
+            tvProgressMap[tvId] = { watched, total }
         }
     }
 

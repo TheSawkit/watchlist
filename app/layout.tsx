@@ -52,7 +52,7 @@ export default async function RootLayout({
                     </a>
                     <Navbar />
                     <CinemaSpotlight />
-                    <main id="main-content">
+                    <main id="main-content" className="pt-12">
                         {children}
                     </main>
                 </Providers>

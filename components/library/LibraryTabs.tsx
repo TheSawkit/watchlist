@@ -76,8 +76,8 @@ export function LibraryTabs({ toWatch, watched, tvProgress = {} }: LibraryTabsPr
                     </p>
                     <p className="text-muted max-w-sm text-center">
                         {activeTab === "to_watch"
-                            ? "Browse and add movies to your watchlist"
-                            : "Titles you watch will appear here"}
+                            ? t.library.noMoviesDesc
+                            : t.library.noWatchedDesc}
                     </p>
                 </div>
             ) : (

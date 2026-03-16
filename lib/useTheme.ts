@@ -12,7 +12,8 @@ type Theme = "light" | "dark" | "system"
 export function useTheme() {
     useEffect(() => {
         const html = document.documentElement
-        const savedTheme = localStorage.getItem("theme") as Theme | null
+        const raw = localStorage.getItem("theme")
+        const savedTheme: Theme | null = raw === "light" || raw === "dark" || raw === "system" ? raw : null
 
         const resolvedTheme = resolveTheme(savedTheme)
         applyTheme(html, resolvedTheme)

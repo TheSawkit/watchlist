@@ -1,7 +1,26 @@
-import { getServerLocale } from "@/lib/i18n/server"
+import { getServerLocale, getServerLanguage } from "@/lib/i18n/server"
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY
 const TMDB_BASE_URL = "https://api.themoviedb.org/3"
+const TMDB_MAX_PAGE = 500
+
+const REGION_MERGE_CONFIG: Record<string, string[]> = {
+  BE: ["BE", "FR"],
+}
+
+export function clampPage(page: number): number {
+  return Math.max(1, Math.min(page, TMDB_MAX_PAGE))
+}
+
+export function getMergeRegions(region: string): string[] | null {
+  return REGION_MERGE_CONFIG[region] ?? null
+}
+
+export async function getImageLanguageFilter(): Promise<string> {
+  const lang = await getServerLanguage()
+  const languages = new Set(["null", lang, "en"])
+  return Array.from(languages).join(",")
+}
 
 /**
  * Fetches data from the TMDB API with automatic locale and API key injection.
@@ -52,6 +71,7 @@ export async function getUserRegion(): Promise<string> {
       return user.user_metadata.region.toUpperCase()
     }
   } catch {
+    // User not authenticated — fall back to locale-based region
   }
 
   const locale = await getServerLocale()

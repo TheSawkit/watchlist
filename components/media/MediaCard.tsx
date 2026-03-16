@@ -43,7 +43,7 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
             href={href}
             className={cn(
                 "group relative rounded-poster bg-surface border border-card-border block focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12",
-                "transition-all duration-(--duration-medium) ease-[var(--ease-apple)]",
+                "transition-[transform,box-shadow,border-color] duration-(--duration-medium) ease-apple will-change-transform",
                 "hover:scale-[1.03] hover:border-gold/40 hover:shadow-poster hover:z-10",
                 className
             )}
@@ -58,7 +58,7 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
                 />
 
                 <div className={cn(
-                    "absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-(--duration-base)",
+                    "absolute inset-0 bg-linear-to-t from-black/90 via-black/60 to-transparent transition-opacity duration-(--duration-base)",
                     "opacity-0 group-hover:opacity-100",
                 )} />
 
@@ -78,32 +78,13 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
                     </div>
                 )}
 
-                {media.media_type === "movie" && (!watchlistEntry || !isWatched) && (
-                    <div className={cn(
-                        "absolute top-3 left-3 z-10 transition-all duration-(--duration-base)",
-                        "translate-y-0 opacity-0 group-hover:-translate-y-1 group-hover:opacity-100",
-                    )}>
-                        <WatchButton
-                            mediaId={media.id}
-                            mediaTitle={media.title}
-                            mediaType={media.media_type}
-                            posterPath={media.poster_path}
-                            status="watched"
-                            variant="icon"
-                            initialActive={false}
-                            fallbackStatus={watchlistEntry ? "to_watch" : undefined}
-                            releaseDate={media.release_date}
-                        />
-                    </div>
-                )}
-
                 {!hideRating && (
                     <div className={cn(
                         "absolute top-3 right-3 z-10 transition-all duration-(--duration-base) pointer-events-none",
                         "translate-y-0 group-hover:-translate-y-1",
                     )}>
                         <div className="flex items-center gap-1.5 rounded-md bg-poster-overlay px-2 py-1 text-xs font-mono font-bold text-gold-bright backdrop-blur-md border border-white/10 shadow-card-sm transition-colors group-hover:bg-poster-overlay-heavy">
-                            <Star className="h-3 w-3 fill-current drop-shadow-text" />
+                            <Star className="h-3 w-3 fill-current drop-shadow-text" aria-hidden="true" />
                             <span className="drop-shadow-text">
                                 {media.vote_average > 0 ? media.vote_average.toFixed(1) : t.movie.notRated}
                             </span>
@@ -120,14 +101,20 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
                             {media.title}
                         </h3>
 
+                        {media.character && (
+                            <p className="mt-0.5 text-xs font-bold text-gold line-clamp-1">
+                                {media.character}
+                            </p>
+                        )}
+
                         {watchlistEntry ? (
                             <div className="flex items-center gap-1.5 mt-1">
                                 {media.media_type === "tv" ? (
-                                    <Clock className="h-3 w-3 text-muted shrink-0" />
+                                    <Clock className="h-3 w-3 text-white/80 shrink-0" />
                                 ) : isWatched ? (
-                                    <Eye className="h-3 w-3 text-muted shrink-0" />
+                                    <Eye className="h-3 w-3 text-white/80 shrink-0" />
                                 ) : (
-                                    <Clock className="h-3 w-3 text-muted shrink-0" />
+                                    <Clock className="h-3 w-3 text-white/80 shrink-0" />
                                 )}
                                 <span className="text-xs text-muted leading-tight">
                                     {media.media_type === "tv"
@@ -137,7 +124,7 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
                                 </span>
                             </div>
                         ) : (
-                            <p className="mt-1 text-xs text-muted line-clamp-2">
+                            <p className="mt-1 text-xs text-white/80 line-clamp-2">
                                 {media.overview || t.movie.noDescription}
                             </p>
                         )}

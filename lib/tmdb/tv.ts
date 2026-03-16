@@ -8,18 +8,18 @@ import type {
   ContentRatingsResponse,
   MediaImagesResponse,
 } from "@/types/tmdb"
-import { fetchTMDB, getUserRegion } from "./client"
+import { fetchTMDB, getUserRegion, clampPage, getImageLanguageFilter } from "./client"
 import { findTvCertification } from "./certifications"
 
 /** @returns Paginated list of popular TV shows. */
 export async function getPopularTvShows(page: number = 1): Promise<TvShow[]> {
-  const { results } = await fetchTMDB<{ results: TvShow[] }>("/tv/popular", { page: page.toString() })
+  const { results } = await fetchTMDB<{ results: TvShow[] }>("/tv/popular", { page: clampPage(page).toString() })
   return results
 }
 
 /** @returns Paginated list of top-rated TV shows. */
 export async function getTopRatedTvShows(page: number = 1): Promise<TvShow[]> {
-  const { results } = await fetchTMDB<{ results: TvShow[] }>("/tv/top_rated", { page: page.toString() })
+  const { results } = await fetchTMDB<{ results: TvShow[] }>("/tv/top_rated", { page: clampPage(page).toString() })
   return results
 }
 
@@ -28,25 +28,25 @@ export async function getTopRatedTvShows(page: number = 1): Promise<TvShow[]> {
  * @returns Paginated list of trending TV shows.
  */
 export async function getTrendingTvShows(timeWindow: "day" | "week" = "week", page: number = 1): Promise<TvShow[]> {
-  const { results } = await fetchTMDB<{ results: TvShow[] }>(`/trending/tv/${timeWindow}`, { page: page.toString() })
+  const { results } = await fetchTMDB<{ results: TvShow[] }>(`/trending/tv/${timeWindow}`, { page: clampPage(page).toString() })
   return results
 }
 
 /** @returns Paginated list of TV shows airing today. */
 export async function getAiringTodayTvShows(page: number = 1): Promise<TvShow[]> {
-  const { results } = await fetchTMDB<{ results: TvShow[] }>("/tv/airing_today", { page: page.toString() })
+  const { results } = await fetchTMDB<{ results: TvShow[] }>("/tv/airing_today", { page: clampPage(page).toString() })
   return results
 }
 
 /** @returns Paginated list of TV shows currently on the air. */
 export async function getOnTheAirTvShows(page: number = 1): Promise<TvShow[]> {
-  const { results } = await fetchTMDB<{ results: TvShow[] }>("/tv/on_the_air", { page: page.toString() })
+  const { results } = await fetchTMDB<{ results: TvShow[] }>("/tv/on_the_air", { page: clampPage(page).toString() })
   return results
 }
 
 /** @returns Paginated list of TV shows matching the search query. */
 export async function searchTvShows(query: string, page: number = 1): Promise<TvShow[]> {
-  const { results } = await fetchTMDB<{ results: TvShow[] }>("/search/tv", { query, page: page.toString() })
+  const { results } = await fetchTMDB<{ results: TvShow[] }>("/search/tv", { query, page: clampPage(page).toString() })
   return results
 }
 
@@ -63,7 +63,8 @@ export async function getTvShowDetails(id: number): Promise<TvShowDetails> {
     const ratings = await fetchTMDB<ContentRatingsResponse>(`/tv/${id}/content_ratings`)
     const userRegion = await getUserRegion()
     details.certification = findTvCertification(ratings, userRegion)
-  } catch {
+  } catch (error) {
+    console.warn(`[tmdb/tv] Certification fetch failed for TV ${id}:`, error)
     details.certification = undefined
   }
 
@@ -99,8 +100,9 @@ export async function getTvShowVideos(id: number): Promise<Video[]> {
 
 /** @returns Available backdrop and poster images for the given TV show. */
 export async function getTvShowImages(id: number): Promise<MediaImagesResponse> {
+  const imageLanguage = await getImageLanguageFilter()
   return fetchTMDB<MediaImagesResponse>(`/tv/${id}/images`, {
-    include_image_language: "null,fr,en",
+    include_image_language: imageLanguage,
   })
 }
 
