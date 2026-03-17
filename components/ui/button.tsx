@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-red-2 text-white hover:bg-red shadow-cinema",
+        default: "bg-red text-white hover:bg-red-2 shadow-cinema",
         destructive:
           "bg-red text-white hover:bg-red-2 border-2 border-transparent",
         outline:
@@ -24,9 +24,9 @@ const buttonVariants = cva(
         default: "px-5 py-2.5 has-[>svg]:px-4",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
         lg: "px-8 py-3 has-[>svg]:px-6",
-        icon: "size-9",
-        "icon-sm": "size-8",
-        "icon-lg": "size-10",
+        icon: "size-11",
+        "icon-sm": "size-9",
+        "icon-lg": "size-12",
       },
     },
     defaultVariants: {

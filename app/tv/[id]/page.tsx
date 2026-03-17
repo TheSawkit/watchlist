@@ -24,6 +24,8 @@ import type { Season } from "@/types/tmdb"
  * @param props.params - Promise resolving to { id: string } TV show ID
  * @returns Metadata object with title, description, OpenGraph, and Twitter card data
  */
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://reelmark.app"
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params
     const tvId = parseInt(id)
@@ -46,17 +48,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         const watchDescription = tvDetails.overview || t.metadata.watchShowOn.replace("${title}", tvDetails.name)
 
         return {
-            title: `${tvDetails.name} - ReelMark`,
+            title: tvDetails.name,
             description: watchDescription,
+            alternates: { canonical: `${BASE_URL}/tv/${tvId}` },
             openGraph: {
-                title: `${tvDetails.name} - ReelMark`,
+                title: tvDetails.name,
                 description: watchDescription,
                 type: "video.tv_show",
                 images: images.length > 0 ? images : undefined,
             },
             twitter: {
                 card: "summary_large_image",
-                title: `${tvDetails.name} - ReelMark`,
+                title: tvDetails.name,
                 description: watchDescription,
                 images: images.length > 0 ? [images[0].url] : undefined,
             },
@@ -123,17 +126,19 @@ export default async function TvShowPage(props: TvPageProps) {
                 certification={tvDetails.certification}
                 genres={tvDetails.genres}
                 actions={
-                    <div className="flex flex-row items-center gap-3">
-                        <WatchButton
-                            mediaId={tvDetails.id}
-                            mediaTitle={tvDetails.name}
-                            mediaType="tv"
-                            posterPath={tvDetails.poster_path}
-                            status={watchlistEntry?.status === "watched" ? "watched" : "to_watch"}
-                            variant="full"
-                            initialActive={!!watchlistEntry}
-                            releaseDate={tvDetails.first_air_date}
-                        />
+                    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                        <div className="w-full sm:w-auto">
+                            <WatchButton
+                                mediaId={tvDetails.id}
+                                mediaTitle={tvDetails.name}
+                                mediaType="tv"
+                                posterPath={tvDetails.poster_path}
+                                status={watchlistEntry?.status === "watched" ? "watched" : "to_watch"}
+                                variant="full"
+                                initialActive={!!watchlistEntry}
+                                releaseDate={tvDetails.first_air_date}
+                            />
+                        </div>
 
                         {totalWatched > 0 && (
                             <div className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-md bg-surface/30 backdrop-blur-md border border-border/10">
@@ -152,6 +157,17 @@ export default async function TvShowPage(props: TvPageProps) {
                             </div>
                         )}
                     </div>
+                }
+                stickyActions={
+                    <WatchButton
+                        mediaId={tvDetails.id}
+                        mediaTitle={tvDetails.name}
+                        mediaType="tv"
+                        posterPath={tvDetails.poster_path}
+                        status={watchlistEntry?.status === "watched" ? "watched" : "to_watch"}
+                        initialActive={!!watchlistEntry}
+                        releaseDate={tvDetails.first_air_date}
+                    />
                 }
             />
 

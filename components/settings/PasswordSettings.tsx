@@ -64,9 +64,9 @@ export function PasswordSettings() {
                         </Field>
                     </FieldGroup>
 
-                    {state.error && <p className="text-sm text-red">{state.error}</p>}
+                    {state.error && <p role="alert" className="text-sm text-red">{state.error}</p>}
                     {state.success && (
-                        <p className="text-sm text-gold">{state.message}</p>
+                        <p role="status" className="text-sm text-gold">{state.message}</p>
                     )}
 
                     <Button type="submit" disabled={isPending}>

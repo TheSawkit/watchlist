@@ -8,6 +8,7 @@ interface StaggeredItemProps {
   duration?: string
   className?: string
   children: ReactNode
+  eager?: boolean
 }
 
 /**
@@ -20,6 +21,7 @@ interface StaggeredItemProps {
  * @param duration - CSS duration value, supports custom properties (default: "var(--duration-slow)").
  * @param className - Additional classes for the wrapper element.
  * @param children - Content to animate.
+ * @param eager - If true, renders immediately visible (skips opacity:0 start). Use for above-the-fold items.
  *
  * @example
  * {items.map((item, index) => (
@@ -35,11 +37,15 @@ export function StaggeredItem({
   duration = "var(--duration-slow)",
   className,
   children,
+  eager,
 }: StaggeredItemProps) {
   return (
     <div
       className={cn(className)}
-      style={{
+      style={eager ? {
+        animation: `${animation} ${duration} ease-out both`,
+        animationDelay: `${index * staggerMs}ms`,
+      } : {
         animation: `${animation} ${duration} ease-out forwards`,
         animationDelay: `${index * staggerMs}ms`,
         opacity: 0,

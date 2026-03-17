@@ -52,6 +52,20 @@ export function EpisodeCard({
         if (e.key === 'Escape') setIsExpanded(false)
     }, [])
 
+    const handleDialogKeyDown = useCallback((e: React.KeyboardEvent) => {
+        if (e.key !== 'Tab' || !dialogRef.current) return
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (e.shiftKey) {
+            if (document.activeElement === first) { e.preventDefault(); last.focus() }
+        } else {
+            if (document.activeElement === last) { e.preventDefault(); first.focus() }
+        }
+    }, [])
+
     useEffect(() => {
         if (!isExpanded) {
             triggerRef.current?.focus()
@@ -156,6 +170,7 @@ export function EpisodeCard({
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby={`episode-title-${episode.episode_number}`}
+                    onKeyDown={handleDialogKeyDown}
                     className="absolute inset-0 z-30 bg-surface/40 backdrop-blur-3xl border border-border/10 border-t-border/20 flex flex-col p-6 animate-in fade-in duration-(--duration-base) cursor-pointer"
                 >
                     <div className="flex justify-between items-start mb-4 gap-4">
@@ -168,7 +183,7 @@ export function EpisodeCard({
                                 setIsExpanded(false)
                             }}
                             aria-label={t.common.close}
-                            className="h-8 w-8 flex items-center justify-center shrink-0 rounded-full bg-border-subtle hover:bg-border text-muted hover:text-text-main transition-colors cursor-pointer"
+                            className="h-11 w-11 flex items-center justify-center shrink-0 rounded-full bg-border-subtle hover:bg-border text-muted hover:text-text-main transition-colors cursor-pointer"
                         >
                             <X className="h-4 w-4" aria-hidden="true" />
                         </button>

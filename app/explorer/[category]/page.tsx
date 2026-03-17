@@ -66,16 +66,16 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   }
 
   return {
-    title: `${categoryData.title} - ReelMark`,
+    title: categoryData.title,
     description: categoryData.description,
     openGraph: {
-      title: `${categoryData.title} - ReelMark`,
+      title: categoryData.title,
       description: categoryData.description,
       type: "website",
     },
     twitter: {
       card: "summary",
-      title: `${categoryData.title} - ReelMark`,
+      title: categoryData.title,
       description: categoryData.description,
     },
   }
@@ -87,36 +87,24 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category } = await params
   const t = await getTranslations()
 
-  const validCategories = [
-    "popular",
-    "top-rated",
-    "upcoming",
-    "now-playing",
-    "trending",
-    "tv-popular",
-    "tv-top-rated",
-    "tv-trending",
-    "tv-airing-today",
-    "tv-on-the-air",
-  ]
+  const categoryTitleMap: Record<string, string> = {
+    popular: t.pages.explorer.popular,
+    "top-rated": t.pages.explorer.topRated,
+    upcoming: t.pages.explorer.upcoming,
+    "now-playing": t.pages.explorer.nowPlaying,
+    trending: t.pages.explorer.trending,
+    "tv-popular": t.pages.explorer.tvPopular,
+    "tv-top-rated": t.pages.explorer.tvTopRated,
+    "tv-trending": t.pages.explorer.tvTrending,
+    "tv-airing-today": t.pages.explorer.tvAiringToday,
+    "tv-on-the-air": t.pages.explorer.tvOnTheAir,
+  }
 
-  if (!validCategories.includes(category)) {
+  if (!(category in categoryTitleMap)) {
     notFound()
   }
 
-  let title = ""
-  switch (category) {
-    case "popular": title = t.pages.explorer.popular; break;
-    case "top-rated": title = t.pages.explorer.topRated; break;
-    case "upcoming": title = t.pages.explorer.upcoming; break;
-    case "now-playing": title = t.pages.explorer.nowPlaying; break;
-    case "trending": title = t.pages.explorer.trending; break;
-    case "tv-popular": title = t.pages.explorer.tvPopular; break;
-    case "tv-top-rated": title = t.pages.explorer.tvTopRated; break;
-    case "tv-trending": title = t.pages.explorer.tvTrending; break;
-    case "tv-airing-today": title = t.pages.explorer.tvAiringToday; break;
-    case "tv-on-the-air": title = t.pages.explorer.tvOnTheAir; break;
-  }
+  const title = categoryTitleMap[category]
 
   const initialItems = await fetchMoreMedia(category, 1)
 

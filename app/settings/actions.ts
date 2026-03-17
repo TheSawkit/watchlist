@@ -2,11 +2,22 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { headers } from 'next/headers'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n/server'
 import { validateEmail, validatePassword, validateUsername, validateRegion, validateAvatarFile } from '@/lib/validators'
+import { checkRateLimit } from '@/lib/rate-limit'
+
+async function getClientIp(): Promise<string> {
+    const h = await headers()
+    return h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+}
 
 export async function updateEmail(prevState: unknown, formData: FormData) {
+    const ip = await getClientIp()
+    const { allowed } = checkRateLimit(`settings:email:${ip}`, 5, 15 * 60 * 1000)
+    if (!allowed) return { error: 'Too many requests. Please try again later.', success: false }
+
     const supabase = await createClient()
     const t = await getTranslations()
 
@@ -36,6 +47,10 @@ export async function updateEmail(prevState: unknown, formData: FormData) {
 }
 
 export async function updatePassword(prevState: unknown, formData: FormData) {
+    const ip = await getClientIp()
+    const { allowed } = checkRateLimit(`settings:password:${ip}`, 5, 15 * 60 * 1000)
+    if (!allowed) return { error: 'Too many requests. Please try again later.', success: false }
+
     const supabase = await createClient()
     const t = await getTranslations()
 
@@ -70,6 +85,10 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
 }
 
 export async function updateProfile(prevState: unknown, formData: FormData) {
+    const ip = await getClientIp()
+    const { allowed } = checkRateLimit(`settings:profile:${ip}`, 10, 60 * 60 * 1000)
+    if (!allowed) return { error: 'Too many requests. Please try again later.', success: false }
+
     const supabase = await createClient()
     const t = await getTranslations()
 
@@ -107,6 +126,10 @@ export async function updateProfile(prevState: unknown, formData: FormData) {
 }
 
 export async function updateAvatar(prevState: unknown, formData: FormData) {
+    const ip = await getClientIp()
+    const { allowed } = checkRateLimit(`settings:avatar:${ip}`, 10, 60 * 60 * 1000)
+    if (!allowed) return { error: 'Too many requests. Please try again later.', success: false }
+
     const supabase = await createClient()
     const t = await getTranslations()
 
@@ -167,6 +190,10 @@ export async function updateAvatar(prevState: unknown, formData: FormData) {
 }
 
 export async function deleteAccount(prevState: unknown, formData: FormData) {
+    const ip = await getClientIp()
+    const { allowed } = checkRateLimit(`settings:delete:${ip}`, 3, 60 * 60 * 1000)
+    if (!allowed) return { error: 'Too many requests. Please try again later.', success: false }
+
     const supabase = await createClient()
     const t = await getTranslations()
 
@@ -180,9 +207,8 @@ export async function deleteAccount(prevState: unknown, formData: FormData) {
 
     const confirmation = formData.get('confirmation')
     const password = formData.get('password')
-    const expectedWord = t.danger.confirmPlaceholder
 
-    if (typeof confirmation !== 'string' || confirmation !== expectedWord) {
+    if (typeof confirmation !== 'string' || confirmation !== 'DELETE') {
         return { error: t.settings.dangerZone.incorrectConfirmation, success: false }
     }
 
@@ -199,7 +225,15 @@ export async function deleteAccount(prevState: unknown, formData: FormData) {
         return { error: t.settings.dangerZone.confirmPassword, success: false }
     }
 
-    await supabase.auth.signOut()
+    await supabase.from('episode_watches').delete().eq('user_id', user.id)
+    await supabase.from('watchlist').delete().eq('user_id', user.id)
+
+    const adminClient = createAdminClient()
+    const { error: deleteError } = await adminClient.auth.admin.deleteUser(user.id)
+
+    if (deleteError) {
+        return { error: deleteError.message, success: false }
+    }
 
     revalidatePath('/', 'layout')
     redirect('/login?deleted=true')

@@ -46,9 +46,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
 
     return (
         <div
-            className={cn("flex flex-col gap-6", className)}
+            className={cn("flex flex-col gap-6 auth-form-animate", className)}
             {...props}
-            style={{ animation: "scaleIn var(--duration-slow) ease-out forwards", opacity: 0 }}
         >
             <Card className="transform transition-all duration-(--duration-base) hover:shadow-cinema">
                 <CardHeader className="text-center">
@@ -137,7 +136,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                                 <FieldDescription>{t.auth.signup.regionDescription}</FieldDescription>
                             </Field>
                             {state?.error && (
-                                <p className="text-sm text-red-2 text-center">{state.error}</p>
+                                <p role="alert" className="text-sm text-red-2 text-center">{state.error}</p>
                             )}
                             <Field>
                                 <Button type="submit" disabled={isPending}>
@@ -154,8 +153,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
             </Card>
             <FieldDescription className="px-6 text-center">
                 {t.auth.terms}{" "}
-                <a href="#">{t.auth.termsLink}</a> {t.common.and}{" "}
-                <a href="#">{t.auth.privacyLink}</a>.
+                <span className="underline cursor-default">{t.auth.termsLink}</span> {t.common.and}{" "}
+                <span className="underline cursor-default">{t.auth.privacyLink}</span>.
             </FieldDescription>
         </div>
     )

@@ -5,12 +5,20 @@ import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { getTranslations } from "@/lib/i18n/server"
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://reelmark.app"
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations()
 
   return {
     title: t.metadata.loginTitle,
     description: t.metadata.loginDescription,
+    robots: {
+      index: false,
+      follow: false,
+      googleBot: { index: false, follow: false },
+    },
+    alternates: { canonical: `${BASE_URL}/login` },
     openGraph: {
       title: t.metadata.loginTitle,
       description: t.metadata.loginDescription,

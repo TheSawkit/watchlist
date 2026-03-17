@@ -49,7 +49,6 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
                                 variant="ghost"
                                 size="icon"
                                 onClick={closeMenu}
-                                className="h-8 w-8"
                                 aria-label={t.navbar.mobile.closeMenu}
                             >
                                 <X className="h-5 w-5" />

@@ -1,21 +1,43 @@
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Settings } from "lucide-react";
-import { SignoutButton } from "@/components/auth/SignoutButton";
-import { NavbarMobile } from "@/components/navigation/NavbarMobile";
-import { NavLinks } from "@/components/navigation/NavLinks";
-import { UserAvatar } from "@/components/shared/UserAvatar";
 import Title from "@/components/layout/Title";
 import { getTranslations } from "@/lib/i18n/server";
+
+const NavbarMobile = dynamic(() =>
+    import("@/components/navigation/NavbarMobile").then(m => ({ default: m.NavbarMobile }))
+);
+const NavLinks = dynamic(() =>
+    import("@/components/navigation/NavLinks").then(m => ({ default: m.NavLinks }))
+);
+const SignoutButton = dynamic(() =>
+    import("@/components/auth/SignoutButton").then(m => ({ default: m.SignoutButton }))
+);
+const UserAvatar = dynamic(() =>
+    import("@/components/shared/UserAvatar").then(m => ({ default: m.UserAvatar }))
+);
+const DropdownMenu = dynamic(() =>
+    import("@/components/ui/dropdown-menu").then(m => ({ default: m.DropdownMenu }))
+);
+const DropdownMenuContent = dynamic(() =>
+    import("@/components/ui/dropdown-menu").then(m => ({ default: m.DropdownMenuContent }))
+);
+const DropdownMenuItem = dynamic(() =>
+    import("@/components/ui/dropdown-menu").then(m => ({ default: m.DropdownMenuItem }))
+);
+const DropdownMenuLabel = dynamic(() =>
+    import("@/components/ui/dropdown-menu").then(m => ({ default: m.DropdownMenuLabel }))
+);
+const DropdownMenuSeparator = dynamic(() =>
+    import("@/components/ui/dropdown-menu").then(m => ({ default: m.DropdownMenuSeparator }))
+);
+const DropdownMenuTrigger = dynamic(() =>
+    import("@/components/ui/dropdown-menu").then(m => ({ default: m.DropdownMenuTrigger }))
+);
+const Settings = dynamic(() =>
+    import("lucide-react").then(m => ({ default: m.Settings }))
+);
 
 /**
  * App navigation header with logo, links, and user menu.
@@ -76,6 +98,7 @@ export default async function Navbar() {
                                         <Button
                                             variant="outline"
                                             size="icon-lg"
+                                            aria-label={t.navbar.userMenu}
                                             className="rounded-full overflow-hidden border-2 border-transparent data-[state=open]:border-primary transition-all duration-(--duration-fast) focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 min-w-12"
                                         >
                                             <UserAvatar
@@ -109,10 +132,8 @@ export default async function Navbar() {
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
-                                        <DropdownMenuItem asChild variant="destructive">
-                                            <div className="py-1.5 px-2 mr-2 gap-2 flex items-center">
-                                                <SignoutButton />
-                                            </div>
+                                        <DropdownMenuItem variant="destructive">
+                                            <SignoutButton />
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>

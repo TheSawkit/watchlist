@@ -1,4 +1,5 @@
 import { getServerLocale, getServerLanguage } from "@/lib/i18n/server"
+import { createClient } from "@/lib/supabase/server"
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY
 const TMDB_BASE_URL = "https://api.themoviedb.org/3"
@@ -53,8 +54,6 @@ export async function fetchTMDB<T>(endpoint: string, params: Record<string, stri
 
   return response.json()
 }
-
-import { createClient } from "@/lib/supabase/server"
 
 /**
  * Resolves the current user's region from their Supabase profile metadata.

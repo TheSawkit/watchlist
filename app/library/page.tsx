@@ -1,18 +1,36 @@
 import { Suspense } from "react"
 import { requireAuth } from "@/lib/auth"
 import { getUserWatchlist } from "@/app/actions/watchlist"
-import { getTvShowWatchProgress } from "@/app/actions/episodes"
+import { getAllTvShowsWatchProgress } from "@/app/actions/episodes"
 import { LibraryTabs } from "@/components/library/LibraryTabs"
 import { PageLayout, PageHeader } from "@/components/ui/PageLayout"
 import { getTranslations } from "@/lib/i18n/server"
 import { MediaTypeSwitcher } from "@/components/media/MediaTypeSwitcher"
 import { getTvShowTotalEpisodes } from "@/lib/tmdb"
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://reelmark.app"
+
 export async function generateMetadata() {
     const t = await getTranslations()
     return {
-        title: `${t.pages.library.title} - Reelmark`,
-        description: t.library.inLibrary,
+        title: t.pages.library.title,
+        description: t.metadata.libraryDescription,
+        robots: {
+            index: false,
+            follow: false,
+            googleBot: { index: false, follow: false },
+        },
+        alternates: { canonical: `${BASE_URL}/library` },
+        openGraph: {
+            title: t.pages.library.title,
+            description: t.metadata.libraryDescription,
+            type: "website",
+        },
+        twitter: {
+            card: "summary",
+            title: t.pages.library.title,
+            description: t.metadata.libraryDescription,
+        },
     }
 }
 
@@ -36,18 +54,12 @@ export default async function LibraryPage({ searchParams }: Props) {
     const tvProgressMap: Record<number, { watched: number; total: number }> = {}
     if (type === "tv") {
         const tvIds = watchlist.map(entry => entry.media_id)
-        const results = await Promise.all(
-            tvIds.map(async (tvId) => {
-                const [progress, total] = await Promise.all([
-                    getTvShowWatchProgress(tvId),
-                    getTvShowTotalEpisodes(tvId),
-                ])
-                const watched = Array.from(progress.values()).reduce((sum, count) => sum + count, 0)
-                return { tvId, watched, total }
-            })
-        )
-        for (const { tvId, watched, total } of results) {
-            tvProgressMap[tvId] = { watched, total }
+        const [watchedCounts, totals] = await Promise.all([
+            getAllTvShowsWatchProgress(tvIds),
+            Promise.all(tvIds.map(tvId => getTvShowTotalEpisodes(tvId).then(total => ({ tvId, total })))),
+        ])
+        for (const { tvId, total } of totals) {
+            tvProgressMap[tvId] = { watched: watchedCounts[tvId] ?? 0, total }
         }
     }
 

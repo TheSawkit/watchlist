@@ -98,7 +98,7 @@ export function DangerZone() {
                         </FieldGroup>
 
                         {state.error && (
-                            <p className="text-sm text-red">{state.error}</p>
+                            <p role="alert" className="text-sm text-red">{state.error}</p>
                         )}
 
                         <div className="flex gap-3 pt-4 border-t">

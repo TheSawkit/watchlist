@@ -43,6 +43,8 @@ export interface MediaBannerProps {
   certification?: string
   genres?: { id: number; name: string }[]
   actions?: ReactNode
+  // Compact icon-only buttons shown in the sticky header on scroll (avoids overflow on mobile)
+  stickyActions?: ReactNode
 }
 
 export interface MediaDescriptionProps {

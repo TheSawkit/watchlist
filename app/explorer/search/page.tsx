@@ -13,7 +13,10 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
     const params = await searchParams
     const query = params.q || params.query || ""
     return {
-        title: query ? `"${query}" — ReelMark` : "Search — ReelMark",
+        title: query ? `"${query}" — Search` : "Search",
+        description: query
+            ? `Search results for "${query}" on ReelMark — movies, TV shows, and actors.`
+            : "Search movies, TV shows, and actors on ReelMark.",
     }
 }
 

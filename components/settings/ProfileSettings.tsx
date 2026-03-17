@@ -81,7 +81,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                     <form action={formAction} className="space-y-6">
                         <FieldGroup>
                             <Field>
-                                <FieldLabel>{t.settings.profile.avatar}</FieldLabel>
+                                <FieldLabel id="avatar-label">{t.settings.profile.avatar}</FieldLabel>
                                 <div className="flex items-start gap-6 mt-4">
                                     <div className="relative">
                                         {avatarPreview ? (
@@ -114,6 +114,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                                             type="button"
                                             variant="outline"
                                             size="sm"
+                                            aria-labelledby="avatar-label"
                                             onClick={() => fileInputRef.current?.click()}
                                             className="gap-2"
                                         >
@@ -144,10 +145,10 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                                                     {isAvatarPending ? t.common.updating : t.settings.profile.updateAvatar}
                                                 </Button>
                                                 {avatarState.error && (
-                                                    <p className="text-sm text-red">{avatarState.error}</p>
+                                                    <p role="alert" className="text-sm text-red">{avatarState.error}</p>
                                                 )}
                                                 {avatarState.success && (
-                                                    <p className="text-sm text-gold">{avatarState.message}</p>
+                                                    <p role="status" className="text-sm text-gold">{avatarState.message}</p>
                                                 )}
                                             </>
                                         )}
@@ -196,9 +197,9 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                             </Field>
                         </FieldGroup>
 
-                        {state.error && <p className="text-sm text-red">{state.error}</p>}
+                        {state.error && <p role="alert" className="text-sm text-red">{state.error}</p>}
                         {state.success && (
-                            <p className="text-sm text-gold">{state.message}</p>
+                            <p role="status" className="text-sm text-gold">{state.message}</p>
                         )}
 
                         <Button type="submit" disabled={isPending}>

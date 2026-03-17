@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { getImageUrl } from "@/lib/tmdb/images"
 import type { MediaBannerProps } from "@/types/components"
 import { Star, Clock, Calendar, ArrowLeft } from "lucide-react"
@@ -38,16 +39,22 @@ export function MediaBanner({
     certification,
     genres,
     actions,
+    stickyActions,
 }: MediaBannerProps) {
     const { t, lang } = useTranslation()
     const locale = getLocale(lang)
+    const router = useRouter()
     const [scrolled, setScrolled] = useState(false)
     const bottomRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
-                setScrolled(!entry.isIntersecting)
+                if (entry.isIntersecting) {
+                    setScrolled(false)
+                } else if (window.scrollY > 0) {
+                    setScrolled(true)
+                }
             },
             { threshold: 0, rootMargin: "-64px 0px 0px 0px" }
         )
@@ -69,12 +76,12 @@ export function MediaBanner({
                 scrolled ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
             )}>
                 <div className="bg-surface/30 backdrop-blur-3xl backdrop-saturate-150 border-b border-border/10 shadow-card">
-                    <div className="container mx-auto px-4 h-16 sm:h-20 flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                    <div className="container mx-auto px-3 sm:px-4 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
+                        <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
                             <button
-                                onClick={() => window.history.back()}
+                                onClick={() => router.back()}
                                 aria-label={t.common.goBack}
-                                className="h-10 w-10 shrink-0 flex items-center justify-center rounded-full bg-surface/10 hover:bg-surface/20 text-text transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                                className="h-11 w-11 shrink-0 flex items-center justify-center rounded-full bg-surface/10 hover:bg-surface/20 text-text transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
                             >
                                 <ArrowLeft className="h-5 w-5" />
                             </button>
@@ -107,16 +114,16 @@ export function MediaBanner({
                             </div>
                         </div>
 
-                        {actions && (
-                            <div className="flex items-center gap-2 shrink-0 scale-75 origin-right sm:scale-90">
-                                {actions}
+                        {(stickyActions ?? actions) && (
+                            <div className="flex items-center gap-2 shrink-0">
+                                {stickyActions ?? actions}
                             </div>
                         )}
                     </div>
                 </div>
             </div>
 
-            <div className="relative w-full -mt-16 min-h-[70vh] md:min-h-[80vh] flex flex-col justify-end pt-32 pb-12 overflow-hidden">
+            <div className="relative w-full -mt-16 min-h-[70vh] md:min-h-[80vh] flex flex-col justify-end pt-20 sm:pt-32 pb-6 sm:pb-12 overflow-hidden">
                 <div
                     className="absolute inset-x-0 top-0 h-full -z-10"
                 >
@@ -132,35 +139,34 @@ export function MediaBanner({
                     <div className="absolute inset-0 bg-linear-to-r from-app-bg via-app-bg/40 to-transparent" />
                 </div>
 
-                <div className="relative z-10 container mx-auto px-6 lg:px-12 h-full flex flex-col justify-end pb-12">
+                <div className="relative z-10 container mx-auto px-6 lg:px-12 h-full flex flex-col justify-end pb-4 sm:pb-12">
                     <div className="w-full justify-start mb-6 md:mb-8 z-20 hidden md:flex">
                         <button
-                            onClick={() => window.history.back()}
+                            onClick={() => router.back()}
                             aria-label={t.common.goBack}
-                            className="h-10 w-10 flex items-center justify-center rounded-full bg-surface/20 backdrop-blur-2xl border border-border/10 border-t-border/20 hover:bg-surface-2/20 shrink-0 text-text transition-colors cursor-pointer shadow-card-xs focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                            className="h-11 w-11 flex items-center justify-center rounded-full bg-surface/20 backdrop-blur-2xl border border-border/10 border-t-border/20 hover:bg-surface-2/20 shrink-0 text-text transition-colors cursor-pointer shadow-card-xs focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
                         >
                             <ArrowLeft className="h-5 w-5" />
                         </button>
                     </div>
-                    <div className="flex flex-col md:flex-row gap-6 md:gap-8 w-full items-start md:items-end pt-12 md:pt-0">
-                        <div className="relative aspect-2/3 w-32 sm:w-40 md:w-48 lg:w-56 shrink-0 rounded-lg overflow-hidden border-2 border-gold/30 shadow-poster">
+                    <div className="flex flex-col md:flex-row gap-3 sm:gap-6 md:gap-8 w-full items-start md:items-end pt-4 sm:pt-10 md:pt-0">
+                        <div className="relative aspect-2/3 w-20 sm:w-40 md:w-48 lg:w-56 shrink-0 rounded-lg overflow-hidden border-2 border-gold/30 shadow-poster">
                             <Image
                                 src={getImageUrl(posterPath, "w500")}
                                 alt={title}
                                 fill
                                 className="object-cover"
                                 sizes="(max-width: 768px) 128px, 224px"
-                                priority
                             />
                         </div>
 
                         <div className="flex-1 max-w-4xl">
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-text mb-4 drop-shadow-text">
+                            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-text mb-4 drop-shadow-text">
                                 {title}
                             </h1>
 
                             {tagline && (
-                                <p className="text-xl md:text-2xl text-text-muted mb-6 italic">
+                                <p className="text-base sm:text-xl md:text-2xl text-text-muted mb-6 italic">
                                     {tagline}
                                 </p>
                             )}
@@ -207,7 +213,7 @@ export function MediaBanner({
                             )}
 
                             {actions && (
-                                <div ref={bottomRef} className="flex items-center gap-3 mt-2">{actions}</div>
+                                <div ref={bottomRef} className="flex flex-wrap justify-center sm:justify-normal items-center gap-3 mt-2">{actions}</div>
                             )}
 
                             {!actions && <div ref={bottomRef} className="h-1 w-full" />}

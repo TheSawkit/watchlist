@@ -22,7 +22,7 @@ export function ActorBanner({ actor }: ActorBannerProps) {
             <div className="relative z-10 container mx-auto px-6 lg:px-12 py-12 md:py-16">
                 <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start">
 
-                    <div className="relative w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 shrink-0 rounded-full overflow-hidden border-4 border-gold/30 shadow-cinema">
+                    <div className="relative w-32 h-32 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 shrink-0 rounded-full overflow-hidden border-4 border-gold/30 shadow-cinema">
                         <Image
                             src={getImageUrl(actor.profile_path)}
                             alt={actor.name}
@@ -35,7 +35,7 @@ export function ActorBanner({ actor }: ActorBannerProps) {
 
 
                     <div className="flex-1 text-center md:text-left">
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-text mb-4">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-text mb-4">
                             {actor.name}
                         </h1>
 

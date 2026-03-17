@@ -16,19 +16,38 @@ export async function generateMetadata({ params: paramsPromise }: SeasonPageProp
     const tvId = parseInt(params.id)
     const seasonNumber = parseInt(params.seasonNumber)
 
-    if (isNaN(tvId) || isNaN(seasonNumber)) return { title: "Season — ReelMark" }
+    if (isNaN(tvId) || isNaN(seasonNumber)) return { title: "Season" }
 
     try {
         const [tvDetails, seasonDetails] = await Promise.all([
             getTvShowDetails(tvId),
             getSeasonDetails(tvId, seasonNumber),
         ])
+        const description = seasonDetails.overview || `${seasonDetails.name} of ${tvDetails.name}`
+        const ogImage = seasonDetails.poster_path
+            ? `https://image.tmdb.org/t/p/w500${seasonDetails.poster_path}`
+            : tvDetails.poster_path
+                ? `https://image.tmdb.org/t/p/w500${tvDetails.poster_path}`
+                : undefined
+
         return {
-            title: `${seasonDetails.name} — ${tvDetails.name} — ReelMark`,
-            description: seasonDetails.overview || `${seasonDetails.name} of ${tvDetails.name}`,
+            title: `${seasonDetails.name} — ${tvDetails.name}`,
+            description,
+            openGraph: {
+                title: `${seasonDetails.name} — ${tvDetails.name}`,
+                description,
+                type: "video.tv_show",
+                images: ogImage ? [{ url: ogImage }] : undefined,
+            },
+            twitter: {
+                card: "summary_large_image",
+                title: `${seasonDetails.name} — ${tvDetails.name}`,
+                description,
+                images: ogImage ? [ogImage] : undefined,
+            },
         }
     } catch {
-        return { title: "Season — ReelMark" }
+        return { title: "Season" }
     }
 }
 

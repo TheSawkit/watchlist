@@ -16,6 +16,8 @@ interface Props extends MediaCardProps {
     watchlistEntry?: WatchlistEntry
     hideRating?: boolean
     tvProgress?: { watched: number; total: number }
+    priority?: boolean
+    imageSize?: "card" | "grid"
 }
 
 /**
@@ -29,9 +31,11 @@ interface Props extends MediaCardProps {
  * @param props.watchlistEntry - Optional watchlist data for the media item
  * @param props.hideRating - If true, hides the rating badge on card
  * @param props.tvProgress - Optional TV show progress { watched episodes, total episodes }
+ * @param props.priority - If true, preloads the image (for above-the-fold cards)
+ * @param props.imageSize - Layout context: "card" for horizontal scroll, "grid" for full grid
  * @returns Linked card component with media poster and overlay controls
  */
-export function MediaCard({ media, className, watchlistEntry, hideRating, tvProgress }: Props) {
+export function MediaCard({ media, className, watchlistEntry, hideRating, tvProgress, priority, imageSize = "card" }: Props) {
     const { t, lang } = useTranslation()
     const locale = getLocale(lang)
 
@@ -50,11 +54,16 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
         >
             <div className="relative aspect-2/3 w-full overflow-hidden rounded-poster bg-surface">
                 <Image
-                    src={getImageUrl(media.poster_path)}
+                    src={getImageUrl(media.poster_path, imageSize === "grid" ? "w342" : "w342")}
                     alt={media.title}
                     fill
+                    loading={priority ? "eager" : "lazy"}
+                    {...(priority ? { priority: true } : {})}
                     className="object-cover transition-transform duration-(--duration-base) ease-out group-hover:scale-105"
-                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 16vw"
+                    sizes={imageSize === "grid"
+                        ? "(max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 16vw"
+                        : "200px"
+                    }
                 />
 
                 <div className={cn(
@@ -97,7 +106,7 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
                     "translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100",
                 )}>
                     <div>
-                        <h3 className="text-lg font-bold text-white leading-tight line-clamp-2">
+                        <h3 className="text-lg font-bold text-text leading-tight line-clamp-2">
                             {media.title}
                         </h3>
 
@@ -130,18 +139,26 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
                         )}
                     </div>
 
-                    <WatchButton
-                        mediaId={watchlistEntry?.media_id ?? media.id}
-                        mediaTitle={watchlistEntry?.media_title ?? media.title}
-                        mediaType={watchlistEntry?.media_type ?? media.media_type}
-                        posterPath={watchlistEntry?.poster_path ?? media.poster_path}
-                        status={media.media_type === "tv"
+                    {(() => {
+                        const resolvedStatus = media.media_type === "tv"
                             ? "to_watch"
-                            : (watchlistEntry ? watchlistEntry.status : (media.watchlistEntry?.status ?? "to_watch"))}
-                        initialActive={!!watchlistEntry || !!media.watchlistEntry}
-                        fallbackStatus={media.media_type === "movie" && (isWatched || media.watchlistEntry?.status === "watched") ? "to_watch" : undefined}
-                        variant="full"
-                    />
+                            : (watchlistEntry ? watchlistEntry.status : (media.watchlistEntry?.status ?? "to_watch"))
+                        const resolvedFallback = media.media_type === "movie" && (isWatched || media.watchlistEntry?.status === "watched")
+                            ? "to_watch"
+                            : undefined
+                        return (
+                            <WatchButton
+                                mediaId={watchlistEntry?.media_id ?? media.id}
+                                mediaTitle={watchlistEntry?.media_title ?? media.title}
+                                mediaType={watchlistEntry?.media_type ?? media.media_type}
+                                posterPath={watchlistEntry?.poster_path ?? media.poster_path}
+                                status={resolvedStatus}
+                                initialActive={!!watchlistEntry || !!media.watchlistEntry}
+                                fallbackStatus={resolvedFallback}
+                                variant="full"
+                            />
+                        )
+                    })()}
                 </div>
             </div>
         </Link>

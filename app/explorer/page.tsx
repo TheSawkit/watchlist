@@ -84,13 +84,17 @@ export default async function ExplorerPage({ searchParams }: Props) {
 
       <SearchBar />
 
-      <Suspense fallback={<div className="h-11.5 mb-8" />}>
-        <MediaTypeSwitcher defaultType="movie" />
-      </Suspense>
+      <div className="mb-8 min-h-[56px] flex justify-center">
+        <Suspense fallback={null}>
+          <MediaTypeSwitcher defaultType="movie" />
+        </Suspense>
+      </div>
 
-      <Suspense fallback={<div className="h-10 mb-8" />}>
-        <CategoryNav />
-      </Suspense>
+      <div className="mb-8 min-h-[44px]">
+        <Suspense fallback={null}>
+          <CategoryNav />
+        </Suspense>
+      </div>
 
       <MediaSection
         title={type === "movie" ? t.pages.explorer.trending : t.pages.explorer.tvTrending}

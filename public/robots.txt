@@ -1,0 +1,9 @@
+User-Agent: *
+Allow: /
+Allow: /login
+Allow: /signup
+Disallow: /library
+Disallow: /settings
+Disallow: /api/
+
+Sitemap: https://reelmark.app/sitemap.xml

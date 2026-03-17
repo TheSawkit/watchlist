@@ -27,16 +27,16 @@ export function NavLinks({ orientation = "vertical", className, onLinkClick }: N
                     onClick={onLinkClick}
                     aria-current={pathname === link.href ? "page" : undefined}
                     className={cn(
-                        "text-muted transition-all duration-(--duration-base) hover:text-text-main text-nowrap relative group",
+                        "text-muted transition-all duration-(--duration-base) hover:text-text-main text-nowrap relative group inline-flex items-center",
                         !isHorizontal && "px-4 py-2 rounded-md hover:bg-surface-2",
+                        isHorizontal && "py-2 min-h-11",
                         pathname === link.href && "text-gold font-medium",
                         isHorizontal && "after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-gold after:w-0 after:transition-all after:duration-(--duration-base) hover:after:w-full",
                         isHorizontal && pathname === link.href && "after:w-full"
                     )}
                     style={{
-                        animation: `slideUp var(--duration-medium) ease-out forwards`,
+                        animation: `slideUp var(--duration-medium) ease-out both`,
                         animationDelay: `${index * 100}ms`,
-                        opacity: 0,
                     }}
                 >
                     {link.label}

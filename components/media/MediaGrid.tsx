@@ -22,7 +22,7 @@ export function MediaGrid({ items, hideRating }: MediaGridProps) {
                     index={index}
                     animation="fadeIn"
                 >
-                    <MediaCard media={media} hideRating={hideRating} />
+                    <MediaCard media={media} hideRating={hideRating} imageSize="grid" priority={index < 6} />
                 </StaggeredItem>
             ))}
         </div>

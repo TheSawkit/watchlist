@@ -5,6 +5,8 @@ export default function Title({ className }: { className?: string }) {
       fill="currentColor"
       className={className}
       xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="ReelMark"
       style={{ fillRule: "evenodd", clipRule: "evenodd", strokeLinejoin: "round", strokeMiterlimit: 2 }}
     >
       <g transform="matrix(1,0,0,1,-469.928858,-104)">

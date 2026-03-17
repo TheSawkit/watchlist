@@ -44,8 +44,9 @@ export function MediaSection({ title, items, categoryUrl, hideRating }: MediaSec
                     index={index}
                     staggerMs={CARD_ANIMATION_DELAY_MS}
                     className="flex-none w-40 md:w-50 snap-start"
+                    eager={index < 4}
                 >
-                    <MediaCard media={media} hideRating={hideRating} className="h-full" />
+                    <MediaCard media={media} hideRating={hideRating} priority={index < 4} className="h-full" />
                 </StaggeredItem>
             ))}
             <ViewAllCard href={categoryUrl} label={t.common.viewAll} />
@@ -79,11 +80,13 @@ export function LibraryMediaSection({ title, entries, categoryUrl }: LibrarySect
                     index={index}
                     staggerMs={CARD_ANIMATION_DELAY_MS}
                     className="flex-none w-40 md:w-50 snap-start"
+                    eager={index < 4}
                 >
                     <MediaCard
                         media={mediaItems[index]}
                         watchlistEntry={entry}
                         hideRating
+                        priority={index < 4}
                         className="h-full"
                     />
                 </StaggeredItem>

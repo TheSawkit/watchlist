@@ -19,7 +19,7 @@ export default async function FeaturesSection() {
             <div className="mx-auto max-w-6xl">
                 <h2
                     className="mb-12 text-center font-display text-5xl font-normal text-text md:text-6xl"
-                    style={{ animation: "slideUp var(--duration-slower) ease-out forwards", opacity: 0 }}
+                    style={{ animation: "slideUpSubtle var(--duration-slower) ease-out both" }}
                 >
                     {t.home.features.title}
                 </h2>
@@ -31,6 +31,7 @@ export default async function FeaturesSection() {
                             staggerMs={100}
                             animation="fadeIn"
                             duration="var(--duration-slower)"
+                            eager={index < 3}
                         >
                             <FeatureCard
                                 icon={feature.icon}

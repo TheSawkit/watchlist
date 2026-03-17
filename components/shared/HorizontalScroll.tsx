@@ -30,7 +30,8 @@ export function HorizontalScroll({
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 rounded-full bg-background/50 backdrop-blur-sm border-surface-3 hover:bg-surface-2 hover:text-text focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+              aria-label="Scroll left"
+              className="h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm border-surface-3 hover:bg-surface-2 hover:text-text focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
               onClick={() => scroll('left')}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -38,7 +39,8 @@ export function HorizontalScroll({
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 rounded-full bg-background/50 backdrop-blur-sm border-surface-3 hover:bg-surface-2 hover:text-text focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+              aria-label="Scroll right"
+              className="h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm border-surface-3 hover:bg-surface-2 hover:text-text focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
               onClick={() => scroll('right')}
             >
               <ChevronRight className="h-4 w-4" />

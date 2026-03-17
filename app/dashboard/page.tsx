@@ -23,6 +23,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t.metadata.dashboardTitle,
     description: t.metadata.dashboardDescription,
+    robots: {
+      index: false,
+      follow: false,
+      googleBot: { index: false, follow: false },
+    },
     openGraph: {
       title: t.metadata.dashboardTitle,
       description: t.metadata.dashboardDescription,
@@ -56,9 +61,6 @@ export default async function DashboardPage({ searchParams }: Props) {
     const seedForRecs = seedMedia.slice(0, 1)
     const seedForSimilars = seedMedia.slice(1, 4)
 
-    let recommendationSections = []
-    let similarSections = []
-
     const isMovie = type === "movie"
     const getRecs = isMovie ? getMovieRecommendations : getTvShowRecommendations
     const getSims = isMovie ? getSimilarMovies : getSimilarTvShows
@@ -68,14 +70,14 @@ export default async function DashboardPage({ searchParams }: Props) {
         Promise.all(seedForSimilars.map(entry => getSims(entry.media_id)))
     ])
 
-    recommendationSections = seedForRecs.map((entry, index) => ({
+    const recommendationSections = seedForRecs.map((entry, index) => ({
         title: t.pages.dashboard.basedOn.replace("${movie.movie_title}", entry.media_title),
         items: isMovie
             ? (recommendationsResults[index] as Movie[]).map(movieToMediaItem)
             : (recommendationsResults[index] as TvShow[]).map(tvShowToMediaItem)
     })).filter(section => section.items.length > 0)
 
-    similarSections = seedForSimilars.map((entry, index) => ({
+    const similarSections = seedForSimilars.map((entry, index) => ({
         title: t.pages.dashboard.similarTo.replace("${movie.movie_title}", entry.media_title),
         items: isMovie
             ? (similarResults[index] as Movie[]).map(movieToMediaItem)

@@ -160,6 +160,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-x: clip; /* fixed elements are clipped at the viewport level */
 }
 
 body {
@@ -168,6 +169,7 @@ body {
   font-family: var(--font-sans);
   line-height: 1.6;
   letter-spacing: -0.011em;
+  overflow-x: clip; /* prevent any element from causing horizontal page scroll */
 }
 
 ::selection {
@@ -175,8 +177,12 @@ body {
   color: var(--color-text);
 }
 
-:focus-visible {
-  outline: none;
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @keyframes backdropBlur {
@@ -210,6 +216,17 @@ body {
   from {
     transform: translateY(20px);
     opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUpSubtle {
+  from {
+    transform: translateY(10px);
+    opacity: 1;
   }
   to {
     transform: translateY(0);
@@ -256,4 +273,16 @@ body {
 @keyframes spotlightDrift {
   0%, 100% { transform: translateX(-8%); opacity: 0.6; }
   50% { transform: translateX(8%); opacity: 1; }
+}
+
+.auth-form-animate {
+  animation: scaleIn var(--duration-slow) ease-out forwards;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-form-animate {
+    animation: none;
+    opacity: 1;
+  }
 }

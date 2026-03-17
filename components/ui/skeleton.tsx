@@ -10,7 +10,6 @@ export function Skeleton({
             style={{
                 backgroundImage: `linear-gradient(90deg, var(--color-surface-2) 0%, var(--color-surface-3) 50%, var(--color-surface-2) 100%)`,
                 backgroundSize: "200% 100%",
-                animation: "shimmer 2s infinite",
             }}
             {...props}
         />

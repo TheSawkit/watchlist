@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef, useCallback } from "react"
-import { useInView } from "@/lib/hooks"
+import { useInView } from "@/hooks/useInView"
 import type { MediaItem } from "@/types/tmdb"
 import { MediaGrid } from "@/components/media/MediaGrid"
 import { Loader2 } from "lucide-react"
@@ -14,6 +14,7 @@ export function InfiniteScrollMedia({ initialItems, category, clientSideData }: 
     const [page, setPage] = useState(2)
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
+    const [loadError, setLoadError] = useState(false)
     const loaderRef = useRef<HTMLDivElement>(null)
     const isLoaderVisible = useInView(loaderRef, { rootMargin: "0px 0px 200px 0px" })
     const { t } = useTranslation()
@@ -39,7 +40,7 @@ export function InfiniteScrollMedia({ initialItems, category, clientSideData }: 
     }, [category, initialItems])
 
     const loadMore = useCallback(async () => {
-        if (loading || !hasMore) return
+        if (loading || !hasMore || loadError) return
 
         setLoading(true)
         try {
@@ -68,13 +69,13 @@ export function InfiniteScrollMedia({ initialItems, category, clientSideData }: 
                 return [...prev, ...uniqueItems]
             })
             setPage((prev) => prev + 1)
-        } catch (error) {
-            console.warn('[InfiniteScroll] Load failed:', error)
+        } catch {
+            setLoadError(true)
             return
         } finally {
             setLoading(false)
         }
-    }, [category, hasMore, loading, page, clientSideData])
+    }, [category, hasMore, loading, loadError, page, clientSideData])
 
     useEffect(() => {
         if (isLoaderVisible) loadMore()
@@ -91,8 +92,12 @@ export function InfiniteScrollMedia({ initialItems, category, clientSideData }: 
                 </div>
             )}
 
-            {!hasMore && (
+            {!hasMore && !loadError && (
                 <div className="text-center py-8 text-muted">{t.movie.scrollEnd}</div>
+            )}
+
+            {loadError && (
+                <div role="alert" className="text-center py-8 text-muted">{t.common.errorDescription}</div>
             )}
         </>
     )

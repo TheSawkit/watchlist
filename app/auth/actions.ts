@@ -13,6 +13,13 @@ async function getClientIp(): Promise<string> {
     return h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
 }
 
+async function getOrigin(): Promise<string> {
+  const h = await headers()
+  const proto = h.get('x-forwarded-proto') ?? 'https'
+  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'reelmark.app'
+  return `${proto}://${host}`
+}
+
 export async function login(prevState: unknown, formData: FormData) {
   const ip = await getClientIp()
   const { allowed } = checkRateLimit(`login:${ip}`, 10, 15 * 60 * 1000)
@@ -75,4 +82,43 @@ export async function signout() {
   await supabase.auth.signOut()
   revalidatePath('/', 'layout')
   redirect('/login')
+}
+
+export async function requestPasswordReset(prevState: unknown, formData: FormData) {
+  const ip = await getClientIp()
+  const { allowed } = checkRateLimit(`reset-password:${ip}`, 5, 60 * 60 * 1000)
+  if (!allowed) return { error: 'Too many attempts. Please try again later.' }
+
+  const t = await getTranslations()
+  const email = validateEmail(formData.get('email'))
+  if (!email) return { error: t.settings.missingFields }
+
+  const supabase = await createClient()
+  const origin = await getOrigin()
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/auth/confirm?next=/auth/update-password`,
+  })
+
+  if (error) return { error: error.message }
+
+  return { error: '', success: true }
+}
+
+export async function updatePassword(prevState: unknown, formData: FormData) {
+  const ip = await getClientIp()
+  const { allowed } = checkRateLimit(`update-password:${ip}`, 10, 15 * 60 * 1000)
+  if (!allowed) return { error: 'Too many attempts. Please try again later.' }
+
+  const t = await getTranslations()
+  const password = validatePassword(formData.get('password'))
+  const confirmPassword = formData.get('confirm-password')
+  if (!password) return { error: t.settings.missingFields }
+  if (password !== confirmPassword) return { error: t.settings.password.noMatch }
+
+  const supabase = await createClient()
+  const { error } = await supabase.auth.updateUser({ password })
+  if (error) return { error: error.message }
+
+  revalidatePath('/', 'layout')
+  redirect('/dashboard')
 }

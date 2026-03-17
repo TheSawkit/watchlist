@@ -44,7 +44,7 @@ export function SearchDropdown({ query, results, isOpen, isLoading, onClose }: S
                     >
                         <div className="relative w-12 h-18 shrink-0 rounded-lg overflow-hidden shadow-card-xs">
                             <Image
-                                src={getImageUrl(item.poster_path, "w500")}
+                                src={getImageUrl(item.poster_path, "w92")}
                                 alt={item.title}
                                 fill
                                 className="object-cover group-hover:scale-110 transition-transform duration-(--duration-slow)"

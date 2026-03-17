@@ -21,6 +21,8 @@ import type { MoviePageProps } from "@/types/pages"
  * @param props.params - Promise resolving to { id: string } movie ID
  * @returns Metadata object with title, description, OpenGraph, and Twitter card data
  */
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://reelmark.app"
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
   const movieId = parseInt(id)
@@ -43,17 +45,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const watchDescription = movieDetails.overview || t.metadata.watchMovieOn.replace("${title}", movieDetails.title)
 
     return {
-      title: `ReelMark - ${movieDetails.title}`,
+      title: movieDetails.title,
       description: watchDescription,
+      alternates: { canonical: `${BASE_URL}/movie/${movieId}` },
       openGraph: {
-        title: `ReelMark - ${movieDetails.title}`,
+        title: movieDetails.title,
         description: watchDescription,
         type: "video.movie",
         images: images.length > 0 ? images : undefined,
       },
       twitter: {
         card: "summary_large_image",
-        title: `${movieDetails.title} - ReelMark`,
+        title: movieDetails.title,
         description: watchDescription,
         images: images.length > 0 ? [images[0].url] : undefined,
       },
@@ -113,7 +116,45 @@ export default async function MoviePage(props: MoviePageProps) {
         certification={movieDetails.certification}
         genres={movieDetails.genres}
         actions={
-          <div className="flex flex-row items-center gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            {!isWatched && (
+              <div className="w-full sm:w-auto">
+                <WatchButton
+                  mediaId={movieDetails.id}
+                  mediaTitle={movieDetails.title}
+                  mediaType="movie"
+                  posterPath={movieDetails.poster_path}
+                  status="to_watch"
+                  variant="full"
+                  initialActive={watchlistEntry?.status === "to_watch"}
+                />
+              </div>
+            )}
+            <div className="w-full sm:w-auto">
+              <WatchButton
+                mediaId={movieDetails.id}
+                mediaTitle={movieDetails.title}
+                mediaType="movie"
+                posterPath={movieDetails.poster_path}
+                status="watched"
+                variant="full"
+                initialActive={isWatched}
+                fallbackStatus="to_watch"
+                releaseDate={movieDetails.release_date}
+              />
+            </div>
+            {isWatched && watchlistEntry?.created_at && (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-surface-2 border border-border text-muted animate-in fade-in slide-in-from-left-4 duration-(--duration-slow)">
+                <Eye className="h-4 w-4 shrink-0" />
+                <span className="text-sm font-medium">
+                  {t.movie.watchedOn} {formatDate(watchlistEntry.created_at, locale)}
+                </span>
+              </div>
+            )}
+          </div>
+        }
+        stickyActions={
+          <div className="flex items-center gap-2">
             {!isWatched && (
               <WatchButton
                 mediaId={movieDetails.id}
@@ -121,7 +162,6 @@ export default async function MoviePage(props: MoviePageProps) {
                 mediaType="movie"
                 posterPath={movieDetails.poster_path}
                 status="to_watch"
-                variant="full"
                 initialActive={watchlistEntry?.status === "to_watch"}
               />
             )}
@@ -131,19 +171,10 @@ export default async function MoviePage(props: MoviePageProps) {
               mediaType="movie"
               posterPath={movieDetails.poster_path}
               status="watched"
-              variant="full"
               initialActive={isWatched}
               fallbackStatus="to_watch"
               releaseDate={movieDetails.release_date}
             />
-            {isWatched && watchlistEntry?.created_at && (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-surface-2 border border-border text-muted animate-in fade-in slide-in-from-left-4 duration-(--duration-slow)">
-                <Eye className="h-4 w-4 shrink-0" />
-                <span className="text-sm font-medium text-nowrap">
-                  {t.movie.watchedOn} {formatDate(watchlistEntry.created_at, locale)}
-                </span>
-              </div>
-            )}
           </div>
         }
       />

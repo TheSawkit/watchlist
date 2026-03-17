@@ -1,9 +1,9 @@
 "use server"
 
-import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { getAuthenticatedUser, getOptionalUser } from "@/lib/supabase/auth-helpers"
 import { getTvShowDetails } from "@/lib/tmdb"
+import type { SupabaseServerClient } from "@/lib/supabase/server"
 
 function revalidateEpisodePaths(tvId: number, seasonNumber: number) {
     revalidatePath(`/tv/${tvId}`)
@@ -13,7 +13,7 @@ function revalidateEpisodePaths(tvId: number, seasonNumber: number) {
 }
 
 async function syncTvShowWatchlistStatus(
-    supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never,
+    supabase: SupabaseServerClient,
     userId: string,
     tvId: number
 ) {
@@ -102,7 +102,8 @@ export async function toggleEpisodeWatch(
     let result: boolean
 
     if (existing) {
-        await supabase.from("episode_watches").delete().eq("id", existing.id)
+        const { error: deleteError } = await supabase.from("episode_watches").delete().eq("id", existing.id)
+        if (deleteError) throw new Error(deleteError.message)
         result = false
     } else {
         const { error } = await supabase.from("episode_watches").insert({
@@ -154,7 +155,7 @@ export async function markSeasonWatched(
             .eq("tv_id", tvId)
             .eq("season_number", seasonNumber)
     } else {
-        const toInsert = []
+        const toInsert: { user_id: string; tv_id: number; season_number: number; episode_number: number }[] = []
         for (let ep = 1; ep <= totalEpisodes; ep++) {
             if (!watchedSet.has(ep)) {
                 toInsert.push({
@@ -201,14 +202,6 @@ export async function getSeasonEpisodeWatches(
     return new Set((watches ?? []).map(w => w.episode_number))
 }
 
-/**
- * Returns a map of season number → watched episode count for a TV show.
- * Used to display progress indicators per season.
- * Returns an empty map for unauthenticated users.
- *
- * @param tvId - TMDB TV show ID.
- * @returns Map where keys are season numbers and values are watched episode counts.
- */
 export async function getTvShowWatchProgress(
     tvId: number
 ): Promise<Map<number, number>> {
@@ -227,4 +220,25 @@ export async function getTvShowWatchProgress(
         progress.set(w.season_number, (progress.get(w.season_number) ?? 0) + 1)
     }
     return progress
+}
+
+export async function getAllTvShowsWatchProgress(
+    tvIds: number[]
+): Promise<Record<number, number>> {
+    if (tvIds.length === 0) return {}
+
+    const { supabase, userId } = await getOptionalUser()
+    if (!userId) return {}
+
+    const { data: watches } = await supabase
+        .from("episode_watches")
+        .select("tv_id, episode_number")
+        .eq("user_id", userId)
+        .in("tv_id", tvIds)
+
+    const totals: Record<number, number> = {}
+    for (const w of watches ?? []) {
+        totals[w.tv_id] = (totals[w.tv_id] ?? 0) + 1
+    }
+    return totals
 }

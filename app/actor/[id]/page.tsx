@@ -17,6 +17,8 @@ import { getTranslations } from "@/lib/i18n/server"
  * @param props.params - Promise resolving to { id: string } actor ID
  * @returns Metadata object with title, description, OpenGraph, and Twitter card data
  */
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://reelmark.app"
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
   const actorId = parseInt(id)
@@ -39,17 +41,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const bioDescription = actor.biography?.substring(0, 160) || t.metadata.exploreActorOn.replace("${name}", actor.name)
 
     return {
-      title: `${actor.name} - ReelMark`,
+      title: actor.name,
       description: bioDescription,
+      alternates: { canonical: `${BASE_URL}/actor/${actorId}` },
       openGraph: {
-        title: `${actor.name} - ReelMark`,
+        title: actor.name,
         description: bioDescription,
         type: "profile",
         images: images.length > 0 ? images : undefined,
       },
       twitter: {
         card: "summary_large_image",
-        title: `${actor.name} - ReelMark`,
+        title: actor.name,
         description: bioDescription,
         images: images.length > 0 ? [images[0].url] : undefined,
       },

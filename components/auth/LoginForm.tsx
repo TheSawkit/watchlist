@@ -39,9 +39,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
     return (
         <div
-            className={cn("flex flex-col gap-6", className)}
+            className={cn("flex flex-col gap-6 auth-form-animate", className)}
             {...props}
-            style={{ animation: "scaleIn var(--duration-slow) ease-out forwards", opacity: 0 }}
         >
             <Card className="transform transition-all duration-(--duration-base) hover:shadow-cinema">
                 <CardHeader className="text-center">
@@ -80,12 +79,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                             <Field>
                                 <div className="flex items-center">
                                     <FieldLabel htmlFor="password">{t.auth.login.password}</FieldLabel>
-                                    <a
-                                        href="#"
-                                        className="ml-auto text-sm underline-offset-4 hover:underline"
+                                    <Link
+                                        href="/auth/reset-password"
+                                        className="ml-auto text-sm text-muted hover:text-text transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
                                     >
                                         {t.auth.login.forgotPassword}
-                                    </a>
+                                    </Link>
                                 </div>
                                 <Input
                                     id="password"
@@ -96,7 +95,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                                 />
                             </Field>
                             {state?.error && (
-                                <p className="text-sm text-red-2 text-center">{state.error}</p>
+                                <p role="alert" className="text-sm text-red-2 text-center">{state.error}</p>
                             )}
                             <Field>
                                 <Button type="submit" disabled={isPending}>
@@ -113,8 +112,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             </Card>
             <FieldDescription className="px-6 text-center">
                 {t.auth.terms}{" "}
-                <a href="#">{t.auth.termsLink}</a> {t.common.and}{" "}
-                <a href="#">{t.auth.privacyLink}</a>.
+                <span className="underline cursor-default">{t.auth.termsLink}</span> {t.common.and}{" "}
+                <span className="underline cursor-default">{t.auth.privacyLink}</span>.
             </FieldDescription>
         </div>
     )
