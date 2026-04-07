@@ -12,7 +12,24 @@ export default defineConfig({
         trace: "on-first-retry",
     },
     projects: [
-        { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+        {
+            name: "setup",
+            testMatch: /auth\.setup\.ts/,
+        },
+        {
+            name: "chromium",
+            use: { ...devices["Desktop Chrome"] },
+            testIgnore: /protected/,
+        },
+        {
+            name: "authenticated",
+            use: {
+                ...devices["Desktop Chrome"],
+                storageState: "tests/.auth/user.json",
+            },
+            dependencies: ["setup"],
+            testMatch: /protected/,
+        },
     ],
     webServer: process.env.CI
         ? {

@@ -1,0 +1,45 @@
+import { test, expect } from "@playwright/test"
+
+test.beforeEach(async () => {
+    test.skip(!process.env.TEST_USER_EMAIL, "TEST_USER_EMAIL not set — skipping authenticated tests")
+})
+
+test.describe("Dashboard", () => {
+    test("loads and is accessible", async ({ page }) => {
+        await page.goto("/dashboard")
+        await expect(page).toHaveURL("/dashboard")
+        await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 10000 })
+    })
+
+    test("does not redirect to login when authenticated", async ({ page }) => {
+        await page.goto("/dashboard")
+        await expect(page).not.toHaveURL(/\/login/)
+    })
+})
+
+test.describe("Explorer", () => {
+    test("loads with media content", async ({ page }) => {
+        await page.goto("/explorer")
+        await expect(page).toHaveURL("/explorer")
+        await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 10000 })
+        await expect(page.locator("img").first()).toBeVisible({ timeout: 15000 })
+    })
+
+    test("search bar is present", async ({ page }) => {
+        await page.goto("/explorer")
+        await expect(page.getByRole("searchbox").or(page.locator("input[type=search], input[placeholder]").first())).toBeVisible({ timeout: 10000 })
+    })
+})
+
+test.describe("Library", () => {
+    test("loads and is accessible", async ({ page }) => {
+        await page.goto("/library")
+        await expect(page).toHaveURL("/library")
+        await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 10000 })
+    })
+
+    test("shows movie/tv tabs", async ({ page }) => {
+        await page.goto("/library")
+        await expect(page.getByRole("link", { name: /movie|film/i }).or(page.getByRole("tab")).first()).toBeVisible({ timeout: 10000 })
+    })
+})
