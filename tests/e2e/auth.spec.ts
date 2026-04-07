@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test"
 test.describe("Login page", () => {
     test("renders login form", async ({ page }) => {
         await page.goto("/login")
-        await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+        await expect(page.locator('[data-slot="card-title"]')).toBeVisible()
         await expect(page.getByRole("textbox", { name: /email/i })).toBeVisible()
         await expect(page.getByRole("button", { name: /connexion|login|sign in/i })).toBeVisible()
     })

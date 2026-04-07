@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test"
 test.describe("Landing page", () => {
     test("renders hero section", async ({ page }) => {
         await page.goto("/")
-        await expect(page.locator("main")).toBeVisible()
+        await expect(page.locator("main").first()).toBeVisible()
         await expect(page.locator("h1, h2").first()).toBeVisible()
     })
 
