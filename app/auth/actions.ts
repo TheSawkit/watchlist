@@ -6,12 +6,6 @@ import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n/server'
 import { validateEmail, validatePassword, validateUsername, validateRegion, validateLanguage } from '@/lib/validators'
-import { checkRateLimit } from '@/lib/rate-limit'
-
-async function getClientIp(): Promise<string> {
-    const h = await headers()
-    return h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
-}
 
 async function getOrigin(): Promise<string> {
   const h = await headers()
@@ -21,10 +15,6 @@ async function getOrigin(): Promise<string> {
 }
 
 export async function login(prevState: unknown, formData: FormData) {
-  const ip = await getClientIp()
-  const { allowed } = checkRateLimit(`login:${ip}`, 10, 15 * 60 * 1000)
-  if (!allowed) return { error: 'Too many login attempts. Please try again later.' }
-
   const t = await getTranslations()
   const email = validateEmail(formData.get('email'))
   const password = validatePassword(formData.get('password'))
@@ -41,10 +31,6 @@ export async function login(prevState: unknown, formData: FormData) {
 }
 
 export async function signup(prevState: unknown, formData: FormData) {
-  const ip = await getClientIp()
-  const { allowed } = checkRateLimit(`signup:${ip}`, 5, 60 * 60 * 1000)
-  if (!allowed) return { error: 'Too many signup attempts. Please try again later.' }
-
   const t = await getTranslations()
 
   const email = validateEmail(formData.get('email'))
@@ -85,10 +71,6 @@ export async function signout() {
 }
 
 export async function requestPasswordReset(prevState: unknown, formData: FormData) {
-  const ip = await getClientIp()
-  const { allowed } = checkRateLimit(`reset-password:${ip}`, 5, 60 * 60 * 1000)
-  if (!allowed) return { error: 'Too many attempts. Please try again later.' }
-
   const t = await getTranslations()
   const email = validateEmail(formData.get('email'))
   if (!email) return { error: t.settings.missingFields }
@@ -105,10 +87,6 @@ export async function requestPasswordReset(prevState: unknown, formData: FormDat
 }
 
 export async function updatePassword(prevState: unknown, formData: FormData) {
-  const ip = await getClientIp()
-  const { allowed } = checkRateLimit(`update-password:${ip}`, 10, 15 * 60 * 1000)
-  if (!allowed) return { error: 'Too many attempts. Please try again later.' }
-
   const t = await getTranslations()
   const password = validatePassword(formData.get('password'))
   const confirmPassword = formData.get('confirm-password')

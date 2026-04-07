@@ -81,7 +81,9 @@ export async function getTvShowDetails(id: number): Promise<TvShowDetails> {
 export async function getTvShowTotalEpisodes(id: number): Promise<number> {
   try {
     const details = await getTvShowDetails(id)
-    return (details.seasons ?? []).reduce((sum, s) => sum + s.episode_count, 0)
+    return (details.seasons ?? [])
+      .filter(s => s.season_number > 0)
+      .reduce((sum, s) => sum + s.episode_count, 0)
   } catch {
     return 0
   }

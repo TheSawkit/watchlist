@@ -2,22 +2,11 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { headers } from 'next/headers'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n/server'
 import { validateEmail, validatePassword, validateUsername, validateRegion, validateAvatarFile } from '@/lib/validators'
-import { checkRateLimit } from '@/lib/rate-limit'
-
-async function getClientIp(): Promise<string> {
-    const h = await headers()
-    return h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
-}
 
 export async function updateEmail(prevState: unknown, formData: FormData) {
-    const ip = await getClientIp()
-    const { allowed } = checkRateLimit(`settings:email:${ip}`, 5, 15 * 60 * 1000)
-    if (!allowed) return { error: 'Too many requests. Please try again later.', success: false }
-
     const supabase = await createClient()
     const t = await getTranslations()
 
@@ -47,10 +36,6 @@ export async function updateEmail(prevState: unknown, formData: FormData) {
 }
 
 export async function updatePassword(prevState: unknown, formData: FormData) {
-    const ip = await getClientIp()
-    const { allowed } = checkRateLimit(`settings:password:${ip}`, 5, 15 * 60 * 1000)
-    if (!allowed) return { error: 'Too many requests. Please try again later.', success: false }
-
     const supabase = await createClient()
     const t = await getTranslations()
 
@@ -85,10 +70,6 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
 }
 
 export async function updateProfile(prevState: unknown, formData: FormData) {
-    const ip = await getClientIp()
-    const { allowed } = checkRateLimit(`settings:profile:${ip}`, 10, 60 * 60 * 1000)
-    if (!allowed) return { error: 'Too many requests. Please try again later.', success: false }
-
     const supabase = await createClient()
     const t = await getTranslations()
 
@@ -126,10 +107,6 @@ export async function updateProfile(prevState: unknown, formData: FormData) {
 }
 
 export async function updateAvatar(prevState: unknown, formData: FormData) {
-    const ip = await getClientIp()
-    const { allowed } = checkRateLimit(`settings:avatar:${ip}`, 10, 60 * 60 * 1000)
-    if (!allowed) return { error: 'Too many requests. Please try again later.', success: false }
-
     const supabase = await createClient()
     const t = await getTranslations()
 
@@ -161,6 +138,14 @@ export async function updateAvatar(prevState: unknown, formData: FormData) {
 
         const buffer = await avatarFile.arrayBuffer()
 
+        const oldAvatarUrl = user.user_metadata?.avatar_url as string | undefined
+        if (oldAvatarUrl?.includes('/avatars/')) {
+            const oldPath = oldAvatarUrl.split('/avatars/')[1]?.split('?')[0]
+            if (oldPath) {
+                await supabase.storage.from('avatars').remove([oldPath])
+            }
+        }
+
         const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, buffer, {
             contentType: avatarFile.type,
             upsert: true
@@ -190,10 +175,6 @@ export async function updateAvatar(prevState: unknown, formData: FormData) {
 }
 
 export async function deleteAccount(prevState: unknown, formData: FormData) {
-    const ip = await getClientIp()
-    const { allowed } = checkRateLimit(`settings:delete:${ip}`, 3, 60 * 60 * 1000)
-    if (!allowed) return { error: 'Too many requests. Please try again later.', success: false }
-
     const supabase = await createClient()
     const t = await getTranslations()
 

@@ -71,7 +71,10 @@ export async function getUserWatchlist(): Promise<WatchlistEntry[]> {
     return entries ?? []
 }
 
-export async function getMediaWatchlistEntry(mediaId: number): Promise<WatchlistEntry | null> {
+export async function getMediaWatchlistEntry(
+    mediaId: number,
+    mediaType: MediaType = "movie"
+): Promise<WatchlistEntry | null> {
     const { supabase, userId } = await getOptionalUser()
 
     if (!userId) return null
@@ -81,6 +84,7 @@ export async function getMediaWatchlistEntry(mediaId: number): Promise<Watchlist
         .select("*")
         .eq("user_id", userId)
         .eq("media_id", mediaId)
+        .eq("media_type", mediaType)
         .single()
 
     return entry as WatchlistEntry ?? null

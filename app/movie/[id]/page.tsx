@@ -98,7 +98,7 @@ export default async function MoviePage(props: MoviePageProps) {
 
   const heroImagePath = selectHeroImage(images, movieDetails.backdrop_path)
   const heroImageUrl = getImageUrl(heroImagePath, "original")
-  const watchlistEntry = await getMediaWatchlistEntry(movieId)
+  const watchlistEntry = await getMediaWatchlistEntry(movieId, "movie")
   const isWatched = watchlistEntry?.status === "watched"
   const t = await getTranslations()
   const locale = await getServerLocale()

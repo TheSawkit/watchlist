@@ -37,7 +37,10 @@ export function WatchButton({
         e.preventDefault()
         e.stopPropagation()
 
+        const prevActive = active
+        setOptimisticActive(!active)
         setLoading(true)
+
         try {
             if (active) {
                 if (fallbackStatus) {
@@ -48,7 +51,8 @@ export function WatchButton({
             } else {
                 await addToWatchlist(mediaId, mediaTitle, posterPath, status, mediaType)
             }
-            setOptimisticActive(!active)
+        } catch {
+            setOptimisticActive(prevActive)
         } finally {
             setLoading(false)
         }
