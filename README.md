@@ -5,6 +5,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-Auth_&_DB-3FCF8E?style=flat&logo=supabase&logoColor=white)](https://supabase.com/)
 [![GitHub stars](https://img.shields.io/github/stars/gitsawkit/watchlist?style=social)](https://github.com/TheSawkit/watchlist)
+[![CI](https://github.com/TheSawkit/watchlist/actions/workflows/ci.yml/badge.svg)](https://github.com/TheSawkit/watchlist/actions/workflows/ci.yml)
 
 **Stop wasting hours deciding what to watch. Organize your cinematic life with an interface that actually feels like a theater.**
 
