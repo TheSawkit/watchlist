@@ -7,6 +7,16 @@ import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n/server'
 import { validateEmail, validatePassword, validateUsername, validateRegion, validateLanguage } from '@/lib/validators'
 
+type AuthTranslations = Awaited<ReturnType<typeof getTranslations>>
+
+function mapAuthError(message: string, t: AuthTranslations): string {
+    if (message.includes('Invalid login credentials')) return t.auth.errors.invalidCredentials
+    if (message.includes('Email not confirmed')) return t.auth.errors.emailNotConfirmed
+    if (message.includes('User already registered') || message.includes('already been registered')) return t.auth.errors.emailAlreadyUsed
+    if (message.toLowerCase().includes('rate limit') || message.toLowerCase().includes('too many requests')) return t.auth.errors.rateLimitExceeded
+    return message
+}
+
 async function getOrigin(): Promise<string> {
   const h = await headers()
   const proto = h.get('x-forwarded-proto') ?? 'https'
@@ -24,7 +34,7 @@ export async function login(prevState: unknown, formData: FormData) {
   const supabase = await createClient()
   const { error } = await supabase.auth.signInWithPassword({ email, password })
 
-  if (error) return { error: error.message }
+  if (error) return { error: mapAuthError(error.message, t) }
 
   revalidatePath('/', 'layout')
   redirect('/dashboard')
@@ -57,7 +67,7 @@ export async function signup(prevState: unknown, formData: FormData) {
     },
   })
 
-  if (error) return { error: error.message }
+  if (error) return { error: mapAuthError(error.message, t) }
 
   revalidatePath('/', 'layout')
   redirect('/dashboard')

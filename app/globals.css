@@ -14,7 +14,7 @@
 
   --color-gold:             var(--gold);
   --color-gold-bright:      #F5C518;
-  --color-success:          #4ADE80;
+  --color-success:          var(--success);
   --color-red:              #B9090B;
   --color-red-2:            #8B0000;
 
@@ -96,6 +96,7 @@
   --border-card: rgba(245, 197, 24, 0.15);
   --spotlight: rgba(185, 9, 11, 0.12);
   --color-red-rgb: 185 9 11;
+  --success: #4ADE80;
 
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-bg-hover: rgba(255, 255, 255, 0.1);
@@ -153,6 +154,7 @@
   --shadow-navbar: 0 0.5px 0 rgba(0, 0, 0, 0.04), 0 4px 20px rgba(0, 0, 0, 0.04);
   --shadow-text: none;
   --shadow-search-dropdown: 0 4px 20px rgba(0, 0, 0, 0.05), 0 20px 60px rgba(0, 0, 0, 0.08);
+  --success: #16A34A;
 }
 
 html {

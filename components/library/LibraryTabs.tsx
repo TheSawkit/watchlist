@@ -51,7 +51,7 @@ export function LibraryTabs({ toWatch, watched, tvProgress = {} }: LibraryTabsPr
                             className={cn(
                                 "ml-1 px-1.5 py-0.5 rounded-full text-xs",
                                 activeTab === tab.id
-                                    ? "bg-primary/20 text-primary"
+                                    ? "bg-primary/20 text-text"
                                     : "bg-surface-2 text-muted"
                             )}
                         >

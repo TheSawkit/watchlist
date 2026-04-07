@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Eye, Check, Loader2 } from "lucide-react"
+import { Eye, Check, Loader2, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toggleEpisodeWatch } from "@/app/actions/episodes"
 import { useRouter } from "next/navigation"
@@ -22,6 +22,7 @@ export function EpisodeWatchButton({
 }: EpisodeWatchButtonProps) {
     const [watched, setWatched] = useState(initialWatched)
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(false)
     const router = useRouter()
     const { t } = useTranslation()
 
@@ -30,16 +31,20 @@ export function EpisodeWatchButton({
         e.stopPropagation()
         
         setLoading(true)
+        setError(false)
         try {
             const newState = await toggleEpisodeWatch(tvId, seasonNumber, episodeNumber)
             setWatched(newState)
             router.refresh()
+        } catch {
+            setError(true)
+            setTimeout(() => setError(false), 3000)
         } finally {
             setLoading(false)
         }
     }
 
-    const Icon = loading ? Loader2 : watched ? Check : Eye
+    const Icon = loading ? Loader2 : error ? XCircle : watched ? Check : Eye
 
     return (
         <button
@@ -54,7 +59,7 @@ export function EpisodeWatchButton({
             )}
         >
             <Icon className={cn("h-4 w-4", loading && "animate-spin")} />
-            {watched ? t.movie.episodeWatched : t.movie.markEpisodeWatched}
+            {error ? t.common.actionError : watched ? t.movie.episodeWatched : t.movie.markEpisodeWatched}
         </button>
     )
 }

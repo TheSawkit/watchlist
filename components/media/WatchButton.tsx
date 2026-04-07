@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Eye, Plus, Check, Loader2 } from "lucide-react"
+import { Eye, Plus, Check, Loader2, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { addToWatchlist, removeFromWatchlist } from "@/app/actions/watchlist"
 import { useTranslation } from "@/lib/i18n/context"
@@ -15,12 +15,14 @@ export function WatchButton({
     status,
     initialActive = false,
     variant = "icon",
+    onDark = false,
     fallbackStatus,
     releaseDate,
 }: WatchButtonProps) {
     const [optimisticActive, setOptimisticActive] = useState<boolean | null>(null)
     const active = optimisticActive !== null ? optimisticActive : initialActive
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(false)
     const { t } = useTranslation()
 
     useEffect(() => {
@@ -53,12 +55,14 @@ export function WatchButton({
             }
         } catch {
             setOptimisticActive(prevActive)
+            setError(true)
+            setTimeout(() => setError(false), 3000)
         } finally {
             setLoading(false)
         }
     }
 
-    const Icon = loading ? Loader2 : active ? Check : status === "watched" ? Eye : Plus
+    const Icon = loading ? Loader2 : error ? XCircle : active ? Check : status === "watched" ? Eye : Plus
 
     if (variant === "full") {
         return (
@@ -68,17 +72,21 @@ export function WatchButton({
                     "flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all border focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-11 w-full shrink-0",
                     active
                         ? "bg-primary/50 backdrop-blur-2xl text-white border-white/10 shadow-glow-red"
-                        : "bg-white/15 backdrop-blur-2xl text-white/90 border-white/10 hover:bg-white/25 hover:text-white shadow-card-sm"
+                        : onDark
+                            ? "bg-white/15 backdrop-blur-2xl text-white/90 border-white/10 hover:bg-white/25 hover:text-white shadow-card-sm"
+                            : "bg-white/15 backdrop-blur-2xl text-text border-white/10 hover:bg-white/25 hover:text-text shadow-card-sm"
                 )}
             >
                 <Icon className={cn("h-4 w-4", loading && "animate-spin")} />
-                {active
-                    ? status === "watched"
-                        ? t.movie.watched
-                        : t.movie.added
-                    : status === "watched"
-                        ? t.movie.markAsWatched
-                        : t.movie.addToList}
+                {error
+                    ? t.common.actionError
+                    : active
+                        ? status === "watched"
+                            ? t.movie.watched
+                            : t.movie.added
+                        : status === "watched"
+                            ? t.movie.markAsWatched
+                            : t.movie.addToList}
             </button>
         )
     }

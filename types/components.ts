@@ -68,6 +68,7 @@ export interface WatchButtonProps {
   initialActive?: boolean
   fallbackStatus?: WatchStatus
   variant?: "icon" | "full"
+  onDark?: boolean
   releaseDate?: string
 }
 

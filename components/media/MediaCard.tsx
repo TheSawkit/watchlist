@@ -106,7 +106,7 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
                     "translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100",
                 )}>
                     <div>
-                        <h3 className="text-lg font-bold text-text leading-tight line-clamp-2">
+                        <h3 className="text-lg font-bold text-white/80 leading-tight line-clamp-2">
                             {media.title}
                         </h3>
 
@@ -125,7 +125,7 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
                                 ) : (
                                     <Clock className="h-3 w-3 text-white/80 shrink-0" />
                                 )}
-                                <span className="text-xs text-muted leading-tight">
+                                <span className="text-xs text-white/60 leading-tight">
                                     {media.media_type === "tv"
                                         ? t.movie.startedOn
                                         : (isWatched ? t.movie.watchedOn : t.movie.addedOn)}{" "}
@@ -156,6 +156,7 @@ export function MediaCard({ media, className, watchlistEntry, hideRating, tvProg
                                 initialActive={!!watchlistEntry || !!media.watchlistEntry}
                                 fallbackStatus={resolvedFallback}
                                 variant="full"
+                                onDark
                             />
                         )
                     })()}

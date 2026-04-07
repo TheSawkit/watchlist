@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { CheckCheck, Loader2 } from "lucide-react"
+import { CheckCheck, Loader2, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { markSeasonWatched } from "@/app/actions/episodes"
 import { useRouter } from "next/navigation"
@@ -21,6 +21,7 @@ export function SeasonWatchButton({
     watchedCount,
 }: SeasonWatchButtonProps) {
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(false)
     const router = useRouter()
     const { t } = useTranslation()
 
@@ -28,15 +29,19 @@ export function SeasonWatchButton({
 
     async function handleClick() {
         setLoading(true)
+        setError(false)
         try {
             await markSeasonWatched(tvId, seasonNumber, totalEpisodes)
             router.refresh()
+        } catch {
+            setError(true)
+            setTimeout(() => setError(false), 3000)
         } finally {
             setLoading(false)
         }
     }
 
-    const Icon = loading ? Loader2 : CheckCheck
+    const Icon = loading ? Loader2 : error ? XCircle : CheckCheck
 
     return (
         <button
@@ -50,9 +55,11 @@ export function SeasonWatchButton({
             )}
         >
             <Icon className={cn("h-5 w-5", loading && "animate-spin")} />
-            {allWatched
-                ? `${t.movie.seasonComplete} (${watchedCount}/${totalEpisodes})`
-                : `${t.movie.markAllWatched} (${watchedCount}/${totalEpisodes})`}
+            {error
+                ? t.common.actionError
+                : allWatched
+                    ? `${t.movie.seasonComplete} (${watchedCount}/${totalEpisodes})`
+                    : `${t.movie.markAllWatched} (${watchedCount}/${totalEpisodes})`}
         </button>
     )
 }
