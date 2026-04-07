@@ -19,7 +19,7 @@ const display = Bebas_Neue({
     variable: "--font-display",
 });
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://reelmark.app"
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://reelmark.app"
 
 export const viewport: Viewport = {
     width: "device-width",
