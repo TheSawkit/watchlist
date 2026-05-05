@@ -8,13 +8,18 @@ import { ThemeSettings } from './ThemeSettings'
 import { LanguageSettings } from './LanguageSettings'
 import { RegionalSettings } from './RegionalSettings'
 import { DangerZone } from './DangerZone'
+import { SocialLinksSettings } from './SocialLinksSettings'
+import { PrivacySettings } from './PrivacySettings'
 import { SettingsNav, type SettingsTab } from './SettingsNav'
+import type { UserProfile, PrivacySettings as PrivacySettingsType } from '@/types/profile'
 
 interface SettingsContentProps {
     user: User | null
+    userProfile: UserProfile | null
+    privacySettings: PrivacySettingsType | null
 }
 
-export function SettingsContent({ user }: SettingsContentProps) {
+export function SettingsContent({ user, userProfile, privacySettings }: SettingsContentProps) {
     const [activeTab, setActiveTab] = useState<SettingsTab>('profile')
 
     return (
@@ -24,13 +29,19 @@ export function SettingsContent({ user }: SettingsContentProps) {
             </aside>
 
             <main className="flex-1 min-w-0">
-                {activeTab === 'profile' && <ProfileSettings user={user} />}
+                {activeTab === 'profile' && (
+                    <div className="space-y-6">
+                        <ProfileSettings user={user} />
+                        <SocialLinksSettings profile={userProfile} />
+                    </div>
+                )}
                 {activeTab === 'security' && <PasswordSettings />}
                 {activeTab === 'appearance' && (
                     <div className="space-y-6">
                         <ThemeSettings />
                     </div>
                 )}
+                {activeTab === 'privacy' && <PrivacySettings settings={privacySettings} />}
                 {activeTab === 'data' && (
                     <div className="space-y-6">
                         <LanguageSettings />

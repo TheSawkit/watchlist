@@ -1,0 +1,122 @@
+'use client'
+
+import { useState } from 'react'
+import { cn } from '@/lib/utils'
+import { WatchlistSection } from './WatchlistSection'
+import { ReviewsSection } from './ReviewsSection'
+import { PlaylistsSection } from './PlaylistsSection'
+import { FriendsSection } from './FriendsSection'
+import type { WatchlistEntry } from '@/types/tmdb'
+import type { PrivacySettings, Review, Playlist, FriendEntry } from '@/types/profile'
+import { useTranslation } from '@/lib/i18n/context'
+
+type ProfileTab = 'watchlist' | 'watched' | 'reviews' | 'playlists' | 'friends'
+
+interface ProfileTabsProps {
+    toWatch: WatchlistEntry[]
+    watched: WatchlistEntry[]
+    reviews: Review[]
+    playlists: Playlist[]
+    friends: FriendEntry[]
+    privacy: PrivacySettings
+    isOwnProfile: boolean
+    isFriend: boolean
+}
+
+export function ProfileTabs({
+    toWatch,
+    watched,
+    reviews,
+    playlists,
+    friends,
+    privacy,
+    isOwnProfile,
+    isFriend,
+}: ProfileTabsProps) {
+    const { t } = useTranslation()
+    const [activeTab, setActiveTab] = useState<ProfileTab>('watchlist')
+
+    function canView(visibility: string): boolean {
+        if (isOwnProfile) return true
+        if (visibility === 'public') return true
+        if (visibility === 'friends' && isFriend) return true
+        return false
+    }
+
+    const TABS: Array<{ id: ProfileTab; label: string; count: number | null }> = [
+        { id: 'watchlist', label: t.profile.tabs.watchlist, count: toWatch.length },
+        { id: 'watched', label: t.profile.tabs.watched, count: watched.length },
+        { id: 'reviews', label: t.profile.tabs.reviews, count: reviews.length },
+        { id: 'playlists', label: t.profile.tabs.playlists, count: playlists.length },
+        { id: 'friends', label: t.profile.tabs.friends, count: friends.length },
+    ]
+
+    return (
+        <div>
+            <nav
+                className="flex gap-1 border-b border-border-subtle mb-6 overflow-x-auto"
+                aria-label="Profile sections"
+            >
+                {TABS.map((tab) => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={cn(
+                            'flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 -mb-px transition-colors cursor-pointer focus-visible:outline-none',
+                            activeTab === tab.id
+                                ? 'border-primary text-text'
+                                : 'border-transparent text-muted hover:text-text'
+                        )}
+                    >
+                        {tab.label}
+                        {tab.count !== null && tab.count > 0 && (
+                            <span className="text-xs bg-surface-2 text-muted px-1.5 py-0.5 rounded-full">
+                                {tab.count}
+                            </span>
+                        )}
+                    </button>
+                ))}
+            </nav>
+
+            {activeTab === 'watchlist' && (
+                <WatchlistSection
+                    entries={toWatch}
+                    visibility={privacy.watchlist_visibility}
+                    canView={canView(privacy.watchlist_visibility)}
+                    status="to_watch"
+                />
+            )}
+            {activeTab === 'watched' && (
+                <WatchlistSection
+                    entries={watched}
+                    visibility={privacy.watched_visibility}
+                    canView={canView(privacy.watched_visibility)}
+                    status="watched"
+                />
+            )}
+            {activeTab === 'reviews' && (
+                <ReviewsSection
+                    reviews={reviews}
+                    visibility={privacy.reviews_visibility}
+                    canView={canView(privacy.reviews_visibility)}
+                    isOwnProfile={isOwnProfile}
+                />
+            )}
+            {activeTab === 'playlists' && (
+                <PlaylistsSection
+                    playlists={playlists}
+                    visibility={privacy.playlists_visibility}
+                    canView={canView(privacy.playlists_visibility)}
+                    isOwnProfile={isOwnProfile}
+                />
+            )}
+            {activeTab === 'friends' && (
+                <FriendsSection
+                    friends={friends}
+                    visibility={privacy.friends_visibility}
+                    canView={canView(privacy.friends_visibility)}
+                />
+            )}
+        </div>
+    )
+}

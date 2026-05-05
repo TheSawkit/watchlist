@@ -38,6 +38,9 @@ const DropdownMenuTrigger = dynamic(() =>
 const Settings = dynamic(() =>
     import("lucide-react").then(m => ({ default: m.Settings }))
 );
+const User = dynamic(() =>
+    import("lucide-react").then(m => ({ default: m.User }))
+);
 
 /**
  * App navigation header with logo, links, and user menu.
@@ -122,6 +125,17 @@ export default async function Navbar() {
                                             </div>
                                         </DropdownMenuLabel>
                                         <DropdownMenuSeparator />
+                                        {user.user_metadata.username && (
+                                            <DropdownMenuItem asChild>
+                                                <Link
+                                                    href={`/profile/${user.user_metadata.username}`}
+                                                    className="cursor-pointer w-full flex items-center"
+                                                >
+                                                    <User className="mr-2 h-4 w-4" />
+                                                    <span>{t.navbar.profile}</span>
+                                                </Link>
+                                            </DropdownMenuItem>
+                                        )}
                                         <DropdownMenuItem asChild>
                                             <Link
                                                 href="/settings"

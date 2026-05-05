@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils'
 import { useTranslation } from '@/lib/i18n/context'
 
-export type SettingsTab = 'profile' | 'security' | 'appearance' | 'data'
+export type SettingsTab = 'profile' | 'security' | 'appearance' | 'data' | 'privacy'
 
 interface SettingsNavProps {
     onTabChange: (tab: SettingsTab) => void
@@ -17,6 +17,7 @@ export function SettingsNav({ onTabChange, activeTab }: SettingsNavProps) {
         { id: 'profile', label: t.settings.profile.title, icon: '👤' },
         { id: 'security', label: t.settings.password.title, icon: '🔒' },
         { id: 'appearance', label: t.settings.theme.title, icon: '🎨' },
+        { id: 'privacy', label: t.settings.privacy.title, icon: '🔐' },
         { id: 'data', label: t.settings.dangerZone.title, icon: '📁' },
     ]
 

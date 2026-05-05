@@ -1,0 +1,149 @@
+'use client'
+
+import Image from 'next/image'
+import Link from 'next/link'
+import { Instagram, Globe } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import type { UserProfile } from '@/types/profile'
+import { useTranslation } from '@/lib/i18n/context'
+
+interface TikTokIconProps { className?: string }
+function TikTokIcon({ className }: TikTokIconProps) {
+    return (
+        <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.19 8.19 0 004.79 1.52V6.74a4.85 4.85 0 01-1.02-.05z" />
+        </svg>
+    )
+}
+
+interface LetterboxdIconProps { className?: string }
+function LetterboxdIcon({ className }: LetterboxdIconProps) {
+    return (
+        <svg
+            className={className}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            width="1em"
+            height="1em"
+        >
+            <ellipse fill="currentColor" cx="6.2" cy="12" rx="5.2" ry="5.2" />
+            <ellipse fill="currentColor" cx="12.2" cy="12" rx="5.2" ry="5.2" />
+            <ellipse fill="currentColor" cx="18.2" cy="12" rx="5.2" ry="5.2" />
+            <path d="M10.47,15C9.89,14.08 9.56,13.04 9.56,12c0-1.04 0.33-2.08 0.91-3C11,9.92 11.34,10.96 11.34,12c0,1.04 -0.34,2.08 -0.87,3z" fill="surface" />
+            <path d="M13.53,9c0.58,0.92 0.91,1.96 0.91,3s-0.33,2.08 -0.91,3c-0.53,-0.92 -0.87,-1.96 -0.87,-3s0.34,-2.08 0.87,-3z" fill="surface"/>
+        </svg>
+    )
+}
+
+interface XIconProps { className?: string }
+function XIcon({ className }: XIconProps) {
+    return (
+        <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+        </svg>
+    )
+}
+
+interface ProfileHeroProps {
+    profile: UserProfile
+    avatarUrl?: string
+    fullName?: string
+    isOwnProfile: boolean
+    friendshipButton?: React.ReactNode
+}
+
+export function ProfileHero({ profile, avatarUrl, fullName, isOwnProfile, friendshipButton }: ProfileHeroProps) {
+    const { t } = useTranslation()
+    const displayName = fullName || profile.username
+    const initials = displayName.slice(0, 2).toUpperCase()
+
+    const socialLinks = [
+        profile.instagram && {
+            href: `https://instagram.com/${profile.instagram}`,
+            icon: <Instagram className="h-4 w-4" />,
+            label: 'Instagram',
+        },
+        profile.tiktok && {
+            href: `https://tiktok.com/@${profile.tiktok}`,
+            icon: <TikTokIcon className="h-4 w-4" />,
+            label: 'TikTok',
+        },
+        profile.letterboxd && {
+            href: `https://letterboxd.com/${profile.letterboxd}`,
+            icon: <LetterboxdIcon className="h-4 w-4" />,
+            label: 'Letterboxd',
+        },
+        profile.twitter && {
+            href: `https://x.com/${profile.twitter}`,
+            icon: <XIcon className="h-4 w-4" />,
+            label: 'X / Twitter',
+        },
+        profile.website && /^https?:\/\//.test(profile.website) && {
+            href: profile.website,
+            icon: <Globe className="h-4 w-4" />,
+            label: 'Website',
+        },
+    ].filter(Boolean) as Array<{ href: string; icon: React.ReactNode; label: string }>
+
+    return (
+        <div className="flex flex-col sm:flex-row items-start gap-6 mb-10">
+            <div className="shrink-0">
+                {avatarUrl ? (
+                    <Image
+                        src={avatarUrl}
+                        alt={`${displayName} avatar`}
+                        width={88}
+                        height={88}
+                        className="rounded-full object-cover border-2 border-border shadow-card"
+                        unoptimized
+                    />
+                ) : (
+                    <div className="w-22 h-22 rounded-full bg-surface-2 border-2 border-border flex items-center justify-center shadow-card">
+                        <span className="text-xl font-bold text-muted">{initials}</span>
+                    </div>
+                )}
+            </div>
+
+            <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-3 mb-1">
+                    <h1 className="text-2xl font-bold text-text truncate">{displayName}</h1>
+                    {fullName && fullName !== profile.username && (
+                        <span className="text-muted text-sm">@{profile.username}</span>
+                    )}
+                </div>
+
+                {profile.bio && (
+                    <p className="text-muted text-sm mb-3 max-w-lg leading-relaxed">{profile.bio}</p>
+                )}
+
+                {socialLinks.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                        {socialLinks.map((link) => (
+                            <a
+                                key={link.label}
+                                href={link.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={link.label}
+                                className="flex items-center gap-1.5 text-xs text-muted hover:text-text transition-colors px-2.5 py-1 rounded-md bg-surface-2 hover:bg-surface border border-border-subtle"
+                            >
+                                {link.icon}
+                                <span>{link.label}</span>
+                            </a>
+                        ))}
+                    </div>
+                )}
+
+                <div className="flex flex-wrap gap-2 mt-3">
+                    {isOwnProfile ? (
+                        <Button variant="outline" size="sm" asChild>
+                            <Link href="/settings">{t.profile.editProfile}</Link>
+                        </Button>
+                    ) : (
+                        friendshipButton
+                    )}
+                </div>
+            </div>
+        </div>
+    )
+}

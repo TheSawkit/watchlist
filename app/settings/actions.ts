@@ -6,6 +6,17 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n/server'
 import { validateEmail, validatePassword, validateUsername, validateRegion, validateAvatarFile } from '@/lib/validators'
 
+async function syncUserProfile(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, username: string): Promise<string | null> {
+    const { error } = await supabase
+        .from('user_profiles')
+        .upsert({ user_id: userId, username, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })
+        .select('username')
+
+    if (error?.code === '23505') return 'USERNAME_TAKEN'
+    if (error) return error.message
+    return null
+}
+
 export async function updateEmail(prevState: unknown, formData: FormData) {
     const supabase = await createClient()
     const t = await getTranslations()
@@ -101,6 +112,10 @@ export async function updateProfile(prevState: unknown, formData: FormData) {
     if (error) {
         return { error: error.message, success: false }
     }
+
+    const syncError = await syncUserProfile(supabase, user.id, username)
+    if (syncError === 'USERNAME_TAKEN') return { error: t.settings.usernameTaken, success: false }
+    if (syncError) return { error: syncError, success: false }
 
     revalidatePath('/', 'layout')
     return { error: undefined, success: true, message: `${t.settings.profile.title}${t.settings.successUpdate}` }

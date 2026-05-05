@@ -1,7 +1,9 @@
 import { requireAuth } from '@/lib/auth'
+import { createClient } from '@/lib/supabase/server'
 import { SettingsContent } from '@/components/settings/SettingsContent'
 import { PageLayout, PageHeader } from '@/components/ui/PageLayout'
 import { getTranslations } from '@/lib/i18n/server'
+import type { UserProfile, PrivacySettings } from '@/types/profile'
 
 export async function generateMetadata() {
     const t = await getTranslations()
@@ -18,13 +20,22 @@ export async function generateMetadata() {
 
 export default async function SettingsPage() {
     const user = await requireAuth()
+    const supabase = await createClient()
+
+    const [profileResult, privacyResult] = await Promise.all([
+        supabase.from('user_profiles').select('*').eq('user_id', user.id).single(),
+        supabase.from('privacy_settings').select('*').eq('user_id', user.id).single(),
+    ])
+
+    const userProfile = (profileResult.data as UserProfile | null) ?? null
+    const privacySettings = (privacyResult.data as PrivacySettings | null) ?? null
 
     const t = await getTranslations()
 
     return (
         <PageLayout>
             <PageHeader title={t.settings.title} subtitle={t.settings.subtitle} />
-            <SettingsContent user={user} />
+            <SettingsContent user={user} userProfile={userProfile} privacySettings={privacySettings} />
         </PageLayout>
     )
 }

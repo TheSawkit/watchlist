@@ -54,6 +54,15 @@ export async function signup(prevState: unknown, formData: FormData) {
   if (password !== confirmPassword) return { error: t.settings.password.noMatch }
 
   const supabase = await createClient()
+
+  const { data: existingProfile } = await supabase
+    .from('user_profiles')
+    .select('user_id')
+    .ilike('username', username)
+    .maybeSingle()
+
+  if (existingProfile) return { error: t.settings.usernameTaken }
+
   const { error } = await supabase.auth.signUp({
     email,
     password,
