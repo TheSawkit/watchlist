@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development"
+const supabaseHost = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://localhost").hostname
 
 const cspDirectives = [
   "default-src 'self'",
@@ -56,7 +57,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'xdcdbjgbasrfxbuxwbrl.supabase.co',
+        hostname: supabaseHost,
         pathname: '/storage/v1/object/public/avatars/**',
       },
     ],

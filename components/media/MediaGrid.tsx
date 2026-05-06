@@ -8,12 +8,12 @@ import type { MediaGridProps } from "@/types/components"
  * Responsive grid layout for displaying media cards with staggered animations.
  * Automatically adjusts column count based on screen size.
  *
- * @param props - MediaGridProps configuration
- * @param props.items - Array of media items to display
- * @param props.hideRating - If true, hides rating badges on all cards
- * @returns Grid container with animated MediaCard components
+ * @param items - Array of media items to display.
+ * @param hideRating - If true, hides rating badges on all cards.
+ * @param showWatchlistMeta - If true, passes watchlist entry data to each card.
+ * @returns Grid container with animated MediaCard components.
  */
-export function MediaGrid({ items, hideRating }: MediaGridProps) {
+export function MediaGrid({ items, hideRating, showWatchlistMeta }: MediaGridProps) {
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6 lg:gap-8">
             {items.map((media, index) => (
@@ -22,7 +22,13 @@ export function MediaGrid({ items, hideRating }: MediaGridProps) {
                     index={index}
                     animation="fadeIn"
                 >
-                    <MediaCard media={media} hideRating={hideRating} imageSize="grid" priority={index < 6} />
+                    <MediaCard
+                        media={media}
+                        watchlistEntry={showWatchlistMeta ? media.watchlistEntry : undefined}
+                        hideRating={hideRating}
+                        imageSize="grid"
+                        priority={index < 6}
+                    />
                 </StaggeredItem>
             ))}
         </div>

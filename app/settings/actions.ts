@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n/server'
-import { validateEmail, validatePassword, validateUsername, validateRegion, validateAvatarFile } from '@/lib/validators'
+import { validateEmail, validatePassword, validateUsername, validateRegion, validateAvatarFile, formStr } from '@/lib/validators'
 
 async function syncUserProfile(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, username: string): Promise<string | null> {
     const { error } = await supabase
@@ -133,7 +133,7 @@ export async function updateAvatar(prevState: unknown, formData: FormData) {
         return { error: t.auth.notAuthenticated, success: false }
     }
 
-    const avatarUrl = formData.get('avatarUrl') as string | null
+    const avatarUrl = formStr(formData, 'avatarUrl')
     const avatarFile = formData.get('avatarFile') as File | null
 
     if (!avatarUrl && (!avatarFile || avatarFile.size === 0)) {

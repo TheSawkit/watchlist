@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
+import { useRouter } from 'next/navigation'
 import { translations, type Language } from './translations'
 
 type Translations = (typeof translations)[Language]
@@ -31,6 +32,7 @@ interface LanguageProviderProps {
  */
 export function LanguageProvider({ children, initialLang }: LanguageProviderProps) {
     const [lang, setLangState] = useState<Language>(initialLang)
+    const router = useRouter()
 
     const setLang = useCallback(
         (newLang: Language) => {
@@ -38,9 +40,9 @@ export function LanguageProvider({ children, initialLang }: LanguageProviderProp
             localStorage.setItem('preferred-language', newLang)
             const secureFlag = location.protocol === 'https:' ? '; Secure' : ''
             document.cookie = `preferred-language=${newLang}; path=/; max-age=31536000; SameSite=Lax${secureFlag}`
-            window.location.reload()
+            router.refresh()
         },
-        []
+        [router]
     )
 
     return (

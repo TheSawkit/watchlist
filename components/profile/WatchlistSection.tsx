@@ -1,77 +1,91 @@
 'use client'
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { Lock, Users } from 'lucide-react'
+import { useState } from 'react'
+import { cn } from '@/lib/utils'
 import type { WatchlistEntry } from '@/types/tmdb'
 import type { PrivacyVisibility } from '@/types/profile'
 import { useTranslation } from '@/lib/i18n/context'
+import { watchlistEntryToMediaItem } from '@/lib/mappers'
+import { InfiniteScrollMedia } from '@/components/media/InfiniteScrollMedia'
+import { PrivacyBlock } from '@/components/ui/PrivacyBlock'
+import { EmptyState } from '@/components/ui/EmptyState'
+
+type MediaTypeFilter = 'all' | 'movie' | 'tv'
 
 interface WatchlistSectionProps {
     entries: WatchlistEntry[]
     visibility: PrivacyVisibility
     canView: boolean
-    status: 'to_watch' | 'watched'
+    isOwnProfile: boolean
+    sectionKey: string
 }
 
-export function WatchlistSection({ entries, visibility, canView, status }: WatchlistSectionProps) {
+export function WatchlistSection({ entries, visibility, canView, isOwnProfile, sectionKey }: WatchlistSectionProps) {
     const { t } = useTranslation()
+    const [mediaType, setMediaType] = useState<MediaTypeFilter>('all')
 
-    if (!canView) {
-        return (
-            <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted">
-                {visibility === 'private' ? (
-                    <>
-                        <Lock className="h-8 w-8 opacity-40" />
-                        <p className="text-sm font-medium">{t.profile.private}</p>
-                        <p className="text-xs opacity-60">{t.profile.privateDesc}</p>
-                    </>
-                ) : (
-                    <>
-                        <Users className="h-8 w-8 opacity-40" />
-                        <p className="text-sm font-medium">{t.profile.friendsOnly}</p>
-                        <p className="text-xs opacity-60">{t.profile.friendsOnlyDesc}</p>
-                    </>
-                )}
-            </div>
-        )
-    }
+    if (!canView) return <PrivacyBlock visibility={visibility} />
 
     if (entries.length === 0) {
         return (
-            <p className="text-muted text-sm py-8 text-center">{t.profile.noContent}</p>
+            <EmptyState
+                message={t.profile.noContent}
+                action={isOwnProfile ? { href: '/explorer', label: t.profile.exploreButton } : undefined}
+            />
         )
     }
 
+    const movieCount = entries.filter(e => e.media_type === 'movie').length
+    const tvCount = entries.filter(e => e.media_type === 'tv').length
+
+    const FILTERS: Array<{ id: MediaTypeFilter; label: string; count: number }> = [
+        { id: 'all', label: t.profile.all, count: entries.length },
+        { id: 'movie', label: t.profile.movies, count: movieCount },
+        { id: 'tv', label: t.profile.series, count: tvCount },
+    ]
+
+    const filtered = mediaType === 'all' ? entries : entries.filter(e => e.media_type === mediaType)
+    const items = filtered.map(watchlistEntryToMediaItem)
+    const category = `${sectionKey}-${mediaType}`
+
     return (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
-            {entries.map((entry) => (
-                <Link
-                    key={entry.id}
-                    href={`/${entry.media_type}/${entry.media_id}`}
-                    className="group block"
-                >
-                    <div className="relative aspect-2/3 rounded-poster overflow-hidden bg-surface-2 shadow-card-sm">
-                        {entry.poster_path ? (
-                            <Image
-                                src={`https://image.tmdb.org/t/p/w300${entry.poster_path}`}
-                                alt={entry.media_title}
-                                fill
-                                sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, 16vw"
-                                className="object-cover group-hover:scale-105 transition-transform duration-(--duration-normal)"
-                            />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                                <span className="text-muted text-xs text-center px-1 leading-tight">{entry.media_title}</span>
-                            </div>
+        <div>
+            <div className="flex gap-1.5 mb-5 flex-wrap">
+                {FILTERS.map(f => (
+                    <button
+                        key={f.id}
+                        onClick={() => setMediaType(f.id)}
+                        className={cn(
+                            'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer',
+                            mediaType === f.id
+                                ? 'bg-primary text-white'
+                                : 'bg-surface-2 text-muted hover:text-text'
                         )}
-                        {status === 'watched' && (
-                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        )}
-                    </div>
-                    <p className="mt-1.5 text-xs text-muted truncate leading-tight">{entry.media_title}</p>
-                </Link>
-            ))}
+                    >
+                        {f.label}
+                        <span className={cn(
+                            'text-xs px-1.5 py-0.5 rounded-full',
+                            mediaType === f.id ? 'bg-white/20 text-white' : 'bg-surface-3 text-muted'
+                        )}>
+                            {f.count}
+                        </span>
+                    </button>
+                ))}
+            </div>
+
+            {filtered.length === 0 ? (
+                <p className="text-muted text-sm py-8 text-center">
+                    {mediaType === 'movie' ? t.profile.noMovies : t.profile.noSeries}
+                </p>
+            ) : (
+                <InfiniteScrollMedia
+                    initialItems={items.slice(0, 20)}
+                    clientSideData={items}
+                    category={category}
+                    hideRating
+                    showWatchlistMeta
+                />
+            )}
         </div>
     )
 }

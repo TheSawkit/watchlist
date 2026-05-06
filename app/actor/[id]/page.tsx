@@ -89,7 +89,7 @@ export default async function ActorPage(props: ActorPageProps) {
     const mergedTvShows = await mergeMediaWithWatchlist(tvCredits.map(tvCreditToMediaItem))
 
     return (
-        <main className="min-h-screen">
+        <div className="min-h-screen">
             <ActorBanner actor={actor} />
 
             <div className="container mx-auto px-6 lg:px-12 py-8 space-y-12">
@@ -97,6 +97,6 @@ export default async function ActorPage(props: ActorPageProps) {
 
                 <ActorFilmography movies={mergedMovies} tvShows={mergedTvShows} />
             </div>
-        </main>
+        </div>
     )
 }

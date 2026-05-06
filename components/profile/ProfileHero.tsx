@@ -26,11 +26,11 @@ function LetterboxdIcon({ className }: LetterboxdIconProps) {
             width="1em"
             height="1em"
         >
-            <ellipse fill="currentColor" cx="6.2" cy="12" rx="5.2" ry="5.2" />
-            <ellipse fill="currentColor" cx="12.2" cy="12" rx="5.2" ry="5.2" />
-            <ellipse fill="currentColor" cx="18.2" cy="12" rx="5.2" ry="5.2" />
-            <path d="M10.47,15C9.89,14.08 9.56,13.04 9.56,12c0-1.04 0.33-2.08 0.91-3C11,9.92 11.34,10.96 11.34,12c0,1.04 -0.34,2.08 -0.87,3z" fill="surface" />
-            <path d="M13.53,9c0.58,0.92 0.91,1.96 0.91,3s-0.33,2.08 -0.91,3c-0.53,-0.92 -0.87,-1.96 -0.87,-3s0.34,-2.08 0.87,-3z" fill="surface"/>
+            <ellipse fill="currentColor" cx="5" cy="12" rx="5.2" ry="5.2" />
+            <ellipse fill="currentColor" cx="12" cy="12" rx="5.2" ry="5.2" />
+            <ellipse fill="currentColor" cx="19" cy="12" rx="5.2" ry="5.2" />
+            <path d="M10.47,15C9.89,14.08 9.56,13.04 9.56,12c0-1.04 0.33-2.08 0.91-3C11,9.92 11.34,10.96 11.34,12c0,1.04 -0.34,2.08 -0.87,3z" fill="var(--surface-3)" />
+            <path d="M13.53,9c0.58,0.92 0.91,1.96 0.91,3s-0.33,2.08 -0.91,3c-0.53,-0.92 -0.87,-1.96 -0.87,-3s0.34,-2.08 0.87,-3z" fill="var(--surface-3)" />
         </svg>
     )
 }
@@ -92,13 +92,13 @@ export function ProfileHero({ profile, avatarUrl, fullName, isOwnProfile, friend
                     <Image
                         src={avatarUrl}
                         alt={`${displayName} avatar`}
-                        width={88}
-                        height={88}
+                        width={80}
+                        height={80}
                         className="rounded-full object-cover border-2 border-border shadow-card"
                         unoptimized
                     />
                 ) : (
-                    <div className="w-22 h-22 rounded-full bg-surface-2 border-2 border-border flex items-center justify-center shadow-card">
+                    <div className="w-20 h-20 rounded-full bg-surface-2 border-2 border-border flex items-center justify-center shadow-card">
                         <span className="text-xl font-bold text-muted">{initials}</span>
                     </div>
                 )}

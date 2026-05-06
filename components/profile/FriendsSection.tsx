@@ -2,9 +2,10 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Lock, Users } from 'lucide-react'
 import type { FriendEntry, PrivacyVisibility } from '@/types/profile'
 import { useTranslation } from '@/lib/i18n/context'
+import { PrivacyBlock } from '@/components/ui/PrivacyBlock'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 interface FriendsSectionProps {
     friends: FriendEntry[]
@@ -15,27 +16,8 @@ interface FriendsSectionProps {
 export function FriendsSection({ friends, visibility, canView }: FriendsSectionProps) {
     const { t } = useTranslation()
 
-    if (!canView) {
-        return (
-            <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted">
-                {visibility === 'private' ? (
-                    <>
-                        <Lock className="h-8 w-8 opacity-40" />
-                        <p className="text-sm font-medium">{t.profile.private}</p>
-                    </>
-                ) : (
-                    <>
-                        <Users className="h-8 w-8 opacity-40" />
-                        <p className="text-sm font-medium">{t.profile.friendsOnly}</p>
-                    </>
-                )}
-            </div>
-        )
-    }
-
-    if (friends.length === 0) {
-        return <p className="text-muted text-sm py-8 text-center">{t.profile.noFriends}</p>
-    }
+    if (!canView) return <PrivacyBlock visibility={visibility} />
+    if (friends.length === 0) return <EmptyState message={t.profile.noFriends} />
 
     return (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -47,7 +29,7 @@ export function FriendsSection({ friends, visibility, canView }: FriendsSectionP
                     <Link
                         key={friendship.id}
                         href={`/profile/${username}`}
-                        className="flex flex-col items-center gap-2 p-3 rounded-lg bg-surface border border-border-subtle hover:bg-surface-2 transition-colors"
+                        className="flex flex-col items-center gap-2 p-3 rounded-lg bg-surface border border-border-subtle shadow-card-sm hover:bg-surface-2 transition-colors"
                     >
                         {avatarUrl ? (
                             <Image

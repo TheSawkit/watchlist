@@ -1,57 +1,15 @@
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import Title from "@/components/layout/Title";
 import { getTranslations } from "@/lib/i18n/server";
+import { NavbarMobile } from "@/components/navigation/NavbarMobile";
+import { NavLinks } from "@/components/navigation/NavLinks";
+import { SignoutButton } from "@/components/auth/SignoutButton";
+import { UserAvatar } from "@/components/shared/UserAvatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Settings, User } from "lucide-react";
 
-const NavbarMobile = dynamic(() =>
-    import("@/components/navigation/NavbarMobile").then(m => ({ default: m.NavbarMobile }))
-);
-const NavLinks = dynamic(() =>
-    import("@/components/navigation/NavLinks").then(m => ({ default: m.NavLinks }))
-);
-const SignoutButton = dynamic(() =>
-    import("@/components/auth/SignoutButton").then(m => ({ default: m.SignoutButton }))
-);
-const UserAvatar = dynamic(() =>
-    import("@/components/shared/UserAvatar").then(m => ({ default: m.UserAvatar }))
-);
-const DropdownMenu = dynamic(() =>
-    import("@/components/ui/dropdown-menu").then(m => ({ default: m.DropdownMenu }))
-);
-const DropdownMenuContent = dynamic(() =>
-    import("@/components/ui/dropdown-menu").then(m => ({ default: m.DropdownMenuContent }))
-);
-const DropdownMenuItem = dynamic(() =>
-    import("@/components/ui/dropdown-menu").then(m => ({ default: m.DropdownMenuItem }))
-);
-const DropdownMenuLabel = dynamic(() =>
-    import("@/components/ui/dropdown-menu").then(m => ({ default: m.DropdownMenuLabel }))
-);
-const DropdownMenuSeparator = dynamic(() =>
-    import("@/components/ui/dropdown-menu").then(m => ({ default: m.DropdownMenuSeparator }))
-);
-const DropdownMenuTrigger = dynamic(() =>
-    import("@/components/ui/dropdown-menu").then(m => ({ default: m.DropdownMenuTrigger }))
-);
-const Settings = dynamic(() =>
-    import("lucide-react").then(m => ({ default: m.Settings }))
-);
-const User = dynamic(() =>
-    import("lucide-react").then(m => ({ default: m.User }))
-);
-
-/**
- * App navigation header with logo, links, and user menu.
- * Displays authenticated user avatar with dropdown menu, or login/signup buttons.
- * Responsive layout: mobile menu on small screens, horizontal links on desktop.
- *
- * @returns Navigation header with authentication-aware UI
- * @example
- * // Used as main app navbar in layout
- * <Navbar />
- */
 export default async function Navbar() {
     const supabase = await createClient();
     const {
@@ -81,7 +39,7 @@ export default async function Navbar() {
                     <div className="flex justify-center md:justify-start col-start-2 md:col-start-1">
                         <Link
                             href="/"
-                            className="font-display text-2xl font-normal text-text-main transform transition-transform duration-(--duration-fast) hover:scale-105 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 flex items-center"
+                            className="font-display text-2xl font-normal text-text transform transition-transform duration-(--duration-fast) hover:scale-105 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 flex items-center"
                         >
                             <Title className="inline-block h-[0.7em] align-baseline mr-[0.03em] text-text" />
                         </Link>
@@ -119,7 +77,7 @@ export default async function Navbar() {
                                                 <p className="text-sm font-medium leading-none">
                                                     {user.user_metadata.username || user.user_metadata.full_name}
                                                 </p>
-                                                <p className="text-xs leading-none text-text-muted">
+                                                <p className="text-xs leading-none text-muted">
                                                     {user.email}
                                                 </p>
                                             </div>

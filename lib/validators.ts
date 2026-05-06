@@ -43,6 +43,11 @@ export function validateLanguage(language: unknown): string {
     return VALID_LANGUAGES.has(language) ? language : 'en'
 }
 
+export function formStr(formData: FormData, key: string): string | null {
+    const v = formData.get(key)
+    return typeof v === 'string' ? v || null : null
+}
+
 export function validateAvatarFile(file: File): { valid: boolean; error?: string } {
     if (file.size > MAX_AVATAR_SIZE) {
         return { valid: false, error: 'File too large (max 5MB)' }

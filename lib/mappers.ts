@@ -20,6 +20,7 @@ export function watchlistEntryToMediaItem(entry: WatchlistEntry): MediaItem {
         vote_average: 0,
         vote_count: 0,
         popularity: 0,
+        watchlistEntry: entry,
     }
 }
 

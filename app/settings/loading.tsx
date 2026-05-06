@@ -7,7 +7,7 @@ import {
 
 export default function SettingsLoading() {
     return (
-        <main className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background">
             <div className="container py-12">
                 <div className="max-w-4xl mx-auto">
                     <div className="mb-12">
@@ -56,6 +56,6 @@ export default function SettingsLoading() {
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     )
 }

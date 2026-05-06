@@ -10,6 +10,7 @@ export interface FeatureCardProps {
 export interface MediaGridProps {
   items: MediaItem[]
   hideRating?: boolean
+  showWatchlistMeta?: boolean
 }
 
 export interface MediaCardProps {
@@ -30,6 +31,8 @@ export interface InfiniteScrollMediaProps {
   category: string
   mediaType?: MediaType
   clientSideData?: MediaItem[]
+  hideRating?: boolean
+  showWatchlistMeta?: boolean
 }
 
 export interface MediaBannerProps {
@@ -43,7 +46,6 @@ export interface MediaBannerProps {
   certification?: string
   genres?: { id: number; name: string }[]
   actions?: ReactNode
-  // Compact icon-only buttons shown in the sticky header on scroll (avoids overflow on mobile)
   stickyActions?: ReactNode
 }
 

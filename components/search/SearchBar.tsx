@@ -12,10 +12,7 @@ import { SearchDropdown } from "./SearchDropdown"
  * Search input with live suggestions dropdown and navigation to full search page.
  * Handles clearing input and click-outside dismissal of suggestions.
  *
- * @returns Search bar with input field, loading state, and dropdown results
- * @example
- * // Used in navbar or page headers for searching media
- * <SearchBar />
+ * @returns Search bar with input field, loading state, and dropdown results.
  */
 export function SearchBar() {
     const { t } = useTranslation()

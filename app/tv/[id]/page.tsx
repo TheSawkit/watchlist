@@ -114,7 +114,7 @@ export default async function TvShowPage(props: TvPageProps) {
     const overallPercent = totalEpisodes > 0 ? Math.round((totalWatched / totalEpisodes) * 100) : 0
 
     return (
-        <main className="min-h-screen">
+        <div className="min-h-screen">
             <MediaBanner
                 title={tvDetails.name}
                 tagline={tvDetails.tagline}
@@ -203,6 +203,6 @@ export default async function TvShowPage(props: TvPageProps) {
 
                 <MediaCast cast={credits.cast} />
             </div>
-        </main>
+        </div>
     )
 }

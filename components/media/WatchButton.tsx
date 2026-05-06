@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useOptimistic, useTransition } from "react"
 import { Eye, Plus, Check, Loader2, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { addToWatchlist, removeFromWatchlist } from "@/app/actions/watchlist"
@@ -19,15 +19,10 @@ export function WatchButton({
     fallbackStatus,
     releaseDate,
 }: WatchButtonProps) {
-    const [optimisticActive, setOptimisticActive] = useState<boolean | null>(null)
-    const active = optimisticActive !== null ? optimisticActive : initialActive
-    const [loading, setLoading] = useState(false)
+    const [isPending, startTransition] = useTransition()
+    const [active, setActive] = useOptimistic(initialActive)
     const [error, setError] = useState(false)
     const { t } = useTranslation()
-
-    useEffect(() => {
-        setOptimisticActive(null)
-    }, [initialActive])
 
     const isUnreleased = releaseDate ? new Date(releaseDate) > new Date() : false
 
@@ -35,39 +30,36 @@ export function WatchButton({
         return null
     }
 
-    async function handleClick(e: React.MouseEvent) {
+    function handleClick(e: React.MouseEvent) {
         e.preventDefault()
         e.stopPropagation()
 
-        const prevActive = active
-        setOptimisticActive(!active)
-        setLoading(true)
-
-        try {
-            if (active) {
-                if (fallbackStatus) {
-                    await addToWatchlist(mediaId, mediaTitle, posterPath, fallbackStatus, mediaType)
+        startTransition(async () => {
+            setActive(!active)
+            try {
+                if (active) {
+                    if (fallbackStatus) {
+                        await addToWatchlist(mediaId, mediaTitle, posterPath, fallbackStatus, mediaType)
+                    } else {
+                        await removeFromWatchlist(mediaId, mediaType)
+                    }
                 } else {
-                    await removeFromWatchlist(mediaId, mediaType)
+                    await addToWatchlist(mediaId, mediaTitle, posterPath, status, mediaType)
                 }
-            } else {
-                await addToWatchlist(mediaId, mediaTitle, posterPath, status, mediaType)
+            } catch {
+                setError(true)
+                setTimeout(() => setError(false), 3000)
             }
-        } catch {
-            setOptimisticActive(prevActive)
-            setError(true)
-            setTimeout(() => setError(false), 3000)
-        } finally {
-            setLoading(false)
-        }
+        })
     }
 
-    const Icon = loading ? Loader2 : error ? XCircle : active ? Check : status === "watched" ? Eye : Plus
+    const Icon = isPending ? Loader2 : error ? XCircle : active ? Check : status === "watched" ? Eye : Plus
 
     if (variant === "full") {
         return (
             <button
                 onClick={handleClick}
+                disabled={isPending}
                 className={cn(
                     "flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all border focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-11 w-full shrink-0",
                     active
@@ -77,7 +69,7 @@ export function WatchButton({
                             : "bg-white/15 backdrop-blur-2xl text-text border-white/10 hover:bg-white/25 hover:text-text shadow-card-sm"
                 )}
             >
-                <Icon className={cn("h-4 w-4", loading && "animate-spin")} />
+                <Icon className={cn("h-4 w-4", isPending && "animate-spin")} />
                 {error
                     ? t.common.actionError
                     : active
@@ -94,6 +86,7 @@ export function WatchButton({
     return (
         <button
             onClick={handleClick}
+            disabled={isPending}
             aria-label={
                 status === "watched" ? t.movie.markAsWatched : t.movie.addToList
             }
@@ -108,7 +101,7 @@ export function WatchButton({
                     : "bg-surface/20 text-muted border-border/10 border-t-border/20 hover:text-text hover:bg-surface-2/20 shadow-card-sm hover:border-border"
             )}
         >
-            <Icon className={cn("h-4 w-4", loading && "animate-spin")} />
+            <Icon className={cn("h-4 w-4", isPending && "animate-spin")} />
         </button>
     )
 }

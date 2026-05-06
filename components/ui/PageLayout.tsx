@@ -37,7 +37,7 @@ export function PageHeader({ title, subtitle }: PageHeaderProps) {
       className="mb-12 md:mb-16"
       style={{ animation: "slideUpSubtle var(--duration-slower) var(--ease-apple) both" }}
     >
-      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 text-text-main tracking-tight">{title}</h1>
+      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 text-text tracking-tight">{title}</h1>
       {subtitle && <p className="text-muted text-lg">{subtitle}</p>}
     </div>
   )

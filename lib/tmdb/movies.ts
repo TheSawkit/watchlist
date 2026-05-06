@@ -98,10 +98,10 @@ export async function searchMovies(query: string, page: number = 1): Promise<Mov
  * @returns Full movie details with optional certification field.
  */
 export async function getMovieDetails(id: number): Promise<MovieDetails> {
-  const details = await fetchTMDB<MovieDetails>(`/movie/${id}`)
+  const details = await fetchTMDB<MovieDetails>(`/movie/${id}`, {}, 86400)
 
   try {
-    const releaseDates = await fetchTMDB<ReleaseDatesResponse>(`/movie/${id}/release_dates`)
+    const releaseDates = await fetchTMDB<ReleaseDatesResponse>(`/movie/${id}/release_dates`, {}, 86400)
     const userRegion = await getUserRegion()
     details.certification = findLocalCertification(releaseDates, userRegion)
   } catch (error) {
@@ -114,12 +114,12 @@ export async function getMovieDetails(id: number): Promise<MovieDetails> {
 
 /** @returns Cast and crew credits for the given movie. */
 export async function getMovieCredits(id: number): Promise<Credits> {
-  return fetchTMDB<Credits>(`/movie/${id}/credits`)
+  return fetchTMDB<Credits>(`/movie/${id}/credits`, {}, 86400)
 }
 
 /** @returns Official video trailers and clips for the given movie. */
 export async function getMovieVideos(id: number): Promise<Video[]> {
-  const { results } = await fetchTMDB<VideoResponse>(`/movie/${id}/videos`)
+  const { results } = await fetchTMDB<VideoResponse>(`/movie/${id}/videos`, {}, 86400)
   return results
 }
 
@@ -129,7 +129,7 @@ export async function getMovieVideos(id: number): Promise<Video[]> {
  */
 export async function getMovieRecommendations(id: number): Promise<Movie[]> {
   try {
-    const { results } = await fetchTMDB<{ results: Movie[] }>(`/movie/${id}/recommendations`)
+    const { results } = await fetchTMDB<{ results: Movie[] }>(`/movie/${id}/recommendations`, {}, 86400)
     return results
   } catch {
     return []
@@ -142,7 +142,7 @@ export async function getMovieRecommendations(id: number): Promise<Movie[]> {
  */
 export async function getSimilarMovies(id: number): Promise<Movie[]> {
   try {
-    const { results } = await fetchTMDB<{ results: Movie[] }>(`/movie/${id}/similar`)
+    const { results } = await fetchTMDB<{ results: Movie[] }>(`/movie/${id}/similar`, {}, 86400)
     return results
   } catch {
     return []
@@ -154,5 +154,5 @@ export async function getMovieImages(id: number): Promise<MediaImagesResponse> {
   const imageLanguage = await getImageLanguageFilter()
   return fetchTMDB<MediaImagesResponse>(`/movie/${id}/images`, {
     include_image_language: imageLanguage,
-  })
+  }, 86400)
 }

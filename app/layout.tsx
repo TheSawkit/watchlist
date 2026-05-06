@@ -74,7 +74,7 @@ export default async function RootLayout({
                     }}
                 />
             </head>
-            <body className={`${sans.variable} ${display.variable} antialiased bg-app-bg text-text-main`}>
+            <body className={`${sans.variable} ${display.variable} antialiased bg-background text-text`}>
                 <Providers initialLang={lang}>
                     <a
                         href="#main-content"

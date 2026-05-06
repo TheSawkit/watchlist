@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getAuthenticatedUser } from '@/lib/supabase/auth-helpers'
+import { formStr } from '@/lib/validators'
 import type { MediaType } from '@/types/tmdb'
 import type { PrivacySettings, PrivacyDefaults, PrivacyVisibility, Review, Playlist, UserProfile, Friendship } from '@/types/profile'
 
@@ -41,12 +42,12 @@ export async function updateSocialLinks(prevState: unknown, formData: FormData) 
 
     if (!username) return { error: 'Username required', success: false }
 
-    const bio = (formData.get('bio') as string) || null
-    const instagram = (formData.get('instagram') as string) || null
-    const tiktok = (formData.get('tiktok') as string) || null
-    const letterboxd = (formData.get('letterboxd') as string) || null
-    const twitter = (formData.get('twitter') as string) || null
-    const website = (formData.get('website') as string) || null
+    const bio = formStr(formData, 'bio')
+    const instagram = formStr(formData, 'instagram')
+    const tiktok = formStr(formData, 'tiktok')
+    const letterboxd = formStr(formData, 'letterboxd')
+    const twitter = formStr(formData, 'twitter')
+    const website = formStr(formData, 'website')
 
     if (bio && bio.length > 500) return { error: 'Bio must be 500 characters or less', success: false }
     if (instagram && instagram.length > 50) return { error: 'Instagram handle must be 50 characters or less', success: false }
@@ -103,6 +104,7 @@ export async function updatePrivacySettings(prevState: unknown, formData: FormDa
 
     if (error) return { error: error.message, success: false }
 
+    await revalidateProfile(supabase)
     return { error: undefined, success: true, message: 'Privacy settings updated' }
 }
 

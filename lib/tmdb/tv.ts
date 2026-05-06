@@ -57,10 +57,10 @@ export async function searchTvShows(query: string, page: number = 1): Promise<Tv
  * @returns Full TV show details with optional certification field.
  */
 export async function getTvShowDetails(id: number): Promise<TvShowDetails> {
-  const details = await fetchTMDB<TvShowDetails>(`/tv/${id}`)
+  const details = await fetchTMDB<TvShowDetails>(`/tv/${id}`, {}, 86400)
 
   try {
-    const ratings = await fetchTMDB<ContentRatingsResponse>(`/tv/${id}/content_ratings`)
+    const ratings = await fetchTMDB<ContentRatingsResponse>(`/tv/${id}/content_ratings`, {}, 86400)
     const userRegion = await getUserRegion()
     details.certification = findTvCertification(ratings, userRegion)
   } catch (error) {
@@ -91,12 +91,12 @@ export async function getTvShowTotalEpisodes(id: number): Promise<number> {
 
 /** @returns Cast and crew credits for the given TV show. */
 export async function getTvShowCredits(id: number): Promise<Credits> {
-  return fetchTMDB<Credits>(`/tv/${id}/credits`)
+  return fetchTMDB<Credits>(`/tv/${id}/credits`, {}, 86400)
 }
 
 /** @returns Official video trailers and clips for the given TV show. */
 export async function getTvShowVideos(id: number): Promise<Video[]> {
-  const { results } = await fetchTMDB<VideoResponse>(`/tv/${id}/videos`)
+  const { results } = await fetchTMDB<VideoResponse>(`/tv/${id}/videos`, {}, 86400)
   return results
 }
 
@@ -105,7 +105,7 @@ export async function getTvShowImages(id: number): Promise<MediaImagesResponse> 
   const imageLanguage = await getImageLanguageFilter()
   return fetchTMDB<MediaImagesResponse>(`/tv/${id}/images`, {
     include_image_language: imageLanguage,
-  })
+  }, 86400)
 }
 
 /**
@@ -114,7 +114,7 @@ export async function getTvShowImages(id: number): Promise<MediaImagesResponse> 
  */
 export async function getTvShowRecommendations(id: number): Promise<TvShow[]> {
   try {
-    const { results } = await fetchTMDB<{ results: TvShow[] }>(`/tv/${id}/recommendations`)
+    const { results } = await fetchTMDB<{ results: TvShow[] }>(`/tv/${id}/recommendations`, {}, 86400)
     return results
   } catch {
     return []
@@ -127,7 +127,7 @@ export async function getTvShowRecommendations(id: number): Promise<TvShow[]> {
  */
 export async function getSimilarTvShows(id: number): Promise<TvShow[]> {
   try {
-    const { results } = await fetchTMDB<{ results: TvShow[] }>(`/tv/${id}/similar`)
+    const { results } = await fetchTMDB<{ results: TvShow[] }>(`/tv/${id}/similar`, {}, 86400)
     return results
   } catch {
     return []
@@ -140,5 +140,5 @@ export async function getSimilarTvShows(id: number): Promise<TvShow[]> {
  * @returns Full season details including episodes.
  */
 export async function getSeasonDetails(tvId: number, seasonNumber: number): Promise<SeasonDetails> {
-  return fetchTMDB<SeasonDetails>(`/tv/${tvId}/season/${seasonNumber}`)
+  return fetchTMDB<SeasonDetails>(`/tv/${tvId}/season/${seasonNumber}`, {}, 86400)
 }

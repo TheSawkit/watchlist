@@ -1,13 +1,17 @@
 'use client'
 
 import Image from 'next/image'
-import { Lock, Users, Trash2, Plus, ListVideo } from 'lucide-react'
+import { Plus, ListVideo } from 'lucide-react'
 import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createPlaylist, deletePlaylist } from '@/app/actions/profile'
+import { getImageUrl } from '@/lib/tmdb/images'
 import type { Playlist, PrivacyVisibility } from '@/types/profile'
 import { useTranslation } from '@/lib/i18n/context'
+import { PrivacyBlock } from '@/components/ui/PrivacyBlock'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { DeleteIconButton } from '@/components/ui/DeleteIconButton'
 
 interface PlaylistsSectionProps {
     playlists: Playlist[]
@@ -27,7 +31,7 @@ function PlaylistCard({ playlist, isOwn, onDelete }: {
     const previewItems = items.slice(0, 4)
 
     return (
-        <div className="p-3 rounded-lg bg-surface border border-border-subtle space-y-2">
+        <div className="p-3 rounded-lg bg-surface border border-border-subtle shadow-card-sm space-y-2">
             <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                     <p className="font-medium text-sm text-text truncate">{playlist.name}</p>
@@ -37,26 +41,21 @@ function PlaylistCard({ playlist, isOwn, onDelete }: {
                     <p className="text-xs text-muted mt-1">{items.length} {t.profile.items}</p>
                 </div>
                 {isOwn && (
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled={isPending}
+                    <DeleteIconButton
                         onClick={() => startTransition(() => onDelete(playlist.id))}
-                        className="shrink-0 h-8 w-8 p-0 text-muted hover:text-red"
-                        aria-label={t.profile.deletePlaylist}
-                    >
-                        <Trash2 className="h-4 w-4" />
-                    </Button>
+                        disabled={isPending}
+                        ariaLabel={t.profile.deletePlaylist}
+                    />
                 )}
             </div>
 
             {previewItems.length > 0 && (
                 <div className="flex gap-1.5">
                     {previewItems.map((item) => (
-                        <div key={item.id} className="relative w-10 aspect-2/3 rounded-sm overflow-hidden bg-surface-2 shrink-0">
+                        <div key={item.id} className="relative w-10 aspect-2/3 rounded-poster overflow-hidden bg-surface-2 shrink-0">
                             {item.poster_path ? (
                                 <Image
-                                    src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
+                                    src={getImageUrl(item.poster_path, 'w92')}
                                     alt={item.media_title}
                                     fill
                                     sizes="40px"
@@ -70,7 +69,7 @@ function PlaylistCard({ playlist, isOwn, onDelete }: {
                         </div>
                     ))}
                     {items.length > 4 && (
-                        <div className="w-10 aspect-2/3 rounded-sm bg-surface-2 flex items-center justify-center shrink-0">
+                        <div className="w-10 aspect-2/3 rounded-poster bg-surface-2 flex items-center justify-center shrink-0">
                             <span className="text-xs text-muted">+{items.length - 4}</span>
                         </div>
                     )}
@@ -117,7 +116,7 @@ function CreatePlaylistForm({ onCreate }: { onCreate: (p: Playlist) => void }) {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="p-3 rounded-lg bg-surface border border-border-subtle space-y-2">
+        <form onSubmit={handleSubmit} className="p-3 rounded-lg bg-surface border border-border-subtle shadow-card-sm space-y-2">
             <Input
                 placeholder={t.profile.playlistName}
                 value={name}
@@ -154,23 +153,7 @@ export function PlaylistsSection({ playlists: initial, visibility, canView, isOw
         })
     }
 
-    if (!canView) {
-        return (
-            <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted">
-                {visibility === 'private' ? (
-                    <>
-                        <Lock className="h-8 w-8 opacity-40" />
-                        <p className="text-sm font-medium">{t.profile.private}</p>
-                    </>
-                ) : (
-                    <>
-                        <Users className="h-8 w-8 opacity-40" />
-                        <p className="text-sm font-medium">{t.profile.friendsOnly}</p>
-                    </>
-                )}
-            </div>
-        )
-    }
+    if (!canView) return <PrivacyBlock visibility={visibility} />
 
     return (
         <div className="space-y-3">
@@ -178,7 +161,7 @@ export function PlaylistsSection({ playlists: initial, visibility, canView, isOw
                 <CreatePlaylistForm onCreate={(p) => setPlaylists(prev => [p, ...prev])} />
             )}
             {playlists.length === 0 && (
-                <p className="text-muted text-sm py-8 text-center">{t.profile.noPlaylists}</p>
+                <EmptyState message={t.profile.noPlaylists} />
             )}
             {playlists.map((playlist) => (
                 <PlaylistCard

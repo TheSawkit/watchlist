@@ -75,8 +75,7 @@ async function syncTvShowWatchlistStatus(
 }
 
 /**
- * Toggles the watched state of a single episode for the authenticated user.
- * Also syncs the parent TV show's watchlist status after the change.
+ * Toggles the watched state of a single episode and syncs the parent TV show's watchlist status.
  *
  * @param tvId - TMDB TV show ID.
  * @param seasonNumber - Season number (1-based).

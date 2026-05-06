@@ -11,29 +11,14 @@ export type TMDBImageSize =
   | "w780"
   | "original"
 
-/**
- * Builds a full TMDB image URL from a relative path.
- * Returns a placeholder image URL when path is null or empty.
- *
- * @param path - Relative image path from TMDB (e.g. "/abc123.jpg"), or null.
- * @param size - TMDB image size variant (default: "w500").
- * @returns Full image URL.
- */
+/** Builds a full TMDB image URL; returns the placeholder SVG when path is null or empty. */
 export function getImageUrl(path: string | null, size: TMDBImageSize = "w500") {
   if (!path) return "/poster-placeholder.svg"
 
   return `${TMDB_IMAGE_BASE_URL}${size}${path}`
 }
 
-/**
- * Selects the highest-quality backdrop from a TMDB images response.
- * Excludes the current default backdrop to encourage visual variety.
- * Falls back to the default backdrop if no alternatives exist.
- *
- * @param images - TMDB images response containing a list of backdrops.
- * @param defaultBackdrop - The currently used backdrop path to exclude from sorting.
- * @returns The best-ranked alternative backdrop path, or the default if none found.
- */
+/** Selects the highest-ranked alternative backdrop, excluding the current one to vary visuals. */
 export function selectHeroImage(
   images: MediaImagesResponse,
   defaultBackdrop: string | null

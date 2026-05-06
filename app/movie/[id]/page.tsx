@@ -104,7 +104,7 @@ export default async function MoviePage(props: MoviePageProps) {
   const locale = await getServerLocale()
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <MediaBanner
         title={movieDetails.title}
         tagline={movieDetails.tagline}
@@ -186,6 +186,6 @@ export default async function MoviePage(props: MoviePageProps) {
 
         <MediaCast cast={credits.cast} />
       </div>
-    </main>
+    </div>
   )
 }

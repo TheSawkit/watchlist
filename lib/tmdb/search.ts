@@ -86,8 +86,8 @@ function tmdbMultiResultToMediaItem(result: TMDBMultiResult): MediaItem {
   return {
     id: result.id,
     media_type: isMovie ? "movie" : "tv",
-    title: isMovie ? result.title! : result.name!,
-    original_title: isMovie ? (result.original_title ?? result.title!) : (result.original_name ?? result.name!),
+    title: isMovie ? (result.title ?? result.name ?? '') : (result.name ?? result.title ?? ''),
+    original_title: isMovie ? (result.original_title ?? result.title ?? '') : (result.original_name ?? result.name ?? ''),
     overview: result.overview,
     poster_path: result.poster_path,
     backdrop_path: result.backdrop_path,

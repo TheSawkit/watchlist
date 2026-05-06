@@ -54,7 +54,7 @@ export function ProfileTabs({
     return (
         <div>
             <nav
-                className="flex gap-1 border-b border-border-subtle mb-6 overflow-x-auto"
+                className="flex gap-1 border-b border-border-subtle mb-6 overflow-x-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
                 aria-label="Profile sections"
             >
                 {TABS.map((tab) => (
@@ -83,7 +83,8 @@ export function ProfileTabs({
                     entries={toWatch}
                     visibility={privacy.watchlist_visibility}
                     canView={canView(privacy.watchlist_visibility)}
-                    status="to_watch"
+                    isOwnProfile={isOwnProfile}
+                    sectionKey="profile-watchlist"
                 />
             )}
             {activeTab === 'watched' && (
@@ -91,7 +92,8 @@ export function ProfileTabs({
                     entries={watched}
                     visibility={privacy.watched_visibility}
                     canView={canView(privacy.watched_visibility)}
-                    status="watched"
+                    isOwnProfile={isOwnProfile}
+                    sectionKey="profile-watched"
                 />
             )}
             {activeTab === 'reviews' && (

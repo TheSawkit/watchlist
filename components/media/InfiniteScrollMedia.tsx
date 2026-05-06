@@ -1,22 +1,28 @@
 "use client"
 
-import { useEffect, useState, useRef, useCallback } from "react"
+import { useEffect, useState, useRef, useCallback, useTransition } from "react"
 import { useInView } from "@/hooks/useInView"
 import type { MediaItem } from "@/types/tmdb"
 import { MediaGrid } from "@/components/media/MediaGrid"
-import { Loader2 } from "lucide-react"
+import { MediaCardSkeleton } from "@/components/media/MediaCardSkeleton"
 import { fetchMoreMedia } from "@/app/actions/media"
 import { useTranslation } from "@/lib/i18n/context"
 import type { InfiniteScrollMediaProps } from "@/types/components"
 
-export function InfiniteScrollMedia({ initialItems, category, clientSideData }: InfiniteScrollMediaProps) {
+function computeHasMore(clientSideData: MediaItem[] | undefined, initialItems: MediaItem[]): boolean {
+    if (clientSideData) return clientSideData.length > initialItems.length
+    return true
+}
+
+export function InfiniteScrollMedia({ initialItems, category, clientSideData, hideRating, showWatchlistMeta }: InfiniteScrollMediaProps) {
     const [items, setItems] = useState<MediaItem[]>(initialItems)
     const [page, setPage] = useState(2)
-    const [loading, setLoading] = useState(false)
-    const [hasMore, setHasMore] = useState(true)
+    const [isPending, startTransition] = useTransition()
+    const [hasMore, setHasMore] = useState(() => computeHasMore(clientSideData, initialItems))
     const [loadError, setLoadError] = useState(false)
     const loaderRef = useRef<HTMLDivElement>(null)
-    const isLoaderVisible = useInView(loaderRef, { rootMargin: "0px 0px 200px 0px" })
+    const isLoaderVisible = useInView(loaderRef, { rootMargin: "0px 0px 800px 0px" })
+    const prefetchRef = useRef<Promise<MediaItem[]> | null>(null)
     const { t } = useTranslation()
 
     const prevCategoryRef = useRef(category)
@@ -25,70 +31,100 @@ export function InfiniteScrollMedia({ initialItems, category, clientSideData }: 
         if (prevCategoryRef.current !== category) {
             setItems(initialItems)
             setPage(2)
-            setLoading(false)
-            setHasMore(true)
+            setHasMore(computeHasMore(clientSideData, initialItems))
+            setLoadError(false)
+            prefetchRef.current = null
             prevCategoryRef.current = category
         } else {
-            setItems(prev => prev.map(item => {
-                const refreshed = initialItems.find(i => i.id === item.id && i.media_type === item.media_type)
-                if (refreshed && refreshed.watchlistEntry?.status !== item.watchlistEntry?.status) {
-                    return { ...item, watchlistEntry: refreshed.watchlistEntry }
-                }
-                return item
-            }))
-        }
-    }, [category, initialItems])
-
-    const loadMore = useCallback(async () => {
-        if (loading || !hasMore || loadError) return
-
-        setLoading(true)
-        try {
-            let newItems: MediaItem[]
-
-            if (clientSideData) {
-                const pageSize = 20
-                const start = (page - 1) * pageSize
-                newItems = clientSideData.slice(start, start + pageSize)
-            } else {
-                newItems = await fetchMoreMedia(category, page)
-            }
-
-            if (newItems.length === 0) {
-                setHasMore(false)
-                return
-            }
-
-            setItems((prev) => {
-                const existingIds = new Set(prev.map((m) => `${m.media_type}-${m.id}`))
-                const uniqueItems = newItems.filter((m) => !existingIds.has(`${m.media_type}-${m.id}`))
-                if (uniqueItems.length === 0) {
-                    setHasMore(false)
-                    return prev
-                }
-                return [...prev, ...uniqueItems]
+            setItems(prev => {
+                let changed = false
+                const next = prev.map(item => {
+                    const refreshed = initialItems.find(i => i.id === item.id && i.media_type === item.media_type)
+                    if (refreshed && refreshed.watchlistEntry?.status !== item.watchlistEntry?.status) {
+                        changed = true
+                        return { ...item, watchlistEntry: refreshed.watchlistEntry }
+                    }
+                    return item
+                })
+                return changed ? next : prev
             })
-            setPage((prev) => prev + 1)
-        } catch {
-            setLoadError(true)
-            return
-        } finally {
-            setLoading(false)
         }
-    }, [category, hasMore, loading, loadError, page, clientSideData])
+    }, [category, initialItems, clientSideData])
 
     useEffect(() => {
-        if (isLoaderVisible) loadMore()
-    }, [isLoaderVisible, loadMore])
+        if (!clientSideData) {
+            prefetchRef.current = fetchMoreMedia(category, 2).catch(() => [])
+        }
+    }, [category, clientSideData])
+
+    const loadMore = useCallback(() => {
+        if (isPending || !hasMore || loadError) return
+
+        startTransition(async () => {
+            try {
+                let newItems: MediaItem[]
+
+                if (clientSideData) {
+                    const pageSize = 20
+                    const start = (page - 1) * pageSize
+                    newItems = clientSideData.slice(start, start + pageSize)
+                } else {
+                    newItems = await (prefetchRef.current ?? fetchMoreMedia(category, page))
+                    prefetchRef.current = null
+                }
+
+                if (newItems.length === 0) {
+                    setHasMore(false)
+                    return
+                }
+
+                setItems((prev) => {
+                    const existingIds = new Set(prev.map((m) => `${m.media_type}-${m.id}`))
+                    const uniqueItems = newItems.filter((m) => !existingIds.has(`${m.media_type}-${m.id}`))
+                    if (uniqueItems.length === 0) {
+                        setHasMore(false)
+                        return prev
+                    }
+                    const merged = [...prev, ...uniqueItems]
+                    if (clientSideData && merged.length >= clientSideData.length) {
+                        setHasMore(false)
+                    }
+                    return merged
+                })
+                setPage((prev) => prev + 1)
+
+                if (!clientSideData) {
+                    prefetchRef.current = fetchMoreMedia(category, page + 1).catch(() => [])
+                }
+            } catch {
+                setLoadError(true)
+                prefetchRef.current = null
+            }
+        })
+    }, [isPending, hasMore, loadError, page, clientSideData, category])
+
+    useEffect(() => {
+        if (isLoaderVisible && hasMore && !isPending) {
+            loadMore()
+        }
+    }, [isLoaderVisible, hasMore, isPending, loadMore])
 
     return (
         <>
-            <MediaGrid items={items} hideRating={category === "upcoming"} />
+            <MediaGrid items={items} hideRating={hideRating ?? category === "upcoming"} showWatchlistMeta={showWatchlistMeta} />
 
-            {hasMore && (
-                <div ref={loaderRef} className="flex justify-center py-8" role="status" aria-live="polite">
-                    <Loader2 className="w-8 h-8 animate-spin text-red-2" aria-hidden="true" />
-                    <span className="sr-only">{t.common.loading}</span>
+            <div ref={loaderRef} aria-hidden="true" />
+
+            {isPending && (
+                <div
+                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6 lg:gap-8 mt-4 md:mt-6 lg:mt-8"
+                    role="status"
+                    aria-live="polite"
+                    aria-label={t.common.loading}
+                >
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <MediaCardSkeleton key={i} />
+                    ))}
                 </div>
             )}
 

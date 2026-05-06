@@ -1,7 +1,7 @@
 import { getServerLocale, getServerLanguage } from "@/lib/i18n/server"
 import { createClient } from "@/lib/supabase/server"
 
-const TMDB_API_KEY = process.env.TMDB_API_KEY
+const TMDB_READ_ACCESS_TOKEN = process.env.TMDB_READ_ACCESS_TOKEN
 const TMDB_BASE_URL = "https://api.themoviedb.org/3"
 const TMDB_MAX_PAGE = 500
 
@@ -24,29 +24,29 @@ export async function getImageLanguageFilter(): Promise<string> {
 }
 
 /**
- * Fetches data from the TMDB API with automatic locale and API key injection.
- * Responses are cached for 1 hour via Next.js `fetch` revalidation.
+ * Fetches data from the TMDB API with Bearer auth and automatic locale injection.
+ * Responses are cached via Next.js `fetch` revalidation.
  *
  * @param endpoint - TMDB API path (e.g. "/movie/popular").
  * @param params - Additional query string parameters to append.
+ * @param revalidate - Cache revalidation interval in seconds (default: 3600).
  * @returns Parsed JSON response typed as `T`.
- * @throws Error if `TMDB_API_KEY` is missing or the response is not OK.
+ * @throws Error if `TMDB_READ_ACCESS_TOKEN` is missing or the response is not OK.
  */
-export async function fetchTMDB<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
-  if (!TMDB_API_KEY) {
-    throw new Error("TMDB_API_KEY is not defined.")
+export async function fetchTMDB<T>(endpoint: string, params: Record<string, string> = {}, revalidate = 3600): Promise<T> {
+  if (!TMDB_READ_ACCESS_TOKEN) {
+    throw new Error("TMDB_READ_ACCESS_TOKEN is not defined.")
   }
 
   const locale = await getServerLocale()
 
-  const queryParams = new URLSearchParams({
-    api_key: TMDB_API_KEY,
-    language: locale,
-    ...params,
-  })
+  const queryParams = new URLSearchParams({ language: locale, ...params })
 
   const url = `${TMDB_BASE_URL}${endpoint}?${queryParams.toString()}`
-  const response = await fetch(url, { next: { revalidate: 3600 } })
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${TMDB_READ_ACCESS_TOKEN}` },
+    next: { revalidate },
+  })
 
   if (!response.ok) {
     throw new Error(`TMDB API Error: ${response.status} ${response.statusText}`)
@@ -69,9 +69,7 @@ export async function getUserRegion(): Promise<string> {
     if (user?.user_metadata?.region) {
       return user.user_metadata.region.toUpperCase()
     }
-  } catch {
-    // User not authenticated — fall back to locale-based region
-  }
+  } catch { /* unauthenticated */ }
 
   const locale = await getServerLocale()
   if (locale.includes("-")) {
