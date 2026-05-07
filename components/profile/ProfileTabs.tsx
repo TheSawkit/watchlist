@@ -55,7 +55,7 @@ export function ProfileTabs({
         <div>
             <nav
                 className="flex gap-1 border-b border-border-subtle mb-6 overflow-x-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
-                aria-label="Profile sections"
+                aria-label={t.profile.profileNav}
             >
                 {TABS.map((tab) => (
                     <button

@@ -48,19 +48,12 @@ export function formStr(formData: FormData, key: string): string | null {
     return typeof v === 'string' ? v || null : null
 }
 
-export function validateAvatarFile(file: File): { valid: boolean; error?: string } {
-    if (file.size > MAX_AVATAR_SIZE) {
-        return { valid: false, error: 'File too large (max 5MB)' }
-    }
+export type AvatarErrorCode = 'fileTooLarge' | 'invalidExtension' | 'invalidMimeType'
 
+export function validateAvatarFile(file: File): { valid: true } | { valid: false; errorCode: AvatarErrorCode } {
+    if (file.size > MAX_AVATAR_SIZE) return { valid: false, errorCode: 'fileTooLarge' }
     const ext = file.name.split('.').pop()?.toLowerCase()
-    if (!ext || !ALLOWED_AVATAR_EXTENSIONS.has(ext)) {
-        return { valid: false, error: 'Invalid file extension (allowed: jpg, jpeg, png, webp)' }
-    }
-
-    if (!ALLOWED_AVATAR_MIMES.has(file.type)) {
-        return { valid: false, error: 'Invalid file type (allowed: image/jpeg, image/png, image/webp)' }
-    }
-
+    if (!ext || !ALLOWED_AVATAR_EXTENSIONS.has(ext)) return { valid: false, errorCode: 'invalidExtension' }
+    if (!ALLOWED_AVATAR_MIMES.has(file.type)) return { valid: false, errorCode: 'invalidMimeType' }
     return { valid: true }
 }

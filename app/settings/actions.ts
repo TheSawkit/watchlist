@@ -145,7 +145,7 @@ export async function updateAvatar(prevState: unknown, formData: FormData) {
     if (avatarFile && avatarFile.size > 0) {
         const validation = validateAvatarFile(avatarFile)
         if (!validation.valid) {
-            return { error: validation.error, success: false }
+            return { error: t.settings.avatar[validation.errorCode], success: false }
         }
 
         const fileExt = avatarFile.name.split('.').pop()!.toLowerCase()

@@ -3,6 +3,7 @@ import { Inter, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navigation/Navbar";
 import CinemaSpotlight from "@/components/ui/cinema-spotlight";
+import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./providers";
 import { getServerLanguage, getTranslations } from "@/lib/i18n/server";
 
@@ -91,6 +92,7 @@ export default async function RootLayout({
                         <p>© {new Date().getFullYear()} ReelMark</p>
                     </footer>
                 </Providers>
+                <Toaster />
             </body>
         </html>
     );

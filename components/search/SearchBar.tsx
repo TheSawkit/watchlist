@@ -8,12 +8,6 @@ import { useTranslation } from "@/lib/i18n/context"
 import { useSearchSuggestions } from "@/hooks/useSearchSuggestions"
 import { SearchDropdown } from "./SearchDropdown"
 
-/**
- * Search input with live suggestions dropdown and navigation to full search page.
- * Handles clearing input and click-outside dismissal of suggestions.
- *
- * @returns Search bar with input field, loading state, and dropdown results.
- */
 export function SearchBar() {
     const { t } = useTranslation()
     const [query, setQuery] = useState("")

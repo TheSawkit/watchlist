@@ -101,8 +101,10 @@ export default async function TvShowPage(props: TvPageProps) {
 
     const heroImagePath = selectHeroImage(images, tvDetails.backdrop_path)
     const heroImageUrl = getImageUrl(heroImagePath, "original")
-    const watchlistEntry = await getMediaWatchlistEntry(tvId, "tv")
-    const watchProgress = await getTvShowWatchProgress(tvId)
+    const [watchlistEntry, watchProgress] = await Promise.all([
+        getMediaWatchlistEntry(tvId, "tv"),
+        getTvShowWatchProgress(tvId),
+    ])
     const t = await getTranslations()
     const locale = await getServerLocale()
 

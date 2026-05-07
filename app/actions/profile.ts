@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getAuthenticatedUser } from '@/lib/supabase/auth-helpers'
 import { formStr } from '@/lib/validators'
+import { getTranslations } from '@/lib/i18n/server'
 import type { MediaType } from '@/types/tmdb'
 import type { PrivacySettings, PrivacyDefaults, PrivacyVisibility, Review, Playlist, UserProfile, Friendship } from '@/types/profile'
 
@@ -36,11 +37,12 @@ export async function getProfileByUsername(username: string): Promise<UserProfil
 
 export async function updateSocialLinks(prevState: unknown, formData: FormData) {
     const { supabase, userId } = await getAuthenticatedUser()
+    const t = await getTranslations()
 
     const { data: { user } } = await supabase.auth.getUser()
     const username = user?.user_metadata?.username as string | undefined
 
-    if (!username) return { error: 'Username required', success: false }
+    if (!username) return { error: t.settings.social.errors.usernameRequired, success: false }
 
     const bio = formStr(formData, 'bio')
     const instagram = formStr(formData, 'instagram')
@@ -49,14 +51,14 @@ export async function updateSocialLinks(prevState: unknown, formData: FormData) 
     const twitter = formStr(formData, 'twitter')
     const website = formStr(formData, 'website')
 
-    if (bio && bio.length > 500) return { error: 'Bio must be 500 characters or less', success: false }
-    if (instagram && instagram.length > 50) return { error: 'Instagram handle must be 50 characters or less', success: false }
-    if (tiktok && tiktok.length > 50) return { error: 'TikTok handle must be 50 characters or less', success: false }
-    if (letterboxd && letterboxd.length > 50) return { error: 'Letterboxd handle must be 50 characters or less', success: false }
-    if (twitter && twitter.length > 50) return { error: 'Twitter handle must be 50 characters or less', success: false }
+    if (bio && bio.length > 500) return { error: t.settings.social.errors.bioTooLong, success: false }
+    if (instagram && instagram.length > 50) return { error: t.settings.social.errors.instagramTooLong, success: false }
+    if (tiktok && tiktok.length > 50) return { error: t.settings.social.errors.tiktokTooLong, success: false }
+    if (letterboxd && letterboxd.length > 50) return { error: t.settings.social.errors.letterboxdTooLong, success: false }
+    if (twitter && twitter.length > 50) return { error: t.settings.social.errors.twitterTooLong, success: false }
     if (website) {
-        if (!/^https?:\/\//.test(website)) return { error: 'Website must start with https:// or http://', success: false }
-        if (website.length > 2000) return { error: 'Website URL must be 2000 characters or less', success: false }
+        if (!/^https?:\/\//.test(website)) return { error: t.settings.social.errors.websiteInvalid, success: false }
+        if (website.length > 2000) return { error: t.settings.social.errors.websiteTooLong, success: false }
     }
 
     const { error } = await supabase
@@ -143,11 +145,12 @@ export async function upsertReview(
     rating: number | null,
     content: string | null
 ): Promise<void> {
+    const t = await getTranslations()
     if (rating !== null && (rating < 1 || rating > 10 || !Number.isInteger(rating))) {
-        throw new Error('Rating must be an integer between 1 and 10')
+        throw new Error(t.profile.errors.ratingInvalid)
     }
     if (content && content.length > 2000) {
-        throw new Error('Review content must be 2000 characters or less')
+        throw new Error(t.profile.errors.reviewTooLong)
     }
 
     const { supabase, userId } = await getAuthenticatedUser()
@@ -190,12 +193,31 @@ export async function getUserPlaylists(userId: string): Promise<Playlist[]> {
 }
 
 export async function createPlaylist(name: string, description: string | null): Promise<void> {
-    if (!name.trim() || name.length > 100) throw new Error('Playlist name must be 1–100 characters')
-    if (description && description.length > 500) throw new Error('Description must be 500 characters or less')
+    const t = await getTranslations()
+    if (!name.trim() || name.length > 100) throw new Error(t.profile.errors.playlistNameInvalid)
+    if (description && description.length > 500) throw new Error(t.profile.errors.descriptionTooLong)
 
     const { supabase, userId } = await getAuthenticatedUser()
 
     const { error } = await supabase.from('playlists').insert({ user_id: userId, name, description })
+
+    if (error) throw new Error(error.message)
+    await revalidateProfile(supabase)
+}
+
+export async function updatePlaylist(playlistId: string, name: string, description: string | null): Promise<void> {
+    const t = await getTranslations()
+    const trimmedName = name.trim()
+    if (!trimmedName || trimmedName.length > 100) throw new Error(t.profile.errors.playlistNameInvalid)
+    if (description && description.length > 500) throw new Error(t.profile.errors.descriptionTooLong)
+
+    const { supabase, userId } = await getAuthenticatedUser()
+
+    const { error } = await supabase
+        .from('playlists')
+        .update({ name: trimmedName, description: description?.trim() || null, updated_at: new Date().toISOString() })
+        .eq('id', playlistId)
+        .eq('user_id', userId)
 
     if (error) throw new Error(error.message)
     await revalidateProfile(supabase)

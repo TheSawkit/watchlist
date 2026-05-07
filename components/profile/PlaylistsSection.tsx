@@ -1,17 +1,19 @@
 'use client'
 
 import Image from 'next/image'
-import { Plus, ListVideo } from 'lucide-react'
+import { Plus, ListVideo, Pencil, Trash2 } from 'lucide-react'
 import { useState, useTransition } from 'react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createPlaylist, deletePlaylist } from '@/app/actions/profile'
 import { getImageUrl } from '@/lib/tmdb/images'
-import type { Playlist, PrivacyVisibility } from '@/types/profile'
+import { cn } from '@/lib/utils'
+import type { Playlist, PlaylistItem, PrivacyVisibility } from '@/types/profile'
 import { useTranslation } from '@/lib/i18n/context'
 import { PrivacyBlock } from '@/components/ui/PrivacyBlock'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { DeleteIconButton } from '@/components/ui/DeleteIconButton'
+import { PlaylistEditDialog } from '@/components/profile/PlaylistEditDialog'
 
 interface PlaylistsSectionProps {
     playlists: Playlist[]
@@ -20,62 +22,202 @@ interface PlaylistsSectionProps {
     isOwnProfile: boolean
 }
 
-function PlaylistCard({ playlist, isOwn, onDelete }: {
+function PlaylistCard({ playlist, isOwn, onDelete, onUpdate }: {
     playlist: Playlist
     isOwn: boolean
     onDelete: (id: string) => void
+    onUpdate: (id: string, patch: Partial<Pick<Playlist, 'items' | 'name' | 'description'>>) => void
 }) {
     const { t } = useTranslation()
     const [isPending, startTransition] = useTransition()
+    const [dialogOpen, setDialogOpen] = useState(false)
+    const [dialogKey, setDialogKey] = useState(0)
+    const [dialogMode, setDialogMode] = useState<'edit' | 'view'>('view')
+    const [confirmDelete, setConfirmDelete] = useState(false)
     const items = playlist.items ?? []
     const previewItems = items.slice(0, 4)
+    const backgroundPoster = items[0]?.poster_path
+
+    const openViewDialog = () => {
+        setDialogMode('view')
+        setDialogKey(k => k + 1)
+        setDialogOpen(true)
+    }
+
+    const openEditDialog = () => {
+        setDialogMode('edit')
+        setDialogKey(k => k + 1)
+        setDialogOpen(true)
+    }
+
+    const switchToEditMode = () => {
+        setDialogMode('edit')
+    }
+
+    const handleDelete = () => {
+        startTransition(async () => {
+            try {
+                await deletePlaylist(playlist.id)
+                onDelete(playlist.id)
+            } catch {
+                toast.error(t.profile.errorDelete)
+                setConfirmDelete(false)
+            }
+        })
+    }
+
+    const handleAddItem = (item: PlaylistItem) => {
+        onUpdate(playlist.id, { items: [...items, item] })
+    }
+
+    const handleRemoveItem = (mediaId: number, mediaType: 'movie' | 'tv') => {
+        onUpdate(playlist.id, {
+            items: items.filter(i => !(i.media_id === mediaId && i.media_type === mediaType)),
+        })
+    }
+
+    const handleUpdateMeta = (name: string, description: string | null) => {
+        onUpdate(playlist.id, { name, description })
+    }
 
     return (
-        <div className="p-3 rounded-lg bg-surface border border-border-subtle shadow-card-sm space-y-2">
-            <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                    <p className="font-medium text-sm text-text truncate">{playlist.name}</p>
-                    {playlist.description && (
-                        <p className="text-xs text-muted mt-0.5 line-clamp-2">{playlist.description}</p>
-                    )}
-                    <p className="text-xs text-muted mt-1">{items.length} {t.profile.items}</p>
-                </div>
-                {isOwn && (
-                    <DeleteIconButton
-                        onClick={() => startTransition(() => onDelete(playlist.id))}
-                        disabled={isPending}
-                        ariaLabel={t.profile.deletePlaylist}
+        <>
+            <div
+                className="group relative h-44 overflow-hidden rounded-xl cursor-pointer bg-surface border border-border-subtle"
+                onClick={openViewDialog}
+                role="button"
+                aria-label={t.profile.viewPlaylist}
+            >
+                {backgroundPoster && (
+                    <Image
+                        src={getImageUrl(backgroundPoster, 'w342')}
+                        alt=""
+                        fill
+                        sizes="100vw"
+                        className="object-cover scale-125 blur-xl opacity-60 pointer-events-none"
                     />
+                )}
+                <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/60 to-black/10" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+
+                <div className="relative z-10 h-full flex items-center pl-5 pr-20 py-4 gap-6">
+                    <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+                        <h3 className="font-display text-3xl font-normal leading-none uppercase tracking-wide text-white truncate">
+                            {playlist.name}
+                        </h3>
+                        {playlist.description && (
+                            <p className="text-sm text-white/55 line-clamp-2 leading-snug">
+                                {playlist.description}
+                            </p>
+                        )}
+                        <p className="text-xs text-white/35 mt-0.5">
+                            {items.length} {t.profile.items}
+                        </p>
+                    </div>
+
+                    <div className="flex items-center shrink-0">
+                        {previewItems.length > 0 ? (
+                            <>
+                                {previewItems.map((item, i) => (
+                                    <div
+                                        key={item.id}
+                                        className={cn(
+                                            'relative w-14 aspect-2/3 rounded-poster overflow-hidden shrink-0',
+                                            'border-2 border-black shadow-card',
+                                            'transition-transform duration-(--duration-base) ease-out',
+                                            'group-hover:-translate-y-1',
+                                            i > 0 && '-ml-[18px]',
+                                        )}
+                                        style={{ zIndex: previewItems.length - i, transitionDelay: `${i * 30}ms` }}
+                                    >
+                                        {item.poster_path ? (
+                                            <Image
+                                                src={getImageUrl(item.poster_path, 'w154')}
+                                                alt={item.media_title}
+                                                fill
+                                                sizes="56px"
+                                                className="object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-surface-3 flex items-center justify-center">
+                                                <ListVideo className="h-4 w-4 text-muted opacity-40" />
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                                {items.length > 4 && (
+                                    <div
+                                        className="relative w-14 aspect-2/3 rounded-poster bg-surface-2/70 border-2 border-black -ml-[18px] shrink-0 flex items-center justify-center"
+                                        style={{ zIndex: 0 }}
+                                    >
+                                        <span className="text-xs text-white/50 font-medium">+{items.length - 4}</span>
+                                    </div>
+                                )}
+                            </>
+                        ) : (
+                            <div className="w-14 aspect-2/3 rounded-poster bg-white/5 border border-white/10 flex items-center justify-center">
+                                <ListVideo className="h-5 w-5 text-white/25" />
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {isOwn && !confirmDelete && (
+                    <div className="absolute top-3 right-3 z-20 flex gap-1.5">
+                        <button
+                            onClick={(e) => { e.stopPropagation(); openEditDialog() }}
+                            className="p-2 rounded-lg bg-black/50 backdrop-blur-sm border border-glass-border text-white/55 hover:text-white hover:bg-black/70 transition-colors"
+                            aria-label={t.profile.editPlaylist}
+                        >
+                            <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                            onClick={(e) => { e.stopPropagation(); setConfirmDelete(true) }}
+                            className="p-2 rounded-lg bg-black/50 backdrop-blur-sm border border-glass-border text-white/55 hover:text-red hover:bg-red/20 hover:border-red/30 transition-colors"
+                            aria-label={t.profile.deletePlaylist}
+                        >
+                            <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                    </div>
+                )}
+
+                {confirmDelete && (
+                    <div
+                        className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-3 bg-poster-overlay-heavy backdrop-blur-sm rounded-xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <p className="text-sm text-white/90 font-medium">{t.profile.deletePlaylistConfirm}</p>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handleDelete}
+                                disabled={isPending}
+                                className="px-4 py-1.5 rounded-lg bg-red/20 border border-red/40 text-red text-sm font-medium hover:bg-red/30 transition-colors disabled:opacity-50"
+                            >
+                                {t.profile.deleteConfirm}
+                            </button>
+                            <button
+                                onClick={() => setConfirmDelete(false)}
+                                className="px-4 py-1.5 rounded-lg bg-glass-bg border border-glass-border text-white/70 text-sm hover:bg-glass-bg-hover transition-colors"
+                            >
+                                {t.common.cancel}
+                            </button>
+                        </div>
+                    </div>
                 )}
             </div>
 
-            {previewItems.length > 0 && (
-                <div className="flex gap-1.5">
-                    {previewItems.map((item) => (
-                        <div key={item.id} className="relative w-10 aspect-2/3 rounded-poster overflow-hidden bg-surface-2 shrink-0">
-                            {item.poster_path ? (
-                                <Image
-                                    src={getImageUrl(item.poster_path, 'w92')}
-                                    alt={item.media_title}
-                                    fill
-                                    sizes="40px"
-                                    className="object-cover"
-                                />
-                            ) : (
-                                <div className="w-full h-full bg-surface-3 flex items-center justify-center">
-                                    <ListVideo className="h-3 w-3 text-muted opacity-40" />
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                    {items.length > 4 && (
-                        <div className="w-10 aspect-2/3 rounded-poster bg-surface-2 flex items-center justify-center shrink-0">
-                            <span className="text-xs text-muted">+{items.length - 4}</span>
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
+            <PlaylistEditDialog
+                key={dialogKey}
+                playlist={playlist}
+                mode={dialogMode}
+                open={dialogOpen}
+                onOpenChange={setDialogOpen}
+                onAddItem={handleAddItem}
+                onRemoveItem={handleRemoveItem}
+                onUpdateMeta={isOwn ? handleUpdateMeta : undefined}
+                onSwitchToEdit={isOwn ? switchToEditMode : undefined}
+            />
+        </>
     )
 }
 
@@ -144,13 +286,13 @@ function CreatePlaylistForm({ onCreate }: { onCreate: (p: Playlist) => void }) {
 export function PlaylistsSection({ playlists: initial, visibility, canView, isOwnProfile }: PlaylistsSectionProps) {
     const { t } = useTranslation()
     const [playlists, setPlaylists] = useState(initial)
-    const [isPending, startTransition] = useTransition()
 
     const handleDelete = (id: string) => {
-        startTransition(async () => {
-            await deletePlaylist(id)
-            setPlaylists(prev => prev.filter(p => p.id !== id))
-        })
+        setPlaylists(prev => prev.filter(p => p.id !== id))
+    }
+
+    const handleUpdate = (id: string, patch: Partial<Pick<Playlist, 'items' | 'name' | 'description'>>) => {
+        setPlaylists(prev => prev.map(p => p.id === id ? { ...p, ...patch } : p))
     }
 
     if (!canView) return <PrivacyBlock visibility={visibility} />
@@ -169,6 +311,7 @@ export function PlaylistsSection({ playlists: initial, visibility, canView, isOw
                     playlist={playlist}
                     isOwn={isOwnProfile}
                     onDelete={handleDelete}
+                    onUpdate={handleUpdate}
                 />
             ))}
         </div>

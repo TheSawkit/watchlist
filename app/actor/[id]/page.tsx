@@ -9,14 +9,6 @@ import { movieCreditToMediaItem, tvCreditToMediaItem } from "@/lib/mappers"
 import { mergeMediaWithWatchlist } from "@/app/actions/media"
 import { getTranslations } from "@/lib/i18n/server"
 
-/**
- * Generates metadata for actor detail page for SEO and social sharing.
- * Fetches actor data and constructs OpenGraph and Twitter card information.
- *
- * @param props - Route parameters
- * @param props.params - Promise resolving to { id: string } actor ID
- * @returns Metadata object with title, description, OpenGraph, and Twitter card data
- */
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://reelmark.app"
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
