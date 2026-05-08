@@ -5,16 +5,12 @@ import { PageLayout } from '@/components/ui/PageLayout'
 import { ProfileHero } from '@/components/profile/ProfileHero'
 import { ProfileTabs } from '@/components/profile/ProfileTabs'
 import { FriendshipButton } from '@/components/profile/FriendshipButton'
-import {
-    getProfileByUsername,
-    getPrivacySettings,
-    getUserReviews,
-    getUserPlaylists,
-    getFriends,
-    getFriendshipStatus,
-} from '@/app/actions/profile'
+import { getProfileByUsername, getPrivacySettings } from '@/app/actions/profile'
+import { getUserReviews } from '@/app/actions/reviews'
+import { getUserPlaylists } from '@/app/actions/playlists'
+import { getFriends, getFriendshipStatus } from '@/app/actions/friends'
 import type { WatchlistEntry } from '@/types/tmdb'
-import type { FriendEntry, UserProfile } from '@/types/profile'
+import type { FriendEntry } from '@/types/profile'
 
 interface Props {
     params: Promise<{ username: string }>
@@ -46,7 +42,7 @@ export default async function ProfilePage({ params }: Props) {
         getUserPlaylists(profile.user_id),
         getFriends(profile.user_id),
         isOwnProfile ? Promise.resolve(null) : getFriendshipStatus(profile.user_id),
-        supabase.from('watchlist').select('*').eq('user_id', profile.user_id).order('created_at', { ascending: false }),
+        supabase.from('watchlist').select('*').eq('user_id', profile.user_id).order('created_at', { ascending: false }).limit(1000),
     ])
 
     const watchlist = (watchlistData.data ?? []) as WatchlistEntry[]
@@ -54,33 +50,25 @@ export default async function ProfilePage({ params }: Props) {
     const watched = watchlist.filter(e => e.status === 'watched')
     const isFriend = friendship?.status === 'accepted'
 
-    const friendUserIds = rawFriends.map(f =>
-        f.requester_id === profile.user_id ? f.addressee_id : f.requester_id
+    const friendIdByFriendshipId = new Map(
+        rawFriends.map(f => [f.id, f.requester_id === profile.user_id ? f.addressee_id : f.requester_id])
     )
+    const friendUserIds = Array.from(friendIdByFriendshipId.values())
 
     const friendEntries: FriendEntry[] = []
     if (friendUserIds.length > 0) {
         const { data: friendProfiles } = await supabase
             .from('user_profiles')
-            .select('*')
+            .select('user_id, username')
             .in('user_id', friendUserIds)
 
-        const friendAuthUsers = await Promise.all(
-            friendUserIds.map(id => adminClient.auth.admin.getUserById(id))
-        )
+        const profileByUserId = new Map(friendProfiles?.map(p => [p.user_id, p]) ?? [])
 
         for (const f of rawFriends) {
-            const friendId = f.requester_id === profile.user_id ? f.addressee_id : f.requester_id
-            const friendProfile = friendProfiles?.find(p => p.user_id === friendId) as UserProfile | undefined
-            const authResult = friendAuthUsers.find(r => r.data.user?.id === friendId)
-            const meta = authResult?.data.user?.user_metadata
+            const friendId = friendIdByFriendshipId.get(f.id)!
+            const friendProfile = profileByUserId.get(friendId)
             if (!friendProfile) continue
-            friendEntries.push({
-                friendship: f,
-                username: friendProfile.username,
-                avatarUrl: typeof meta?.avatar_url === 'string' ? meta.avatar_url : undefined,
-                fullName: typeof meta?.full_name === 'string' ? meta.full_name : undefined,
-            })
+            friendEntries.push({ friendship: f, username: friendProfile.username })
         }
     }
 

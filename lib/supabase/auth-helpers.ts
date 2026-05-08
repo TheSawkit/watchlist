@@ -1,10 +1,10 @@
 import { createClient } from "@/lib/supabase/server"
 
 /**
- * Returns a Supabase client and the authenticated user's ID.
+ * Returns a Supabase client, the authenticated user's ID, and the full user object.
  * Throws an error if the request is unauthenticated.
  *
- * @returns Object containing the Supabase client and the user's UUID.
+ * @returns Object containing the Supabase client, user UUID, and full User object.
  * @throws Error if no authenticated session is found.
  */
 export async function getAuthenticatedUser() {
@@ -13,7 +13,7 @@ export async function getAuthenticatedUser() {
 
     if (!user) throw new Error("Unauthenticated")
 
-    return { supabase, userId: user.id }
+    return { supabase, userId: user.id, user }
 }
 
 /**

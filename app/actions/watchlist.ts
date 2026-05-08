@@ -65,6 +65,7 @@ export async function getUserWatchlist(): Promise<WatchlistEntry[]> {
         .select("*")
         .eq("user_id", userId)
         .order("created_at", { ascending: false })
+        .limit(1000)
 
     if (error) throw new Error(error.message)
 

@@ -223,6 +223,16 @@ export async function deleteAccount(prevState: unknown, formData: FormData) {
 
     await supabase.from('episode_watches').delete().eq('user_id', user.id)
     await supabase.from('watchlist').delete().eq('user_id', user.id)
+    await supabase.from('reviews').delete().eq('user_id', user.id)
+
+    const { data: userPlaylists } = await supabase.from('playlists').select('id').eq('user_id', user.id)
+    if (userPlaylists && userPlaylists.length > 0) {
+        await supabase.from('playlist_items').delete().in('playlist_id', userPlaylists.map(p => p.id))
+    }
+    await supabase.from('playlists').delete().eq('user_id', user.id)
+    await supabase.from('friendships').delete().or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`)
+    await supabase.from('privacy_settings').delete().eq('user_id', user.id)
+    await supabase.from('user_profiles').delete().eq('user_id', user.id)
 
     const adminClient = createAdminClient()
     const { error: deleteError } = await adminClient.auth.admin.deleteUser(user.id)

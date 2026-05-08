@@ -286,6 +286,7 @@ export const translations = {
                 reviewTooLong: "L'avis dépasse 2000 caractères",
                 playlistNameInvalid: 'Le nom doit faire entre 1 et 100 caractères',
                 descriptionTooLong: 'La description dépasse 500 caractères',
+                playlistNotFound: 'Playlist introuvable',
             },
         },
         auth: {
@@ -799,6 +800,7 @@ export const translations = {
                 reviewTooLong: 'Review must be 2000 characters or less',
                 playlistNameInvalid: 'Playlist name must be 1–100 characters',
                 descriptionTooLong: 'Description must be 500 characters or less',
+                playlistNotFound: 'Playlist not found',
             },
         },
         auth: {

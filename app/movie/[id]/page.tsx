@@ -184,7 +184,7 @@ export default async function MoviePage(props: MoviePageProps) {
 
         {trailers.length > 0 && <MediaTrailers trailers={trailers} />}
 
-        <MediaCast cast={credits.cast} />
+        <MediaCast cast={credits.cast.slice(0, 30)} />
       </div>
     </div>
   )

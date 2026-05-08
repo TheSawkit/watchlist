@@ -1,9 +1,15 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, unstable_cache } from "next/cache"
 import { getAuthenticatedUser, getOptionalUser } from "@/lib/supabase/auth-helpers"
 import { getTvShowDetails } from "@/lib/tmdb"
 import type { SupabaseServerClient } from "@/lib/supabase/server"
+
+const getCachedTvShowDetails = unstable_cache(
+    (tvId: number) => getTvShowDetails(tvId),
+    ['tv-show-details'],
+    { revalidate: 300 }
+)
 
 function revalidateEpisodePaths(tvId: number, seasonNumber: number) {
     revalidatePath(`/tv/${tvId}`)
@@ -19,7 +25,7 @@ async function syncTvShowWatchlistStatus(
 ) {
     let details
     try {
-        details = await getTvShowDetails(tvId)
+        details = await getCachedTvShowDetails(tvId)
     } catch (error) {
         console.warn(`[episodes] Failed to sync TV show ${tvId} watchlist status:`, error)
         return

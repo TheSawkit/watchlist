@@ -8,7 +8,7 @@ import {
     acceptFriendRequest,
     rejectFriendRequest,
     removeFriend,
-} from '@/app/actions/profile'
+} from '@/app/actions/friends'
 import type { Friendship } from '@/types/profile'
 import { useTranslation } from '@/lib/i18n/context'
 

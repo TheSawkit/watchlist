@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useTransition } from 'react'
-import { deleteReview } from '@/app/actions/profile'
+import { deleteReview } from '@/app/actions/reviews'
 import { getImageUrl } from '@/lib/tmdb/images'
 import type { Review, PrivacyVisibility } from '@/types/profile'
 import { useTranslation } from '@/lib/i18n/context'
