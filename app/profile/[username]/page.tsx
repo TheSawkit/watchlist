@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
+import { getTranslations } from '@/lib/i18n/server'
 import { PageLayout } from '@/components/ui/PageLayout'
 import { ProfileHero } from '@/components/profile/ProfileHero'
 import { ProfileTabs } from '@/components/profile/ProfileTabs'
@@ -16,11 +17,24 @@ interface Props {
     params: Promise<{ username: string }>
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<import("next").Metadata> {
     const { username } = await params
+    const t = await getTranslations()
+    const description = t.metadata.profileDescription.replace('${username}', username)
     return {
         title: `@${username}`,
-        robots: { index: false, follow: false },
+        description,
+        robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
+        openGraph: {
+            title: `@${username} — ReelMark`,
+            description,
+            type: 'profile',
+        },
+        twitter: {
+            card: 'summary',
+            title: `@${username} — ReelMark`,
+            description,
+        },
     }
 }
 

@@ -1,6 +1,16 @@
 import Link from "next/link"
+import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { getTranslations } from "@/lib/i18n/server"
+
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations()
+    return {
+        title: t.metadata.authErrorTitle,
+        description: t.metadata.authErrorDescription,
+        robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
+    }
+}
 
 export default async function AuthErrorPage() {
   const t = await getTranslations()

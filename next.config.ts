@@ -29,6 +29,9 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-dropdown-menu', '@radix-ui/react-dialog'],
   },
+  turbopack: {
+    root: __dirname,
+  },
   async headers() {
     return [
       {

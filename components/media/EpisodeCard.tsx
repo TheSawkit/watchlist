@@ -159,6 +159,9 @@ export function EpisodeCard({
                         seasonNumber={seasonNumber}
                         episodeNumber={episode.episode_number}
                         initialWatched={isWatched}
+                        episodeId={episode.id}
+                        episodeName={episode.name}
+                        stillPath={episode.still_path}
                     />
                 </div>
             </div>

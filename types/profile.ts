@@ -26,7 +26,7 @@ export interface Review {
   id: string
   user_id: string
   media_id: number
-  media_type: 'movie' | 'tv'
+  media_type: 'movie' | 'tv' | 'episode'
   media_title: string
   poster_path: string | null
   rating: number | null

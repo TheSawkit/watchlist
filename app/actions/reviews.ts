@@ -1,16 +1,17 @@
 'use server'
 
+import { unstable_cache } from 'next/cache'
 import { getAuthenticatedUser } from '@/lib/supabase/auth-helpers'
+import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n/server'
 import { revalidateProfile } from '@/app/actions/_helpers'
-import type { MediaType } from '@/types/tmdb'
+import { getTvShowDetails, getSeasonDetails } from '@/lib/tmdb/tv'
 import type { Review } from '@/types/profile'
+
+type ReviewMediaType = 'movie' | 'tv' | 'episode'
 
 /**
  * Returns all reviews for a given user, newest first.
- *
- * @param userId - Supabase user ID.
- * @returns Array of Review objects.
  */
 export async function getUserReviews(userId: string): Promise<Review[]> {
     const { supabase } = await getAuthenticatedUser()
@@ -28,12 +29,8 @@ export async function getUserReviews(userId: string): Promise<Review[]> {
 
 /**
  * Returns the authenticated user's review for a specific media item, or null if none.
- *
- * @param mediaId - TMDB media ID.
- * @param mediaType - 'movie' or 'tv'.
- * @returns Review or null.
  */
-export async function getMediaReview(mediaId: number, mediaType: MediaType): Promise<Review | null> {
+export async function getMediaReview(mediaId: number, mediaType: ReviewMediaType): Promise<Review | null> {
     const { supabase, userId } = await getAuthenticatedUser()
 
     const { data } = await supabase
@@ -48,28 +45,101 @@ export async function getMediaReview(mediaId: number, mediaType: MediaType): Pro
 }
 
 /**
- * Creates or updates a review for a media item.
- *
- * @param mediaId - TMDB media ID.
- * @param mediaType - 'movie' or 'tv'.
- * @param mediaTitle - Display title of the media.
- * @param posterPath - TMDB poster path, or null.
- * @param rating - Integer 1–10, or null.
- * @param content - Review text up to 2000 chars, or null.
+ * Returns the community average rating (1–10 scale) and count for a media item.
+ * Returns null if no ratings exist.
+ */
+export async function getAverageRating(
+    mediaId: number,
+    mediaType: ReviewMediaType
+): Promise<{ avg: number; count: number } | null> {
+    const supabase = await createClient()
+
+    const { data } = await supabase.rpc('get_media_rating', { p_media_id: mediaId, p_media_type: mediaType })
+
+    const row = (data as Array<{ avg: string | null; count: string }> | null)?.[0] ?? null
+    if (!row || row.avg === null) return null
+    return { avg: Number(row.avg), count: Number(row.count) }
+}
+
+const getCachedSeasonDetails = unstable_cache(
+    (tvId: number, seasonNumber: number) => getSeasonDetails(tvId, seasonNumber),
+    ['season-details-for-ratings'],
+    { revalidate: 300 }
+)
+
+const getCachedTvShowDetails = unstable_cache(
+    (tvId: number) => getTvShowDetails(tvId),
+    ['tv-show-details-for-ratings'],
+    { revalidate: 300 }
+)
+
+/**
+ * Returns the community average rating for a season, computed from episode ratings.
+ * Returns null if no episode ratings exist for this season.
+ */
+export async function getSeasonAverageRating(
+    tvId: number,
+    seasonNumber: number
+): Promise<{ avg: number; count: number } | null> {
+    const supabase = await createClient()
+
+    const season = await getCachedSeasonDetails(tvId, seasonNumber)
+    const episodeIds = season.episodes.map((e) => e.id)
+    if (episodeIds.length === 0) return null
+
+    const { data } = await supabase.rpc('get_episodes_rating', { p_episode_ids: episodeIds })
+
+    const row = (data as Array<{ avg: string | null; count: string }> | null)?.[0] ?? null
+    if (!row || row.avg === null) return null
+    return { avg: Number(row.avg), count: Number(row.count) }
+}
+
+/**
+ * Returns the community average rating for a show, computed from all episode ratings.
+ * Returns null if no ratings exist.
+ */
+export async function getShowAverageRating(
+    tvId: number
+): Promise<{ avg: number; count: number } | null> {
+    const supabase = await createClient()
+
+    const show = await getCachedTvShowDetails(tvId)
+    const regularSeasons = show.seasons?.filter((s) => s.season_number !== 0) ?? []
+    if (regularSeasons.length === 0) return null
+
+    const seasonDetails = await Promise.all(
+        regularSeasons.map((s) => getCachedSeasonDetails(tvId, s.season_number))
+    )
+
+    const allEpisodeIds = seasonDetails.flatMap((s) => s.episodes.map((e) => e.id))
+    if (allEpisodeIds.length === 0) return null
+
+    const { data } = await supabase.rpc('get_episodes_rating', { p_episode_ids: allEpisodeIds })
+
+    const row = (data as Array<{ avg: string | null; count: string }> | null)?.[0] ?? null
+    if (!row || row.avg === null) return null
+    return { avg: Number(row.avg), count: Number(row.count) }
+}
+
+/**
+ * Creates or updates a review. Rating stored as 1–10 integer; display as 0.5–5.0 stars.
  */
 export async function upsertReview(
     mediaId: number,
-    mediaType: MediaType,
+    mediaType: ReviewMediaType,
     mediaTitle: string,
     posterPath: string | null,
     rating: number | null,
     content: string | null
 ): Promise<void> {
     const t = await getTranslations()
+    if (!(['movie', 'tv', 'episode'] as const).includes(mediaType)) {
+        throw new Error('Invalid media type')
+    }
     if (rating !== null && (rating < 1 || rating > 10 || !Number.isInteger(rating))) {
         throw new Error(t.profile.errors.ratingInvalid)
     }
-    if (content && content.length > 2000) {
+    if (content && content.length > 65000) {
         throw new Error(t.profile.errors.reviewTooLong)
     }
 
@@ -88,8 +158,6 @@ export async function upsertReview(
 
 /**
  * Deletes a review owned by the authenticated user.
- *
- * @param reviewId - UUID of the review.
  */
 export async function deleteReview(reviewId: string): Promise<void> {
     const { supabase, userId } = await getAuthenticatedUser()

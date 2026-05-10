@@ -5,7 +5,9 @@ import { ArrowLeft } from "lucide-react"
 import { getTvShowDetails, getSeasonDetails } from "@/lib/tmdb"
 import { getServerLocale, getTranslations } from "@/lib/i18n/server"
 import { getSeasonEpisodeWatches } from "@/app/actions/episodes"
+import { getSeasonAverageRating } from "@/app/actions/reviews"
 import { SeasonWatchButton } from "@/components/media/SeasonWatchButton"
+import { CommunityRating } from "@/components/media/CommunityRating"
 import { EpisodeCard } from "@/components/media/EpisodeCard"
 import { ProgressBar } from "@/components/shared/ProgressBar"
 import { SectionHeading } from "@/components/ui/SectionHeading"
@@ -72,7 +74,10 @@ export default async function SeasonPage(props: SeasonPageProps) {
 
     const t = await getTranslations()
     const locale = await getServerLocale()
-    const watchedEpisodes = await getSeasonEpisodeWatches(tvId, seasonNumber)
+    const [watchedEpisodes, seasonRating] = await Promise.all([
+        getSeasonEpisodeWatches(tvId, seasonNumber),
+        getSeasonAverageRating(tvId, seasonNumber),
+    ])
     const watchedCount = watchedEpisodes.size
 
     return (
@@ -132,6 +137,8 @@ export default async function SeasonPage(props: SeasonPageProps) {
                         </p>
                     </div>
                 )}
+
+                {seasonRating && <CommunityRating avg={seasonRating.avg} count={seasonRating.count} />}
 
                 <div className="w-full h-px bg-border/10 my-8" />
 

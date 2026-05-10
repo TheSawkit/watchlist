@@ -62,7 +62,7 @@ export function ReviewsSection({ reviews: initial, visibility, canView, isOwnPro
                         </Link>
                         {review.rating != null && (
                             <div className="mt-1">
-                                <StarRating rating={review.rating} />
+                                <StarRating value={review.rating} size="sm" />
                             </div>
                         )}
                         {review.content && (

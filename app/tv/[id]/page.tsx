@@ -11,6 +11,8 @@ import { ProgressBar } from "@/components/shared/ProgressBar"
 import { SectionHeading } from "@/components/ui/SectionHeading"
 import { getMediaWatchlistEntry } from "@/app/actions/watchlist"
 import { getTvShowWatchProgress } from "@/app/actions/episodes"
+import { getShowAverageRating } from "@/app/actions/reviews"
+import { CommunityRating } from "@/components/media/CommunityRating"
 import { filterAvailableVideos } from "@/lib/youtube"
 import { getServerLocale, getTranslations } from "@/lib/i18n/server"
 import type { TvPageProps } from "@/types/pages"
@@ -101,9 +103,10 @@ export default async function TvShowPage(props: TvPageProps) {
 
     const heroImagePath = selectHeroImage(images, tvDetails.backdrop_path)
     const heroImageUrl = getImageUrl(heroImagePath, "original")
-    const [watchlistEntry, watchProgress] = await Promise.all([
+    const [watchlistEntry, watchProgress, showRating] = await Promise.all([
         getMediaWatchlistEntry(tvId, "tv"),
         getTvShowWatchProgress(tvId),
+        getShowAverageRating(tvId),
     ])
     const t = await getTranslations()
     const locale = await getServerLocale()
@@ -175,6 +178,8 @@ export default async function TvShowPage(props: TvPageProps) {
 
             <div className="container mx-auto px-6 lg:px-12 py-12 md:py-16 space-y-14 md:space-y-16">
                 <MediaDescription description={tvDetails.overview} />
+
+                {showRating && <CommunityRating avg={showRating.avg} count={showRating.count} />}
 
                 {standardSeasons.length > 0 && (
                     <section className="space-y-6">

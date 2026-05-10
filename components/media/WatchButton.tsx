@@ -5,6 +5,7 @@ import { Eye, Plus, Check, Loader2, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { addToWatchlist, removeFromWatchlist } from "@/app/actions/watchlist"
 import { useTranslation } from "@/lib/i18n/context"
+import { ReviewDialog } from "@/components/media/ReviewDialog"
 import type { WatchButtonProps } from "@/types/components"
 
 export function WatchButton({
@@ -22,6 +23,7 @@ export function WatchButton({
     const [isPending, startTransition] = useTransition()
     const [active, setActive] = useOptimistic(initialActive)
     const [error, setError] = useState(false)
+    const [reviewOpen, setReviewOpen] = useState(false)
     const { t } = useTranslation()
 
     const isUnreleased = releaseDate ? new Date(releaseDate) > new Date() : false
@@ -35,9 +37,10 @@ export function WatchButton({
         e.stopPropagation()
 
         startTransition(async () => {
+            const wasActive = active
             setActive(!active)
             try {
-                if (active) {
+                if (wasActive) {
                     if (fallbackStatus) {
                         await addToWatchlist(mediaId, mediaTitle, posterPath, fallbackStatus, mediaType)
                     } else {
@@ -45,6 +48,7 @@ export function WatchButton({
                     }
                 } else {
                     await addToWatchlist(mediaId, mediaTitle, posterPath, status, mediaType)
+                    if (status === "watched") setReviewOpen(true)
                 }
             } catch {
                 setError(true)
@@ -57,51 +61,71 @@ export function WatchButton({
 
     if (variant === "full") {
         return (
-            <button
-                onClick={handleClick}
-                disabled={isPending}
-                className={cn(
-                    "flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all border focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-11 w-full shrink-0",
-                    active
-                        ? "bg-primary/50 backdrop-blur-2xl text-white border-white/10 shadow-glow-red"
-                        : onDark
-                            ? "bg-white/15 backdrop-blur-2xl text-white/90 border-white/10 hover:bg-white/25 hover:text-white shadow-card-sm"
-                            : "bg-white/15 backdrop-blur-2xl text-text border-white/10 hover:bg-white/25 hover:text-text shadow-card-sm"
+            <>
+                <button
+                    onClick={handleClick}
+                    disabled={isPending}
+                    className={cn(
+                        "flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all border focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-11 w-full shrink-0",
+                        active
+                            ? "bg-primary/50 backdrop-blur-2xl text-white border-white/10 shadow-glow-red"
+                            : onDark
+                                ? "bg-white/15 backdrop-blur-2xl text-white/90 border-white/10 hover:bg-white/25 hover:text-white shadow-card-sm"
+                                : "bg-white/15 backdrop-blur-2xl text-text border-white/10 hover:bg-white/25 hover:text-text shadow-card-sm"
+                    )}
+                >
+                    <Icon className={cn("h-4 w-4", isPending && "animate-spin")} />
+                    {error
+                        ? t.common.actionError
+                        : active
+                            ? status === "watched"
+                                ? t.movie.watched
+                                : t.movie.added
+                            : status === "watched"
+                                ? t.movie.markAsWatched
+                                : t.movie.addToList}
+                </button>
+                {reviewOpen && (
+                    <ReviewDialog
+                        open={reviewOpen}
+                        onClose={() => setReviewOpen(false)}
+                        mediaId={mediaId}
+                        mediaType={mediaType}
+                        mediaTitle={mediaTitle}
+                        posterPath={posterPath}
+                    />
                 )}
-            >
-                <Icon className={cn("h-4 w-4", isPending && "animate-spin")} />
-                {error
-                    ? t.common.actionError
-                    : active
-                        ? status === "watched"
-                            ? t.movie.watched
-                            : t.movie.added
-                        : status === "watched"
-                            ? t.movie.markAsWatched
-                            : t.movie.addToList}
-            </button>
+            </>
         )
     }
 
     return (
-        <button
-            onClick={handleClick}
-            disabled={isPending}
-            aria-label={
-                status === "watched" ? t.movie.markAsWatched : t.movie.addToList
-            }
-            title={
-                status === "watched" ? t.movie.markAsWatched : t.movie.addToList
-            }
-            className={cn(
-                "h-12 w-12 rounded-full backdrop-blur-2xl border",
-                "flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
-                active
-                    ? "bg-primary/40 text-white border-border/10 border-t-border/20 shadow-glow-red"
-                    : "bg-surface/20 text-muted border-border/10 border-t-border/20 hover:text-text hover:bg-surface-2/20 shadow-card-sm hover:border-border"
+        <>
+            <button
+                onClick={handleClick}
+                disabled={isPending}
+                aria-label={status === "watched" ? t.movie.markAsWatched : t.movie.addToList}
+                title={status === "watched" ? t.movie.markAsWatched : t.movie.addToList}
+                className={cn(
+                    "h-12 w-12 rounded-full backdrop-blur-2xl border",
+                    "flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
+                    active
+                        ? "bg-primary/40 text-white border-border/10 border-t-border/20 shadow-glow-red"
+                        : "bg-surface/20 text-muted border-border/10 border-t-border/20 hover:text-text hover:bg-surface-2/20 shadow-card-sm hover:border-border"
+                )}
+            >
+                <Icon className={cn("h-4 w-4", isPending && "animate-spin")} />
+            </button>
+            {reviewOpen && (
+                <ReviewDialog
+                    open={reviewOpen}
+                    onClose={() => setReviewOpen(false)}
+                    mediaId={mediaId}
+                    mediaType={mediaType}
+                    mediaTitle={mediaTitle}
+                    posterPath={posterPath}
+                />
             )}
-        >
-            <Icon className={cn("h-4 w-4", isPending && "animate-spin")} />
-        </button>
+        </>
     )
 }

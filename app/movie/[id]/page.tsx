@@ -7,10 +7,12 @@ import { MediaDescription } from "@/components/media/MediaDescription"
 import { MediaCast } from "@/components/media/MediaCast"
 import { WatchButton } from "@/components/media/WatchButton"
 import { getMediaWatchlistEntry } from "@/app/actions/watchlist"
+import { getAverageRating } from "@/app/actions/reviews"
 import { filterAvailableVideos } from "@/lib/youtube"
 import { Eye } from "lucide-react"
 import { getTranslations, getServerLocale } from "@/lib/i18n/server"
 import { formatDate } from "@/lib/format"
+import { CommunityRating } from "@/components/media/CommunityRating"
 import type { MoviePageProps } from "@/types/pages"
 
 /**
@@ -98,7 +100,10 @@ export default async function MoviePage(props: MoviePageProps) {
 
   const heroImagePath = selectHeroImage(images, movieDetails.backdrop_path)
   const heroImageUrl = getImageUrl(heroImagePath, "original")
-  const watchlistEntry = await getMediaWatchlistEntry(movieId, "movie")
+  const [watchlistEntry, movieRating] = await Promise.all([
+    getMediaWatchlistEntry(movieId, "movie"),
+    getAverageRating(movieId, "movie"),
+  ])
   const isWatched = watchlistEntry?.status === "watched"
   const t = await getTranslations()
   const locale = await getServerLocale()
@@ -181,6 +186,8 @@ export default async function MoviePage(props: MoviePageProps) {
 
       <div className="container mx-auto px-6 lg:px-12 py-12 md:py-16 space-y-14 md:space-y-16">
         <MediaDescription description={movieDetails.overview} />
+
+        {movieRating && <CommunityRating avg={movieRating.avg} count={movieRating.count} />}
 
         {trailers.length > 0 && <MediaTrailers trailers={trailers} />}
 
