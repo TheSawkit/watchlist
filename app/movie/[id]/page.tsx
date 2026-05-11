@@ -12,6 +12,7 @@ import { getAverageRating } from "@/app/actions/reviews"
 import { filterAvailableVideos } from "@/lib/youtube"
 import { Eye } from "lucide-react"
 import { getTranslations, getServerLocale } from "@/lib/i18n/server"
+import { buildMediaMetadata, BASE_URL } from "@/lib/metadata"
 import { formatDate } from "@/lib/format"
 import { CommunityRating } from "@/components/media/CommunityRating"
 import { PublicReviewsSection } from "@/components/media/PublicReviewsSection"
@@ -26,51 +27,25 @@ import type { MoviePageProps } from "@/types/pages"
  * @param props.params - Promise resolving to { id: string } movie ID
  * @returns Metadata object with title, description, OpenGraph, and Twitter card data
  */
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://reelmark.app"
-
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
   const movieId = parseInt(id)
   const t = await getTranslations()
 
-  if (isNaN(movieId)) {
-    return {
-      title: "ReelMark",
-      description: t.metadata.defaultMovieDescription,
-    }
-  }
+  if (isNaN(movieId)) return { title: "ReelMark", description: t.metadata.defaultMovieDescription }
 
   try {
     const movieDetails = await getMovieDetails(movieId)
-    const backdropImage = movieDetails.backdrop_path
-      ? `https://image.tmdb.org/t/p/w1280${movieDetails.backdrop_path}`
-      : undefined
-
-    const images = backdropImage ? [{ url: backdropImage, width: 1280, height: 720 }] : []
-    const watchDescription = movieDetails.overview || t.metadata.watchMovieOn.replace("${title}", movieDetails.title)
-
-    return {
+    const description = movieDetails.overview || t.metadata.watchMovieOn.replace("${title}", movieDetails.title)
+    return buildMediaMetadata({
       title: movieDetails.title,
-      description: watchDescription,
-      alternates: { canonical: `${BASE_URL}/movie/${movieId}` },
-      openGraph: {
-        title: movieDetails.title,
-        description: watchDescription,
-        type: "video.movie",
-        images: images.length > 0 ? images : undefined,
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: movieDetails.title,
-        description: watchDescription,
-        images: images.length > 0 ? [images[0].url] : undefined,
-      },
-    }
+      description,
+      backdropPath: movieDetails.backdrop_path,
+      canonical: `${BASE_URL}/movie/${movieId}`,
+      ogType: "video.movie",
+    })
   } catch {
-    return {
-      title: "ReelMark",
-      description: t.metadata.defaultMovieDescription,
-    }
+    return { title: "ReelMark", description: t.metadata.defaultMovieDescription }
   }
 }
 

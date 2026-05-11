@@ -160,17 +160,10 @@ export async function markSeasonWatched(
             .eq("tv_id", tvId)
             .eq("season_number", seasonNumber)
     } else {
-        const toInsert: { user_id: string; tv_id: number; season_number: number; episode_number: number }[] = []
-        for (let ep = 1; ep <= totalEpisodes; ep++) {
-            if (!watchedSet.has(ep)) {
-                toInsert.push({
-                    user_id: userId,
-                    tv_id: tvId,
-                    season_number: seasonNumber,
-                    episode_number: ep,
-                })
-            }
-        }
+        const toInsert = Array.from({ length: totalEpisodes }, (_, i) => i + 1)
+            .filter(ep => !watchedSet.has(ep))
+            .map(ep => ({ user_id: userId, tv_id: tvId, season_number: seasonNumber, episode_number: ep }))
+
         if (toInsert.length > 0) {
             const { error } = await supabase.from("episode_watches").insert(toInsert)
             if (error) throw new Error(error.message)

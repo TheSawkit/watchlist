@@ -4,8 +4,8 @@ import { useState } from "react"
 import { Eye, Check, Loader2, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toggleEpisodeWatch } from "@/app/actions/episodes"
-import { useRouter } from "next/navigation"
 import { useTranslation } from "@/lib/i18n/context"
+import { useAsyncAction } from "@/hooks/useAsyncAction"
 import { ReviewDialog } from "@/components/media/ReviewDialog"
 
 interface EpisodeWatchButtonProps {
@@ -28,28 +28,17 @@ export function EpisodeWatchButton({
     stillPath,
 }: EpisodeWatchButtonProps) {
     const [watched, setWatched] = useState(initialWatched)
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(false)
     const [reviewOpen, setReviewOpen] = useState(false)
-    const router = useRouter()
+    const { loading, error, execute } = useAsyncAction()
     const { t } = useTranslation()
 
     async function handleToggle(e: React.MouseEvent) {
         e.preventDefault()
         e.stopPropagation()
-
-        setLoading(true)
-        setError(false)
-        try {
-            const newState = await toggleEpisodeWatch(tvId, seasonNumber, episodeNumber)
+        const newState = await execute(() => toggleEpisodeWatch(tvId, seasonNumber, episodeNumber))
+        if (newState !== undefined) {
             setWatched(newState)
-            router.refresh()
             if (newState) setReviewOpen(true)
-        } catch {
-            setError(true)
-            setTimeout(() => setError(false), 3000)
-        } finally {
-            setLoading(false)
         }
     }
 

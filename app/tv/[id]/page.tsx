@@ -18,62 +18,29 @@ import { PublicReviewsSection } from "@/components/media/PublicReviewsSection"
 import { WatchProviders } from "@/components/media/WatchProviders"
 import { filterAvailableVideos } from "@/lib/youtube"
 import { getServerLocale, getTranslations } from "@/lib/i18n/server"
+import { buildMediaMetadata, BASE_URL } from "@/lib/metadata"
 import type { TvPageProps } from "@/types/pages"
 import type { Season } from "@/types/tmdb"
-
-/**
- * Generates metadata for TV show detail page for SEO and social sharing.
- * Fetches TV show data and constructs OpenGraph and Twitter card information.
- *
- * @param props - Route parameters
- * @param props.params - Promise resolving to { id: string } TV show ID
- * @returns Metadata object with title, description, OpenGraph, and Twitter card data
- */
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://reelmark.app"
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params
     const tvId = parseInt(id)
     const t = await getTranslations()
 
-    if (isNaN(tvId)) {
-        return {
-            title: "ReelMark",
-            description: t.metadata.defaultTvDescription,
-        }
-    }
+    if (isNaN(tvId)) return { title: "ReelMark", description: t.metadata.defaultTvDescription }
 
     try {
         const tvDetails = await getTvShowDetails(tvId)
-        const backdropImage = tvDetails.backdrop_path
-            ? `https://image.tmdb.org/t/p/w1280${tvDetails.backdrop_path}`
-            : undefined
-
-        const images = backdropImage ? [{ url: backdropImage, width: 1280, height: 720 }] : []
-        const watchDescription = tvDetails.overview || t.metadata.watchShowOn.replace("${title}", tvDetails.name)
-
-        return {
+        const description = tvDetails.overview || t.metadata.watchShowOn.replace("${title}", tvDetails.name)
+        return buildMediaMetadata({
             title: tvDetails.name,
-            description: watchDescription,
-            alternates: { canonical: `${BASE_URL}/tv/${tvId}` },
-            openGraph: {
-                title: tvDetails.name,
-                description: watchDescription,
-                type: "video.tv_show",
-                images: images.length > 0 ? images : undefined,
-            },
-            twitter: {
-                card: "summary_large_image",
-                title: tvDetails.name,
-                description: watchDescription,
-                images: images.length > 0 ? [images[0].url] : undefined,
-            },
-        }
+            description,
+            backdropPath: tvDetails.backdrop_path,
+            canonical: `${BASE_URL}/tv/${tvId}`,
+            ogType: "video.tv_show",
+        })
     } catch {
-        return {
-            title: "ReelMark",
-            description: t.metadata.defaultTvDescription,
-        }
+        return { title: "ReelMark", description: t.metadata.defaultTvDescription }
     }
 }
 

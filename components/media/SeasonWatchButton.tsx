@@ -1,11 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import { CheckCheck, Loader2, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { markSeasonWatched } from "@/app/actions/episodes"
-import { useRouter } from "next/navigation"
 import { useTranslation } from "@/lib/i18n/context"
+import { useAsyncAction } from "@/hooks/useAsyncAction"
 
 interface SeasonWatchButtonProps {
     tvId: number
@@ -20,25 +19,13 @@ export function SeasonWatchButton({
     totalEpisodes,
     watchedCount,
 }: SeasonWatchButtonProps) {
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(false)
-    const router = useRouter()
+    const { loading, error, execute } = useAsyncAction()
     const { t } = useTranslation()
 
     const allWatched = watchedCount === totalEpisodes && totalEpisodes > 0
 
     async function handleClick() {
-        setLoading(true)
-        setError(false)
-        try {
-            await markSeasonWatched(tvId, seasonNumber, totalEpisodes)
-            router.refresh()
-        } catch {
-            setError(true)
-            setTimeout(() => setError(false), 3000)
-        } finally {
-            setLoading(false)
-        }
+        await execute(() => markSeasonWatched(tvId, seasonNumber, totalEpisodes))
     }
 
     const Icon = loading ? Loader2 : error ? XCircle : CheckCheck

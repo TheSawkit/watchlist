@@ -7,6 +7,12 @@ import { revalidateProfile } from '@/app/actions/_helpers'
 import { getTvShowDetails, getSeasonDetails } from '@/lib/tmdb/tv'
 import type { Review, PublicReview, ReviewMediaType } from '@/types/profile'
 
+function parseRatingRow(data: unknown): { avg: number; count: number } | null {
+    const row = (data as Array<{ avg: string | null; count: string }> | null)?.[0] ?? null
+    if (!row || row.avg === null) return null
+    return { avg: Number(row.avg), count: Number(row.count) }
+}
+
 /**
  * Returns all reviews for a given user, newest first.
  */
@@ -52,10 +58,7 @@ export async function getAverageRating(
     const supabase = await createClient()
 
     const { data } = await supabase.rpc('get_media_rating', { p_media_id: mediaId, p_media_type: mediaType })
-
-    const row = (data as Array<{ avg: string | null; count: string }> | null)?.[0] ?? null
-    if (!row || row.avg === null) return null
-    return { avg: Number(row.avg), count: Number(row.count) }
+    return parseRatingRow(data)
 }
 
 
@@ -74,10 +77,7 @@ export async function getSeasonAverageRating(
     if (episodeIds.length === 0) return null
 
     const { data } = await supabase.rpc('get_episodes_rating', { p_episode_ids: episodeIds })
-
-    const row = (data as Array<{ avg: string | null; count: string }> | null)?.[0] ?? null
-    if (!row || row.avg === null) return null
-    return { avg: Number(row.avg), count: Number(row.count) }
+    return parseRatingRow(data)
 }
 
 /**
@@ -101,10 +101,7 @@ export async function getShowAverageRating(
     if (allEpisodeIds.length === 0) return null
 
     const { data } = await supabase.rpc('get_episodes_rating', { p_episode_ids: allEpisodeIds })
-
-    const row = (data as Array<{ avg: string | null; count: string }> | null)?.[0] ?? null
-    if (!row || row.avg === null) return null
-    return { avg: Number(row.avg), count: Number(row.count) }
+    return parseRatingRow(data)
 }
 
 /**

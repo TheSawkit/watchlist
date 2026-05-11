@@ -47,11 +47,13 @@ export interface Playlist {
   items?: PlaylistItem[]
 }
 
+export type PlaylistMediaType = 'movie' | 'tv'
+
 export interface PlaylistItem {
   id: string
   playlist_id: string
   media_id: number
-  media_type: 'movie' | 'tv'
+  media_type: PlaylistMediaType
   media_title: string
   poster_path: string | null
   added_at: string

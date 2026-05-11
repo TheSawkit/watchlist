@@ -14,7 +14,7 @@ import { ProgressBar } from "@/components/shared/ProgressBar"
 import { SectionHeading } from "@/components/ui/SectionHeading"
 import type { SeasonPageProps } from "@/types/pages"
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://reelmark.app"
+import { BASE_URL } from "@/lib/metadata"
 
 export async function generateMetadata({ params: paramsPromise }: SeasonPageProps): Promise<Metadata> {
     const params = await paramsPromise
