@@ -8,6 +8,7 @@ import CinemaSpotlight from "@/components/ui/cinema-spotlight";
 import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./providers";
 import { getServerLanguage, getTranslations } from "@/lib/i18n/server";
+import { BASE_URL } from "@/lib/metadata";
 
 const sans = Inter({
     subsets: ["latin"],
@@ -22,11 +23,10 @@ const display = Bebas_Neue({
     variable: "--font-display",
 });
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://reelmark.app"
-
 export const viewport: Viewport = {
     width: "device-width",
     initialScale: 1,
+    viewportFit: "cover",
     themeColor: [
         { media: "(prefers-color-scheme: dark)", color: "#000000" },
         { media: "(prefers-color-scheme: light)", color: "#F5F5F7" },
@@ -53,9 +53,19 @@ export const metadata: Metadata = {
     twitter: {
         card: "summary_large_image",
     },
+    appleWebApp: {
+        capable: true,
+        title: "ReelMark",
+        statusBarStyle: "black-translucent",
+    },
     icons: {
-        icon: "/maskable_icon_x192.png",
-        apple: "/maskable_icon_x192.png",
+        icon: [
+            { url: "/maskable_icon_x192.png", sizes: "192x192", type: "image/png" },
+            { url: "/maskable_icon_x512.png", sizes: "512x512", type: "image/png" },
+        ],
+        apple: [
+            { url: "/maskable_icon_x192.png", sizes: "192x192", type: "image/png" },
+        ],
     },
 };
 

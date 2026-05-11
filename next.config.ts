@@ -1,10 +1,12 @@
 import type { NextConfig } from "next";
+import withSerwist from "@serwist/next";
 
 const isDev = process.env.NODE_ENV === "development"
 const supabaseHost = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || "https://localhost").hostname
 
 const cspDirectives = [
   "default-src 'self'",
+  "worker-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.youtube.com https://s.ytimg.com`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https://image.tmdb.org https://lh3.googleusercontent.com https://api.dicebear.com https://*.supabase.co https://cdn.watchmode.com https://*.mzstatic.com",
@@ -77,4 +79,8 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSerwist({
+  swSrc: 'app/service-worker.ts',
+  swDest: 'public/sw.js',
+  disable: isDev,
+})(nextConfig);
