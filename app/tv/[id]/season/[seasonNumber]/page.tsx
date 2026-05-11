@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react"
 import { getTvShowDetails, getSeasonDetails } from "@/lib/tmdb"
 import { getServerLocale, getTranslations } from "@/lib/i18n/server"
 import { getSeasonEpisodeWatches } from "@/app/actions/episodes"
-import { getSeasonAverageRating } from "@/app/actions/reviews"
+import { getSeasonAverageRating, getPublicEpisodeReviews } from "@/app/actions/reviews"
 import { SeasonWatchButton } from "@/components/media/SeasonWatchButton"
 import { CommunityRating } from "@/components/media/CommunityRating"
 import { EpisodeCard } from "@/components/media/EpisodeCard"
@@ -74,11 +74,20 @@ export default async function SeasonPage(props: SeasonPageProps) {
 
     const t = await getTranslations()
     const locale = await getServerLocale()
-    const [watchedEpisodes, seasonRating] = await Promise.all([
+    const episodeIds = seasonDetails.episodes.map((e) => e.id)
+    const [watchedEpisodes, seasonRating, episodeReviews] = await Promise.all([
         getSeasonEpisodeWatches(tvId, seasonNumber),
         getSeasonAverageRating(tvId, seasonNumber),
+        getPublicEpisodeReviews(episodeIds),
     ])
     const watchedCount = watchedEpisodes.size
+
+    const reviewsByEpisodeId = new Map<number, typeof episodeReviews>()
+    for (const review of episodeReviews) {
+        const list = reviewsByEpisodeId.get(review.media_id) ?? []
+        list.push(review)
+        reviewsByEpisodeId.set(review.media_id, list)
+    }
 
     return (
         <div className="min-h-screen bg-app-bg pb-20">
@@ -159,6 +168,7 @@ export default async function SeasonPage(props: SeasonPageProps) {
                                     episode={episode}
                                     isWatched={isWatched}
                                     locale={locale}
+                                    reviews={reviewsByEpisodeId.get(episode.id) ?? []}
                                     labels={{
                                         noImage: t.movie.noImage,
                                         noDescription: t.movie.noDescription

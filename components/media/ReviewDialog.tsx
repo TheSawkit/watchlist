@@ -22,6 +22,8 @@ interface ReviewDialogProps {
     mediaTitle: string
     posterPath: string | null
     existingReview?: Review | null
+    onSave?: (rating: number | null, content: string | null) => void
+    onDelete?: () => void
 }
 
 export function ReviewDialog({
@@ -32,6 +34,8 @@ export function ReviewDialog({
     mediaTitle,
     posterPath,
     existingReview,
+    onSave,
+    onDelete,
 }: ReviewDialogProps) {
     const { t } = useTranslation()
     const [rating, setRating] = useState<number | null>(existingReview?.rating ?? null)
@@ -47,6 +51,7 @@ export function ReviewDialog({
             try {
                 await upsertReview(mediaId, mediaType, mediaTitle, posterPath, rating, content.trim() || null)
                 toast.success(t.movie.reviewSaved)
+                onSave?.(rating, content.trim() || null)
                 onClose()
             } catch (err) {
                 toast.error(err instanceof Error ? err.message : t.common.actionError)
@@ -60,6 +65,7 @@ export function ReviewDialog({
             try {
                 await deleteReview(existingReview.id)
                 toast.success(t.movie.reviewDeleted)
+                onDelete?.()
                 onClose()
             } catch {
                 toast.error(t.common.actionError)

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { getImageUrl, getMovieDetails, getMovieCredits, getMovieVideos, getMovieImages, selectHeroImage } from "@/lib/tmdb"
 import { MediaBanner } from "@/components/media/MediaBanner"
@@ -13,6 +14,7 @@ import { Eye } from "lucide-react"
 import { getTranslations, getServerLocale } from "@/lib/i18n/server"
 import { formatDate } from "@/lib/format"
 import { CommunityRating } from "@/components/media/CommunityRating"
+import { PublicReviewsSection } from "@/components/media/PublicReviewsSection"
 import type { MoviePageProps } from "@/types/pages"
 
 /**
@@ -188,6 +190,10 @@ export default async function MoviePage(props: MoviePageProps) {
         <MediaDescription description={movieDetails.overview} />
 
         {movieRating && <CommunityRating avg={movieRating.avg} count={movieRating.count} />}
+
+        <Suspense fallback={null}>
+          <PublicReviewsSection mediaId={movieId} mediaType="movie" />
+        </Suspense>
 
         {trailers.length > 0 && <MediaTrailers trailers={trailers} />}
 

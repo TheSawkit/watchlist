@@ -1,12 +1,11 @@
 'use server'
 
-import { unstable_cache } from 'next/cache'
-import { getAuthenticatedUser } from '@/lib/supabase/auth-helpers'
+import { getAuthenticatedUser, getOptionalUser } from '@/lib/supabase/auth-helpers'
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n/server'
 import { revalidateProfile } from '@/app/actions/_helpers'
 import { getTvShowDetails, getSeasonDetails } from '@/lib/tmdb/tv'
-import type { Review } from '@/types/profile'
+import type { Review, PublicReview } from '@/types/profile'
 
 type ReviewMediaType = 'movie' | 'tv' | 'episode'
 
@@ -61,17 +60,6 @@ export async function getAverageRating(
     return { avg: Number(row.avg), count: Number(row.count) }
 }
 
-const getCachedSeasonDetails = unstable_cache(
-    (tvId: number, seasonNumber: number) => getSeasonDetails(tvId, seasonNumber),
-    ['season-details-for-ratings'],
-    { revalidate: 300 }
-)
-
-const getCachedTvShowDetails = unstable_cache(
-    (tvId: number) => getTvShowDetails(tvId),
-    ['tv-show-details-for-ratings'],
-    { revalidate: 300 }
-)
 
 /**
  * Returns the community average rating for a season, computed from episode ratings.
@@ -83,7 +71,7 @@ export async function getSeasonAverageRating(
 ): Promise<{ avg: number; count: number } | null> {
     const supabase = await createClient()
 
-    const season = await getCachedSeasonDetails(tvId, seasonNumber)
+    const season = await getSeasonDetails(tvId, seasonNumber)
     const episodeIds = season.episodes.map((e) => e.id)
     if (episodeIds.length === 0) return null
 
@@ -103,12 +91,12 @@ export async function getShowAverageRating(
 ): Promise<{ avg: number; count: number } | null> {
     const supabase = await createClient()
 
-    const show = await getCachedTvShowDetails(tvId)
+    const show = await getTvShowDetails(tvId)
     const regularSeasons = show.seasons?.filter((s) => s.season_number !== 0) ?? []
     if (regularSeasons.length === 0) return null
 
     const seasonDetails = await Promise.all(
-        regularSeasons.map((s) => getCachedSeasonDetails(tvId, s.season_number))
+        regularSeasons.map((s) => getSeasonDetails(tvId, s.season_number))
     )
 
     const allEpisodeIds = seasonDetails.flatMap((s) => s.episodes.map((e) => e.id))
@@ -119,6 +107,49 @@ export async function getShowAverageRating(
     const row = (data as Array<{ avg: string | null; count: string }> | null)?.[0] ?? null
     if (!row || row.avg === null) return null
     return { avg: Number(row.avg), count: Number(row.count) }
+}
+
+/**
+ * Returns public reviews for a media item, filtered by the viewer's auth/friendship status.
+ */
+export async function getPublicReviews(
+    mediaId: number,
+    mediaType: ReviewMediaType
+): Promise<PublicReview[]> {
+    const { supabase, userId } = await getOptionalUser()
+
+    const { data, error } = await supabase.rpc('get_public_reviews', {
+        p_media_id: mediaId,
+        p_media_type: mediaType,
+        p_viewer_id: userId,
+    })
+
+    if (error) {
+        console.error('[getPublicReviews]', error.message)
+        return []
+    }
+    return (data as PublicReview[]) ?? []
+}
+
+/**
+ * Returns public reviews for a set of episode IDs, filtered by viewer's auth/friendship status.
+ */
+export async function getPublicEpisodeReviews(
+    episodeIds: number[]
+): Promise<PublicReview[]> {
+    if (episodeIds.length === 0) return []
+    const { supabase, userId } = await getOptionalUser()
+
+    const { data, error } = await supabase.rpc('get_public_episode_reviews', {
+        p_episode_ids: episodeIds,
+        p_viewer_id: userId,
+    })
+
+    if (error) {
+        console.error('[getPublicEpisodeReviews]', error.message)
+        return []
+    }
+    return (data as PublicReview[]) ?? []
 }
 
 /**

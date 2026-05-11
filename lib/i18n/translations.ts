@@ -428,6 +428,9 @@ export const translations = {
             ratingsCount: 'notes',
             editReview: 'Modifier l\'avis',
             skipRating: 'Passer',
+            communityReviews: 'Avis de la communauté',
+            reviewsCount: 'avis',
+            seeAllReviews: 'Voir tous les avis',
         },
         pages: {
             dashboard: {
@@ -961,6 +964,9 @@ export const translations = {
             ratingsCount: 'ratings',
             editReview: 'Edit review',
             skipRating: 'Skip',
+            communityReviews: 'Community Reviews',
+            reviewsCount: 'reviews',
+            seeAllReviews: 'See all reviews',
         },
         pages: {
             dashboard: {

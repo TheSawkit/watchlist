@@ -6,9 +6,11 @@ import { Clock, Calendar, Star, X } from "lucide-react"
 import { getImageUrl } from "@/lib/tmdb/images"
 import { formatDate, formatRuntime } from "@/lib/format"
 import { EpisodeWatchButton } from "@/components/media/EpisodeWatchButton"
+import { ReviewsList } from "@/components/media/ReviewsList"
 import { useTranslation } from "@/lib/i18n/context"
 import { cn } from "@/lib/utils"
 import type { Episode } from "@/types/tmdb"
+import type { PublicReview } from "@/types/profile"
 
 interface EpisodeCardProps {
     tvId: number
@@ -16,6 +18,7 @@ interface EpisodeCardProps {
     episode: Episode
     isWatched: boolean
     locale: string
+    reviews?: PublicReview[]
     labels?: {
         noImage: string
         noDescription: string
@@ -41,6 +44,7 @@ export function EpisodeCard({
     episode,
     isWatched,
     locale,
+    reviews,
     labels,
 }: EpisodeCardProps) {
     const { t } = useTranslation()
@@ -153,7 +157,11 @@ export function EpisodeCard({
                     )}
                 </div>
 
-                <div className="mt-auto pt-4 flex items-center justify-end relative z-10">
+                <div className="mt-auto pt-4 flex items-center justify-between relative z-10">
+                    {reviews && reviews.length > 0
+                        ? <ReviewsList reviews={reviews} triggerOnly />
+                        : <div />
+                    }
                     <EpisodeWatchButton
                         tvId={tvId}
                         seasonNumber={seasonNumber}
@@ -201,6 +209,7 @@ export function EpisodeCard({
                     </div>
                 </div>
             )}
+
         </div>
     )
 }

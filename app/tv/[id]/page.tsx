@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { getImageUrl, getTvShowDetails, getTvShowCredits, getTvShowVideos, getTvShowImages, selectHeroImage } from "@/lib/tmdb"
 import { MediaBanner } from "@/components/media/MediaBanner"
@@ -13,6 +14,7 @@ import { getMediaWatchlistEntry } from "@/app/actions/watchlist"
 import { getTvShowWatchProgress } from "@/app/actions/episodes"
 import { getShowAverageRating } from "@/app/actions/reviews"
 import { CommunityRating } from "@/components/media/CommunityRating"
+import { PublicReviewsSection } from "@/components/media/PublicReviewsSection"
 import { filterAvailableVideos } from "@/lib/youtube"
 import { getServerLocale, getTranslations } from "@/lib/i18n/server"
 import type { TvPageProps } from "@/types/pages"
@@ -180,6 +182,10 @@ export default async function TvShowPage(props: TvPageProps) {
                 <MediaDescription description={tvDetails.overview} />
 
                 {showRating && <CommunityRating avg={showRating.avg} count={showRating.count} />}
+
+                <Suspense fallback={null}>
+                    <PublicReviewsSection mediaId={tvId} mediaType="tv" />
+                </Suspense>
 
                 {standardSeasons.length > 0 && (
                     <section className="space-y-6">
