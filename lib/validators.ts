@@ -1,5 +1,5 @@
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const USERNAME_REGEX = /^[a-zA-Z0-9]{1,50}$/
+const USERNAME_REGEX = /^[a-zA-Z0-9_]{1,50}$/
 const VALID_REGIONS = new Set(["BE", "FR", "US", "CA", "GB", "CH", "LU"])
 const VALID_LANGUAGES = new Set(["fr", "en"])
 const ALLOWED_AVATAR_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp"])

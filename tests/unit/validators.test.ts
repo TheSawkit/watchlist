@@ -61,7 +61,8 @@ describe("validatePassword", () => {
 describe("validateUsername", () => {
     it("accepts valid usernames", () => {
         expect(validateUsername("john_doe")).toBe("john_doe")
-        expect(validateUsername("User 123")).toBe("User 123")
+        expect(validateUsername("User123")).toBe("User123")
+        expect(validateUsername("the_saw_kit")).toBe("the_saw_kit")
     })
 
     it("trims whitespace", () => {
@@ -77,6 +78,8 @@ describe("validateUsername", () => {
     it("rejects usernames with invalid characters", () => {
         expect(validateUsername("user@name")).toBeNull()
         expect(validateUsername("user!name")).toBeNull()
+        expect(validateUsername("user name")).toBeNull()
+        expect(validateUsername("user-name")).toBeNull()
     })
 })
 
