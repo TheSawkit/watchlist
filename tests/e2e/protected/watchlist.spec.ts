@@ -1,11 +1,12 @@
 import { test, expect } from "@playwright/test"
+import { hasValidAuth } from "../../helpers/auth"
 
 // Fight Club (1999) — entrée TMDB stable pour les tests
 const MOVIE_ID = 550
 const MOVIE_TITLE = "Fight Club"
 
-test.beforeEach(async () => {
-    test.skip(!process.env.TEST_USER_EMAIL, "TEST_USER_EMAIL not set — skipping authenticated tests")
+test.beforeEach(() => {
+    test.skip(!hasValidAuth(), "No valid auth session — skipping authenticated tests")
 })
 
 test.describe("Watchlist", () => {

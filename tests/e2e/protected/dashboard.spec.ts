@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test"
+import { hasValidAuth } from "../../helpers/auth"
 
-test.beforeEach(async () => {
-    test.skip(!process.env.TEST_USER_EMAIL, "TEST_USER_EMAIL not set — skipping authenticated tests")
+test.beforeEach(() => {
+    test.skip(!hasValidAuth(), "No valid auth session — skipping authenticated tests")
 })
 
 test.describe("Dashboard", () => {
