@@ -3,10 +3,12 @@
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { MediaCard } from "@/components/media/MediaCard"
-import { BookMarked, Eye } from "lucide-react"
+import { BookMarked, Eye, ChevronDown } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import type { WatchlistEntry } from "@/types/tmdb"
 import { watchlistEntryToMediaItem } from "@/lib/mappers"
+
+const PAGE_SIZE = 24
 
 interface LibraryTabsProps {
     toWatch: WatchlistEntry[]
@@ -18,6 +20,7 @@ type Tab = "to_watch" | "watched"
 
 export function LibraryTabs({ toWatch, watched, tvProgress = {} }: LibraryTabsProps) {
     const [activeTab, setActiveTab] = useState<Tab>("to_watch")
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
     const { t } = useTranslation()
 
     const tabs = [
@@ -26,6 +29,11 @@ export function LibraryTabs({ toWatch, watched, tvProgress = {} }: LibraryTabsPr
     ]
 
     const current = tabs.find((tab) => tab.id === activeTab)!
+
+    function switchTab(tab: Tab) {
+        setActiveTab(tab)
+        setVisibleCount(PAGE_SIZE)
+    }
 
     return (
         <div>
@@ -36,7 +44,7 @@ export function LibraryTabs({ toWatch, watched, tvProgress = {} }: LibraryTabsPr
                         role="tab"
                         aria-selected={activeTab === tab.id}
                         aria-controls={`panel-${tab.id}`}
-                        onClick={() => setActiveTab(tab.id)}
+                        onClick={() => switchTab(tab.id)}
                         className={cn(
                             "flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-[var(--duration-fast)] ease-[var(--ease-apple)] cursor-pointer",
                             "border-b-2 -mb-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:rounded-sm",
@@ -81,31 +89,42 @@ export function LibraryTabs({ toWatch, watched, tvProgress = {} }: LibraryTabsPr
                     </p>
                 </div>
             ) : (
-                <div
-                    key={activeTab}
-                    role="tabpanel"
-                    id={`panel-${activeTab}`}
-                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6"
-                    style={{ animation: "scaleIn var(--duration-base) ease-out forwards", opacity: 0 }}
-                >
-                    {current.items.map((entry) => {
-                        const mediaItem = watchlistEntryToMediaItem(entry)
-
-                        const progress = entry.media_type === "tv"
-                            ? tvProgress[entry.media_id]
-                            : undefined
-
-                        return (
-                            <MediaCard
-                                key={entry.id}
-                                media={mediaItem}
-                                watchlistEntry={entry}
-                                hideRating
-                                tvProgress={progress}
-                            />
-                        )
-                    })}
-                </div>
+                <>
+                    <div
+                        key={activeTab}
+                        role="tabpanel"
+                        id={`panel-${activeTab}`}
+                        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6"
+                        style={{ animation: "scaleIn var(--duration-base) ease-out forwards", opacity: 0 }}
+                    >
+                        {current.items.slice(0, visibleCount).map((entry) => {
+                            const mediaItem = watchlistEntryToMediaItem(entry)
+                            const progress = entry.media_type === "tv"
+                                ? tvProgress[entry.media_id]
+                                : undefined
+                            return (
+                                <MediaCard
+                                    key={entry.id}
+                                    media={mediaItem}
+                                    watchlistEntry={entry}
+                                    hideRating
+                                    tvProgress={progress}
+                                />
+                            )
+                        })}
+                    </div>
+                    {visibleCount < current.items.length && (
+                        <div className="flex justify-center mt-10">
+                            <button
+                                onClick={() => setVisibleCount(c => c + PAGE_SIZE)}
+                                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-surface-2 border border-border text-sm font-medium text-muted hover:text-text hover:bg-surface-3 transition-colors"
+                            >
+                                <ChevronDown className="h-4 w-4" />
+                                {t.library.loadMore} ({current.items.length - visibleCount})
+                            </button>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     )

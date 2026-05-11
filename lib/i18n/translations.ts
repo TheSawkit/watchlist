@@ -103,6 +103,7 @@ export const translations = {
             filmsCountPlural: 'films',
             tvCount: 'série',
             tvCountPlural: 'séries',
+            loadMore: 'Afficher plus',
         },
         settings: {
             title: 'Paramètres',
@@ -709,6 +710,7 @@ export const translations = {
             filmsCountPlural: 'movies',
             tvCount: 'show',
             tvCountPlural: 'shows',
+            loadMore: 'Load more',
         },
         settings: {
             title: 'Settings',
