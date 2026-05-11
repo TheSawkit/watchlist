@@ -10,6 +10,7 @@ import { RegionalSettings } from './RegionalSettings'
 import { DangerZone } from './DangerZone'
 import { SocialLinksSettings } from './SocialLinksSettings'
 import { PrivacySettings } from './PrivacySettings'
+import { DataSettings } from './DataSettings'
 import { SettingsNav, type SettingsTab } from './SettingsNav'
 import type { UserProfile, PrivacySettings as PrivacySettingsType } from '@/types/profile'
 
@@ -46,6 +47,7 @@ export function SettingsContent({ user, userProfile, privacySettings }: Settings
                     <div className="space-y-6">
                         <LanguageSettings />
                         <RegionalSettings user={user} />
+                        <DataSettings />
                         <DangerZone />
                     </div>
                 )}

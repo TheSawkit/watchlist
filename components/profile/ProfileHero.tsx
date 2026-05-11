@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Instagram, Globe } from 'lucide-react'
+import { siLetterboxd } from 'simple-icons'
 import { Button } from '@/components/ui/button'
 import type { UserProfile } from '@/types/profile'
 import { useTranslation } from '@/lib/i18n/context'
@@ -22,15 +23,12 @@ function LetterboxdIcon({ className }: LetterboxdIconProps) {
         <svg
             className={className}
             viewBox="0 0 24 24"
+            fill="currentColor"
             aria-hidden="true"
             width="1em"
             height="1em"
         >
-            <ellipse fill="currentColor" cx="5" cy="12" rx="5.2" ry="5.2" />
-            <ellipse fill="currentColor" cx="12" cy="12" rx="5.2" ry="5.2" />
-            <ellipse fill="currentColor" cx="19" cy="12" rx="5.2" ry="5.2" />
-            <path d="M10.47,15C9.89,14.08 9.56,13.04 9.56,12c0-1.04 0.33-2.08 0.91-3C11,9.92 11.34,10.96 11.34,12c0,1.04 -0.34,2.08 -0.87,3z" fill="var(--surface-3)" />
-            <path d="M13.53,9c0.58,0.92 0.91,1.96 0.91,3s-0.33,2.08 -0.91,3c-0.53,-0.92 -0.87,-1.96 -0.87,-3s0.34,-2.08 0.87,-3z" fill="var(--surface-3)" />
+            <path d={siLetterboxd.path} />
         </svg>
     )
 }
