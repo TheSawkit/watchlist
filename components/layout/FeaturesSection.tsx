@@ -1,3 +1,4 @@
+import { Film, Compass, FolderOpen, Star, Smartphone, Users } from "lucide-react"
 import FeatureCard from "./FeatureCard";
 import { StaggeredItem } from "@/components/ui/StaggeredItem";
 import { getTranslations } from "@/lib/i18n/server";
@@ -6,12 +7,12 @@ export default async function FeaturesSection() {
     const t = await getTranslations();
 
     const features = [
-        { icon: "🎬", title: t.features.feature1Title, description: t.features.feature1Desc },
-        { icon: "📊", title: t.features.feature2Title, description: t.features.feature2Desc },
-        { icon: "🔍", title: t.features.feature3Title, description: t.features.feature3Desc },
-        { icon: "⭐", title: t.features.feature4Title, description: t.features.feature4Desc },
-        { icon: "📱", title: t.features.feature5Title, description: t.features.feature5Desc },
-        { icon: "🎯", title: t.features.feature6Title, description: t.features.feature6Desc },
+        { icon: <Film className="h-9 w-9 text-primary" />, title: t.features.feature1Title, description: t.features.feature1Desc },
+        { icon: <Compass className="h-9 w-9 text-gold" />, title: t.features.feature2Title, description: t.features.feature2Desc },
+        { icon: <FolderOpen className="h-9 w-9 text-primary" />, title: t.features.feature3Title, description: t.features.feature3Desc },
+        { icon: <Star className="h-9 w-9 text-gold" />, title: t.features.feature4Title, description: t.features.feature4Desc },
+        { icon: <Smartphone className="h-9 w-9 text-primary" />, title: t.features.feature5Title, description: t.features.feature5Desc },
+        { icon: <Users className="h-9 w-9 text-gold" />, title: t.features.feature6Title, description: t.features.feature6Desc },
     ];
 
     return (

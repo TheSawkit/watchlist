@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 import type { MediaItem, MediaType, Cast, Video, ActorDetails, WatchStatus } from "@/types/tmdb"
 
 export interface FeatureCardProps {
-  icon: string
+  icon: ReactNode
   title: string
   description: string
 }
