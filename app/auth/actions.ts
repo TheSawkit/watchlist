@@ -63,10 +63,12 @@ export async function signup(prevState: unknown, formData: FormData) {
 
   if (existingProfile) return { error: t.settings.usernameTaken }
 
+  const origin = await getOrigin()
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
+      emailRedirectTo: `${origin}/auth/confirm?next=/dashboard`,
       data: {
         full_name: username,
         username,
