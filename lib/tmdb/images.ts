@@ -9,6 +9,7 @@ export type TMDBImageSize =
   | "w342"
   | "w500"
   | "w780"
+  | "w1280"
   | "original"
 
 /** Builds a full TMDB image URL; returns the placeholder SVG when path is null or empty. */

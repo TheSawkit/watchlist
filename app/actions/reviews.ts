@@ -7,6 +7,8 @@ import { revalidateProfile } from '@/app/actions/_helpers'
 import { getTvShowDetails, getSeasonDetails } from '@/lib/tmdb/tv'
 import type { Review, PublicReview, ReviewMediaType } from '@/types/profile'
 
+export const MAX_REVIEW_LENGTH = 65000
+
 function parseRatingRow(data: unknown): { avg: number; count: number } | null {
     const row = (data as Array<{ avg: string | null; count: string }> | null)?.[0] ?? null
     if (!row || row.avg === null) return null
@@ -165,7 +167,7 @@ export async function upsertReview(
     if (rating !== null && (rating < 1 || rating > 10 || !Number.isInteger(rating))) {
         throw new Error(t.profile.errors.ratingInvalid)
     }
-    if (content && content.length > 65000) {
+    if (content && content.length > MAX_REVIEW_LENGTH) {
         throw new Error(t.profile.errors.reviewTooLong)
     }
 

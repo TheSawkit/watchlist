@@ -6,11 +6,9 @@ import { Trash2 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { StarRating } from "@/components/ui/StarRating"
 import { Button } from "@/components/ui/button"
-import { upsertReview, deleteReview } from "@/app/actions/reviews"
+import { upsertReview, deleteReview, MAX_REVIEW_LENGTH } from "@/app/actions/reviews"
 import { useTranslation } from "@/lib/i18n/context"
 import type { Review, ReviewMediaType } from "@/types/profile"
-
-const MAX_REVIEW_LENGTH = 65000
 
 interface ReviewDialogProps {
     open: boolean

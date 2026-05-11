@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { getImageUrl } from "@/lib/tmdb/images"
 
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://reelmark.app"
 
@@ -12,7 +13,7 @@ interface MediaMetadataOptions {
 
 /** Builds canonical Next.js Metadata for a movie or TV show detail page. */
 export function buildMediaMetadata({ title, description, backdropPath, canonical, ogType }: MediaMetadataOptions): Metadata {
-    const backdropUrl = backdropPath ? `https://image.tmdb.org/t/p/w1280${backdropPath}` : undefined
+    const backdropUrl = backdropPath ? getImageUrl(backdropPath, "w1280") : undefined
     const images = backdropUrl ? [{ url: backdropUrl, width: 1280, height: 720 }] : []
 
     return {

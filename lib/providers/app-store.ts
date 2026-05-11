@@ -4,7 +4,6 @@ interface ItunesApp {
 }
 
 const PROVIDER_APP_IDS: Record<string, number> = {
-    // Global tier 1
     netflix: 363590051,
     amazon: 545519333,
     amazonprimevideo: 545519333,
@@ -22,8 +21,6 @@ const PROVIDER_APP_IDS: Record<string, number> = {
     youtubetv: 1193350206,
     crunchyroll: 329913454,
     crunchyrollpremium: 329913454,
-
-    // US / North America
     hulu: 376510438,
     peacockpremium: 1508186374,
     peacock: 1508186374,
@@ -38,8 +35,6 @@ const PROVIDER_APP_IDS: Record<string, number> = {
     mgmplus: 1387514950,
     betplus: 1456618978,
     philo: 893244665,
-
-    // UK / Europe
     itvx: 446079916,
     britbox: 1206838907,
     britboxuk: 1206838907,
@@ -50,37 +45,23 @@ const PROVIDER_APP_IDS: Record<string, number> = {
     hayu: 1052817340,
     rakutentv: 532577301,
     rakuten: 532577301,
-
-    // French / Canal
     canalplus: 694580816,
     canal: 694580816,
-
-    // Netherlands / Belgium
     videoland: 1570409180,
     nlziet: 881822672,
-
-    // Spain
     movistarplus: 540674767,
     movistar: 540674767,
-
-    // Australia
     stan: 948095331,
     binge: 1486598248,
     foxtelnow: 569457984,
     kayosports: 1434518367,
-
-    // Brazil
     globoplay: 536321738,
-
-    // Asia / India
     sonyliv: 587794258,
     jiohotstar: 934459219,
     zee5: 743691886,
     dazn: 1129523589,
     rakutenviki: 445553058,
     viki: 445553058,
-
-    // Nordic
     acorntv: 896014310,
 }
 

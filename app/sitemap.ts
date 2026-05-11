@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next"
 import { headers } from "next/headers"
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://reelmark.app"
+import { BASE_URL } from "@/lib/metadata"
 
 async function getBaseUrl(): Promise<string> {
     const h = await headers()
