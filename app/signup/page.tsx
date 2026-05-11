@@ -4,8 +4,7 @@ import CinemaSpotlight from "@/components/ui/cinema-spotlight"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { getTranslations } from "@/lib/i18n/server"
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://reelmark.app"
+import { BASE_URL } from "@/lib/metadata"
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations()

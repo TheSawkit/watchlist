@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useOptimistic, useTransition } from "react"
+import { useState, useOptimistic, useTransition, useEffect } from "react"
 import { Eye, Plus, Check, Loader2, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { addToWatchlist, removeFromWatchlist } from "@/app/actions/watchlist"
@@ -25,6 +25,12 @@ export function WatchButton({
     const [error, setError] = useState(false)
     const [reviewOpen, setReviewOpen] = useState(false)
     const { t } = useTranslation()
+
+    useEffect(() => {
+        if (!error) return
+        const id = setTimeout(() => setError(false), 3000)
+        return () => clearTimeout(id)
+    }, [error])
 
     const isUnreleased = releaseDate ? new Date(releaseDate) > new Date() : false
 
@@ -63,7 +69,6 @@ export function WatchButton({
                 }
             } catch {
                 setError(true)
-                setTimeout(() => setError(false), 3000)
             }
         })
     }

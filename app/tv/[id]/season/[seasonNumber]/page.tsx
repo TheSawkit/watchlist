@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
-import { getTvShowDetails, getSeasonDetails, getTvShowWatchProviders } from "@/lib/tmdb"
+import { getTvShowDetails, getSeasonDetails, getTvShowWatchProviders, getImageUrl } from "@/lib/tmdb"
 import { getServerLocale, getTranslations } from "@/lib/i18n/server"
 import { getSeasonEpisodeWatches } from "@/app/actions/episodes"
 import { getSeasonAverageRating, getPublicEpisodeReviews } from "@/app/actions/reviews"
@@ -29,11 +29,8 @@ export async function generateMetadata({ params: paramsPromise }: SeasonPageProp
             getSeasonDetails(tvId, seasonNumber),
         ])
         const description = seasonDetails.overview || `${seasonDetails.name} of ${tvDetails.name}`
-        const ogImage = seasonDetails.poster_path
-            ? `https://image.tmdb.org/t/p/w500${seasonDetails.poster_path}`
-            : tvDetails.poster_path
-                ? `https://image.tmdb.org/t/p/w500${tvDetails.poster_path}`
-                : undefined
+        const posterPath = seasonDetails.poster_path ?? tvDetails.poster_path
+        const ogImage = posterPath ? getImageUrl(posterPath, "w500") : undefined
 
         return {
             title: `${seasonDetails.name} — ${tvDetails.name}`,

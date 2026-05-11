@@ -5,9 +5,8 @@ import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n/server'
 import { revalidateProfile } from '@/app/actions/_helpers'
 import { getTvShowDetails, getSeasonDetails } from '@/lib/tmdb/tv'
+import { MAX_REVIEW_LENGTH } from '@/types/profile'
 import type { Review, PublicReview, ReviewMediaType } from '@/types/profile'
-
-export const MAX_REVIEW_LENGTH = 65000
 
 function parseRatingRow(data: unknown): { avg: number; count: number } | null {
     const row = (data as Array<{ avg: string | null; count: string }> | null)?.[0] ?? null

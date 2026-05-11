@@ -7,8 +7,7 @@ import { PageLayout, PageHeader } from "@/components/ui/PageLayout"
 import { getTranslations } from "@/lib/i18n/server"
 import { MediaTypeSwitcher } from "@/components/media/MediaTypeSwitcher"
 import { getTvShowTotalEpisodes } from "@/lib/tmdb"
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://reelmark.app"
+import { BASE_URL } from "@/lib/metadata"
 
 export async function generateMetadata() {
     const t = await getTranslations()

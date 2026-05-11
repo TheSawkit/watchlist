@@ -60,16 +60,24 @@ export default async function ProfilePage({ params }: Props) {
     ])
 
     const watchlist = (watchlistData.data ?? []) as WatchlistEntry[]
-    const toWatch = watchlist.filter(e => e.status === 'to_watch')
-    const watched = watchlist.filter(e => e.status === 'watched')
     const isFriend = friendship?.status === 'accepted'
+
+    function canView(visibility: string): boolean {
+        if (isOwnProfile) return true
+        if (visibility === 'public') return true
+        if (visibility === 'friends' && isFriend) return true
+        return false
+    }
+
+    const toWatch = canView(privacy.watchlist_visibility) ? watchlist.filter(e => e.status === 'to_watch') : []
+    const watched = canView(privacy.watched_visibility) ? watchlist.filter(e => e.status === 'watched') : []
 
     const friendIdByFriendshipId = new Map(
         rawFriends.map(f => [f.id, f.requester_id === profile.user_id ? f.addressee_id : f.requester_id])
     )
     const friendUserIds = Array.from(friendIdByFriendshipId.values())
 
-    const friendEntries: FriendEntry[] = []
+    const allFriendEntries: FriendEntry[] = []
     if (friendUserIds.length > 0) {
         const { data: friendProfiles } = await supabase
             .from('user_profiles')
@@ -79,12 +87,17 @@ export default async function ProfilePage({ params }: Props) {
         const profileByUserId = new Map(friendProfiles?.map(p => [p.user_id, p]) ?? [])
 
         for (const f of rawFriends) {
-            const friendId = friendIdByFriendshipId.get(f.id)!
+            const friendId = friendIdByFriendshipId.get(f.id)
+            if (!friendId) continue
             const friendProfile = profileByUserId.get(friendId)
             if (!friendProfile) continue
-            friendEntries.push({ friendship: f, username: friendProfile.username })
+            allFriendEntries.push({ friendship: f, username: friendProfile.username })
         }
     }
+
+    const filteredReviews = canView(privacy.reviews_visibility) ? reviews : []
+    const filteredPlaylists = canView(privacy.playlists_visibility) ? playlists : []
+    const filteredFriends = canView(privacy.friends_visibility) ? allFriendEntries : []
 
     const ownerAuth = await adminClient.auth.admin.getUserById(profile.user_id)
     const ownerMeta = ownerAuth.data.user?.user_metadata
@@ -109,9 +122,9 @@ export default async function ProfilePage({ params }: Props) {
             <ProfileTabs
                 toWatch={toWatch}
                 watched={watched}
-                reviews={reviews}
-                playlists={playlists}
-                friends={friendEntries}
+                reviews={filteredReviews}
+                playlists={filteredPlaylists}
+                friends={filteredFriends}
                 privacy={privacy}
                 isOwnProfile={isOwnProfile}
                 isFriend={isFriend}

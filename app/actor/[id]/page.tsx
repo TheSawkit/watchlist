@@ -8,8 +8,7 @@ import type { ActorPageProps } from "@/types/pages"
 import { movieCreditToMediaItem, tvCreditToMediaItem } from "@/lib/mappers"
 import { mergeMediaWithWatchlist } from "@/app/actions/media"
 import { getTranslations } from "@/lib/i18n/server"
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://reelmark.app"
+import { BASE_URL } from "@/lib/metadata"
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params

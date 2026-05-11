@@ -61,14 +61,16 @@ export function EpisodeWatchButton({
                 {error ? t.common.actionError : watched ? t.movie.episodeWatched : t.movie.markEpisodeWatched}
             </button>
 
-            <ReviewDialog
-                open={reviewOpen}
-                onClose={() => setReviewOpen(false)}
-                mediaId={episodeId}
-                mediaType="episode"
-                mediaTitle={episodeName}
-                posterPath={stillPath}
-            />
+            {reviewOpen && (
+                <ReviewDialog
+                    open={reviewOpen}
+                    onClose={() => setReviewOpen(false)}
+                    mediaId={episodeId}
+                    mediaType="episode"
+                    mediaTitle={episodeName}
+                    posterPath={stillPath}
+                />
+            )}
         </>
     )
 }

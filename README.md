@@ -1,6 +1,6 @@
 # 🎬 ReelMark
 
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2.6-000000?style=flat&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-Auth_&_DB-3FCF8E?style=flat&logo=supabase&logoColor=white)](https://supabase.com/)
@@ -38,7 +38,7 @@
 
 | Layer | Technology |
 |:---|:---|
-| **Frontend** | Next.js 16 (App Router) + React 19 |
+| **Frontend** | Next.js 16.2.6 (App Router) + React 19 |
 | **Styling** | Tailwind CSS 4 (token-based design system) |
 | **Auth & DB** | Supabase (PostgreSQL + RLS) |
 | **Media data** | TMDB API |
@@ -169,7 +169,7 @@ watchlist/
 
 | Couche | Technologie |
 |:---|:---|
-| **Frontend** | Next.js 16 (App Router) + React 19 |
+| **Frontend** | Next.js 16.2.6 (App Router) + React 19 |
 | **Styles** | Tailwind CSS 4 (système de tokens) |
 | **Auth & DB** | Supabase (PostgreSQL + RLS) |
 | **Données média** | TMDB API |

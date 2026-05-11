@@ -1,3 +1,5 @@
+export const MAX_REVIEW_LENGTH = 65000
+
 export type PrivacyVisibility = 'public' | 'friends' | 'private'
 
 export interface UserProfile {

@@ -84,15 +84,20 @@ export async function getWatchmodeProviders(
             getSourceListings(),
         ])
 
-        const best: Record<'sub' | 'rent' | 'buy', Map<string, WatchmodeTitleSource>> = {
+        type BillingType = 'sub' | 'rent' | 'buy'
+
+        function isBillingType(type: string): type is BillingType {
+            return type === 'sub' || type === 'rent' || type === 'buy'
+        }
+
+        const best: Record<BillingType, Map<string, WatchmodeTitleSource>> = {
             sub: new Map(), rent: new Map(), buy: new Map(),
         }
-        const validTypes = new Set(['sub', 'rent', 'buy'] as const)
 
         for (const r of regions) {
             for (const s of sources.filter(src => src.region === r)) {
-                const t = s.type as 'sub' | 'rent' | 'buy'
-                if (!validTypes.has(t)) continue
+                if (!isBillingType(s.type)) continue
+                const t = s.type
                 const existing = best[t].get(s.name)
                 if (!existing || (s.price != null && (existing.price == null || s.price < existing.price))) {
                     best[t].set(s.name, s)
