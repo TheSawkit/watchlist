@@ -5,9 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n/server'
 import { revalidateProfile } from '@/app/actions/_helpers'
 import { getTvShowDetails, getSeasonDetails } from '@/lib/tmdb/tv'
-import type { Review, PublicReview } from '@/types/profile'
-
-type ReviewMediaType = 'movie' | 'tv' | 'episode'
+import type { Review, PublicReview, ReviewMediaType } from '@/types/profile'
 
 /**
  * Returns all reviews for a given user, newest first.

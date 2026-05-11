@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useTransition } from 'react'
 import { Pencil } from 'lucide-react'
+import { toast } from 'sonner'
 import { deleteReview } from '@/app/actions/reviews'
 import { getImageUrl } from '@/lib/tmdb/images'
 import type { Review, PrivacyVisibility } from '@/types/profile'
@@ -27,11 +28,21 @@ export function ReviewsSection({ reviews: initial, visibility, canView, isOwnPro
     const [reviews, setReviews] = useState(initial)
     const [isPending, startTransition] = useTransition()
     const [editingReview, setEditingReview] = useState<Review | null>(null)
+    const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
-    const handleDelete = (reviewId: string) => {
+    const handleDeleteClick = (reviewId: string) => {
+        setConfirmDeleteId(reviewId)
+    }
+
+    const handleDeleteConfirm = (reviewId: string) => {
+        setConfirmDeleteId(null)
         startTransition(async () => {
-            await deleteReview(reviewId)
-            setReviews(prev => prev.filter(r => r.id !== reviewId))
+            try {
+                await deleteReview(reviewId)
+                setReviews(prev => prev.filter(r => r.id !== reviewId))
+            } catch {
+                toast.error(t.common.actionError)
+            }
         })
     }
 
@@ -77,20 +88,44 @@ export function ReviewsSection({ reviews: initial, visibility, canView, isOwnPro
 
                         {isOwnProfile && (
                             <div className="flex items-start gap-0.5 shrink-0">
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => setEditingReview(review)}
-                                    className="h-8 w-8 p-0 text-muted hover:text-text"
-                                    aria-label={t.movie.editReview}
-                                >
-                                    <Pencil className="h-4 w-4" />
-                                </Button>
-                                <DeleteIconButton
-                                    onClick={() => handleDelete(review.id)}
-                                    disabled={isPending}
-                                    ariaLabel={t.profile.deleteReview}
-                                />
+                                {confirmDeleteId === review.id ? (
+                                    <div className="flex items-center gap-1 animate-in fade-in duration-150">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => handleDeleteConfirm(review.id)}
+                                            disabled={isPending}
+                                            className="h-8 px-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-400/10"
+                                        >
+                                            {t.common.confirm}
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setConfirmDeleteId(null)}
+                                            className="h-8 px-2 text-xs text-muted"
+                                        >
+                                            {t.common.cancel}
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setEditingReview(review)}
+                                            className="h-8 w-8 p-0 text-muted hover:text-text"
+                                            aria-label={t.movie.editReview}
+                                        >
+                                            <Pencil className="h-4 w-4" />
+                                        </Button>
+                                        <DeleteIconButton
+                                            onClick={() => handleDeleteClick(review.id)}
+                                            disabled={isPending}
+                                            ariaLabel={t.profile.deleteReview}
+                                        />
+                                    </>
+                                )}
                             </div>
                         )}
                     </article>

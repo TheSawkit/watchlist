@@ -121,7 +121,7 @@ export function EpisodeCard({
             </div>
 
             <div className="p-4 flex flex-col flex-1">
-                <h3 className="text-lg font-bold text-text-main mb-2 line-clamp-1">
+                <h3 className="text-lg font-bold text-text mb-2 line-clamp-1">
                     {episode.name}
                 </h3>
                 <div className="flex items-center gap-4 text-xs text-muted mb-3 font-medium">
@@ -150,7 +150,7 @@ export function EpisodeCard({
                                 e.preventDefault()
                                 setIsExpanded(true)
                             }}
-                            className="text-text-main text-xs font-semibold self-start hover:text-primary transition-colors cursor-pointer mt-1"
+                            className="text-text text-xs font-semibold self-start hover:text-primary transition-colors cursor-pointer mt-1"
                         >
                             {t.movie.readMore}
                         </button>
@@ -185,7 +185,7 @@ export function EpisodeCard({
                     className="absolute inset-0 z-30 bg-surface/40 backdrop-blur-3xl border border-border/10 border-t-border/20 flex flex-col p-6 animate-in fade-in duration-(--duration-base) cursor-pointer"
                 >
                     <div className="flex justify-between items-start mb-4 gap-4">
-                        <h3 id={`episode-title-${episode.episode_number}`} className="text-lg font-bold text-text-main leading-tight">{episode.name}</h3>
+                        <h3 id={`episode-title-${episode.episode_number}`} className="text-lg font-bold text-text leading-tight">{episode.name}</h3>
                         <button
                             data-close
                             onClick={(e) => {
@@ -194,7 +194,7 @@ export function EpisodeCard({
                                 setIsExpanded(false)
                             }}
                             aria-label={t.common.close}
-                            className="h-11 w-11 flex items-center justify-center shrink-0 rounded-full bg-border-subtle hover:bg-border text-muted hover:text-text-main transition-colors cursor-pointer"
+                            className="h-11 w-11 flex items-center justify-center shrink-0 rounded-full bg-border-subtle hover:bg-border text-muted hover:text-text transition-colors cursor-pointer"
                         >
                             <X className="h-4 w-4" aria-hidden="true" />
                         </button>
@@ -203,7 +203,7 @@ export function EpisodeCard({
                         className="overflow-y-auto flex-1 pr-2 cursor-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <p className="text-sm text-text-main leading-relaxed cursor-text selection:bg-primary/30">
+                        <p className="text-sm text-text leading-relaxed cursor-text selection:bg-primary/30">
                             {episode.overview || noDescription}
                         </p>
                     </div>

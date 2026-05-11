@@ -8,9 +8,7 @@ import { StarRating } from "@/components/ui/StarRating"
 import { Button } from "@/components/ui/button"
 import { upsertReview, deleteReview } from "@/app/actions/reviews"
 import { useTranslation } from "@/lib/i18n/context"
-import type { Review } from "@/types/profile"
-
-type ReviewMediaType = "movie" | "tv" | "episode"
+import type { Review, ReviewMediaType } from "@/types/profile"
 
 const MAX_REVIEW_LENGTH = 65000
 
@@ -78,7 +76,7 @@ export function ReviewDialog({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        {mediaType === "episode" ? t.movie.rateEpisode : t.movie.rateMovie}
+                        {mediaType === "episode" ? t.movie.rateEpisode : mediaType === "tv" ? t.movie.rateTvShow : t.movie.rateMovie}
                     </DialogTitle>
                     <p className="text-sm text-muted mt-0.5 line-clamp-1">{mediaTitle}</p>
                 </DialogHeader>

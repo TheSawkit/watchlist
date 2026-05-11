@@ -22,11 +22,13 @@ export interface PrivacySettings {
   friends_visibility: PrivacyVisibility
 }
 
+export type ReviewMediaType = 'movie' | 'tv' | 'episode'
+
 export interface Review {
   id: string
   user_id: string
   media_id: number
-  media_type: 'movie' | 'tv' | 'episode'
+  media_type: ReviewMediaType
   media_title: string
   poster_path: string | null
   rating: number | null

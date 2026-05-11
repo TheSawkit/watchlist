@@ -7,8 +7,11 @@ import type {
   VideoResponse,
   ContentRatingsResponse,
   MediaImagesResponse,
+  WatchProvidersRegion,
+  WatchProvidersResponse,
 } from "@/types/tmdb"
 import { fetchTMDB, getUserRegion, clampPage, getImageLanguageFilter } from "./client"
+import { getWatchmodeProviders } from "@/lib/watchmode/providers"
 import { findTvCertification } from "./certifications"
 
 /** @returns Paginated list of popular TV shows. */
@@ -141,4 +144,36 @@ export async function getSimilarTvShows(id: number): Promise<TvShow[]> {
  */
 export async function getSeasonDetails(tvId: number, seasonNumber: number): Promise<SeasonDetails> {
   return fetchTMDB<SeasonDetails>(`/tv/${tvId}/season/${seasonNumber}`, {}, 86400)
+}
+
+/**
+ * Returns watch providers for a TV show filtered to the user's region.
+ * Returns null if no providers are available for that region.
+ * Data sourced from JustWatch via TMDB.
+ *
+ * @param id - TMDB TV show ID.
+ * @returns Watch providers for the user's region, or null.
+ */
+export async function getTvShowWatchProviders(id: number): Promise<WatchProvidersRegion | null> {
+  try {
+    const region = await getUserRegion()
+    const [tmdbData, watchmode] = await Promise.all([
+      fetchTMDB<WatchProvidersResponse>(`/tv/${id}/watch/providers`, {}, 43200),
+      getWatchmodeProviders(id, 'tv', region),
+    ])
+    const tmdb = tmdbData.results[region] ?? null
+
+    if (watchmode) {
+      return {
+        link: tmdb?.link ?? '',
+        flatrate: watchmode.streaming.length ? watchmode.streaming : tmdb?.flatrate,
+        rent: watchmode.rent.length ? watchmode.rent : tmdb?.rent,
+        buy: watchmode.buy.length ? watchmode.buy : tmdb?.buy,
+      }
+    }
+
+    return tmdb
+  } catch {
+    return null
+  }
 }

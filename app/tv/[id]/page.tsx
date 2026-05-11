@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
 import type { Metadata } from "next"
-import { getImageUrl, getTvShowDetails, getTvShowCredits, getTvShowVideos, getTvShowImages, selectHeroImage } from "@/lib/tmdb"
+import { getImageUrl, getTvShowDetails, getTvShowCredits, getTvShowVideos, getTvShowImages, selectHeroImage, getTvShowWatchProviders } from "@/lib/tmdb"
 import { MediaBanner } from "@/components/media/MediaBanner"
 import { MediaTrailers } from "@/components/media/MediaTrailers"
 import { MediaDescription } from "@/components/media/MediaDescription"
@@ -15,6 +15,7 @@ import { getTvShowWatchProgress } from "@/app/actions/episodes"
 import { getShowAverageRating } from "@/app/actions/reviews"
 import { CommunityRating } from "@/components/media/CommunityRating"
 import { PublicReviewsSection } from "@/components/media/PublicReviewsSection"
+import { WatchProviders } from "@/components/media/WatchProviders"
 import { filterAvailableVideos } from "@/lib/youtube"
 import { getServerLocale, getTranslations } from "@/lib/i18n/server"
 import type { TvPageProps } from "@/types/pages"
@@ -28,7 +29,7 @@ import type { Season } from "@/types/tmdb"
  * @param props.params - Promise resolving to { id: string } TV show ID
  * @returns Metadata object with title, description, OpenGraph, and Twitter card data
  */
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://reelmark.app"
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://reelmark.app"
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params
@@ -85,7 +86,6 @@ export default async function TvShowPage(props: TvPageProps) {
     }
 
     let tvDetails, credits, videos, images
-
     try {
         [tvDetails, credits, videos, images] = await Promise.all([
             getTvShowDetails(tvId),
@@ -101,17 +101,18 @@ export default async function TvShowPage(props: TvPageProps) {
         .filter((video) => video.site === "YouTube" && (video.type === "Trailer" || video.type === "Teaser"))
         .sort((a, b) => (b.official ? 1 : 0) - (a.official ? 1 : 0))
 
-    const trailers = await filterAvailableVideos(candidateTrailers)
-
-    const heroImagePath = selectHeroImage(images, tvDetails.backdrop_path)
-    const heroImageUrl = getImageUrl(heroImagePath, "original")
-    const [watchlistEntry, watchProgress, showRating] = await Promise.all([
+    const [trailers, watchProviders, watchlistEntry, watchProgress, showRating, t, locale] = await Promise.all([
+        filterAvailableVideos(candidateTrailers),
+        getTvShowWatchProviders(tvId).catch(() => null),
         getMediaWatchlistEntry(tvId, "tv"),
         getTvShowWatchProgress(tvId),
         getShowAverageRating(tvId),
+        getTranslations(),
+        getServerLocale(),
     ])
-    const t = await getTranslations()
-    const locale = await getServerLocale()
+
+    const heroImagePath = selectHeroImage(images, tvDetails.backdrop_path)
+    const heroImageUrl = getImageUrl(heroImagePath, "original")
 
     const tvSeasons = tvDetails.seasons ?? []
     const standardSeasons = tvSeasons.filter((s: { season_number: number }) => s.season_number > 0)
@@ -181,9 +182,11 @@ export default async function TvShowPage(props: TvPageProps) {
             <div className="container mx-auto px-6 lg:px-12 py-12 md:py-16 space-y-14 md:space-y-16">
                 <MediaDescription description={tvDetails.overview} />
 
+                <WatchProviders providers={watchProviders} />
+
                 {showRating && <CommunityRating avg={showRating.avg} count={showRating.count} />}
 
-                <Suspense fallback={null}>
+                <Suspense fallback={<div className="h-32 rounded-xl bg-surface/20 animate-pulse" />}>
                     <PublicReviewsSection mediaId={tvId} mediaType="tv" />
                 </Suspense>
 

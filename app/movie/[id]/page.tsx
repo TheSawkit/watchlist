@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
 import type { Metadata } from "next"
-import { getImageUrl, getMovieDetails, getMovieCredits, getMovieVideos, getMovieImages, selectHeroImage } from "@/lib/tmdb"
+import { getImageUrl, getMovieDetails, getMovieCredits, getMovieVideos, getMovieImages, selectHeroImage, getMovieWatchProviders } from "@/lib/tmdb"
 import { MediaBanner } from "@/components/media/MediaBanner"
 import { MediaTrailers } from "@/components/media/MediaTrailers"
 import { MediaDescription } from "@/components/media/MediaDescription"
@@ -15,6 +15,7 @@ import { getTranslations, getServerLocale } from "@/lib/i18n/server"
 import { formatDate } from "@/lib/format"
 import { CommunityRating } from "@/components/media/CommunityRating"
 import { PublicReviewsSection } from "@/components/media/PublicReviewsSection"
+import { WatchProviders } from "@/components/media/WatchProviders"
 import type { MoviePageProps } from "@/types/pages"
 
 /**
@@ -25,7 +26,7 @@ import type { MoviePageProps } from "@/types/pages"
  * @param props.params - Promise resolving to { id: string } movie ID
  * @returns Metadata object with title, description, OpenGraph, and Twitter card data
  */
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://reelmark.app"
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://reelmark.app"
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
@@ -82,7 +83,6 @@ export default async function MoviePage(props: MoviePageProps) {
   }
 
   let movieDetails, credits, videos, images
-
   try {
     [movieDetails, credits, videos, images] = await Promise.all([
       getMovieDetails(movieId),
@@ -98,17 +98,18 @@ export default async function MoviePage(props: MoviePageProps) {
     .filter((video) => video.site === "YouTube" && (video.type === "Trailer" || video.type === "Teaser"))
     .sort((a, b) => (b.official ? 1 : 0) - (a.official ? 1 : 0))
 
-  const trailers = await filterAvailableVideos(candidateTrailers)
+  const [trailers, watchProviders, watchlistEntry, movieRating, t, locale] = await Promise.all([
+    filterAvailableVideos(candidateTrailers),
+    getMovieWatchProviders(movieId).catch(() => null),
+    getMediaWatchlistEntry(movieId, "movie"),
+    getAverageRating(movieId, "movie"),
+    getTranslations(),
+    getServerLocale(),
+  ])
 
   const heroImagePath = selectHeroImage(images, movieDetails.backdrop_path)
   const heroImageUrl = getImageUrl(heroImagePath, "original")
-  const [watchlistEntry, movieRating] = await Promise.all([
-    getMediaWatchlistEntry(movieId, "movie"),
-    getAverageRating(movieId, "movie"),
-  ])
   const isWatched = watchlistEntry?.status === "watched"
-  const t = await getTranslations()
-  const locale = await getServerLocale()
 
   return (
     <div className="min-h-screen">
@@ -189,9 +190,11 @@ export default async function MoviePage(props: MoviePageProps) {
       <div className="container mx-auto px-6 lg:px-12 py-12 md:py-16 space-y-14 md:space-y-16">
         <MediaDescription description={movieDetails.overview} />
 
+        <WatchProviders providers={watchProviders} />
+
         {movieRating && <CommunityRating avg={movieRating.avg} count={movieRating.count} />}
 
-        <Suspense fallback={null}>
+        <Suspense fallback={<div className="h-32 rounded-xl bg-surface/20 animate-pulse" />}>
           <PublicReviewsSection mediaId={movieId} mediaType="movie" />
         </Suspense>
 

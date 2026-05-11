@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development"
-const supabaseHost = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://localhost").hostname
+const supabaseHost = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || "https://localhost").hostname
 
 const cspDirectives = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.youtube.com https://s.ytimg.com`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://image.tmdb.org https://lh3.googleusercontent.com https://api.dicebear.com https://*.supabase.co",
+  "img-src 'self' data: blob: https://image.tmdb.org https://lh3.googleusercontent.com https://api.dicebear.com https://*.supabase.co https://cdn.watchmode.com https://*.mzstatic.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
   `connect-src 'self' https://*.supabase.co https://api.themoviedb.org https://www.youtube.com${isDev ? " ws: wss:" : " wss:"}`,
@@ -62,6 +62,16 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: supabaseHost,
         pathname: '/storage/v1/object/public/avatars/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.watchmode.com',
+        pathname: '/provider_logos/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.mzstatic.com',
+        pathname: '/**',
       },
     ],
   },

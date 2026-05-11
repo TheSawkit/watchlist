@@ -229,3 +229,25 @@ export interface ActorTvCredit {
   overview: string
 }
 
+export interface WatchProvider {
+  provider_id: number
+  provider_name: string
+  logo_path: string
+  display_priority: number
+  logo_url?: string
+  web_url?: string
+  price?: number | null
+}
+
+export interface WatchProvidersRegion {
+  link: string
+  flatrate?: WatchProvider[]
+  rent?: WatchProvider[]
+  buy?: WatchProvider[]
+}
+
+export interface WatchProvidersResponse {
+  id: number
+  results: Record<string, WatchProvidersRegion>
+}
+

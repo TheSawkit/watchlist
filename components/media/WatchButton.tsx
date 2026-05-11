@@ -32,6 +32,17 @@ export function WatchButton({
         return null
     }
 
+    const reviewDialog = reviewOpen ? (
+        <ReviewDialog
+            open={reviewOpen}
+            onClose={() => setReviewOpen(false)}
+            mediaId={mediaId}
+            mediaType={mediaType}
+            mediaTitle={mediaTitle}
+            posterPath={posterPath}
+        />
+    ) : null
+
     function handleClick(e: React.MouseEvent) {
         e.preventDefault()
         e.stopPropagation()
@@ -85,16 +96,7 @@ export function WatchButton({
                                 ? t.movie.markAsWatched
                                 : t.movie.addToList}
                 </button>
-                {reviewOpen && (
-                    <ReviewDialog
-                        open={reviewOpen}
-                        onClose={() => setReviewOpen(false)}
-                        mediaId={mediaId}
-                        mediaType={mediaType}
-                        mediaTitle={mediaTitle}
-                        posterPath={posterPath}
-                    />
-                )}
+                {reviewDialog}
             </>
         )
     }
@@ -116,16 +118,7 @@ export function WatchButton({
             >
                 <Icon className={cn("h-4 w-4", isPending && "animate-spin")} />
             </button>
-            {reviewOpen && (
-                <ReviewDialog
-                    open={reviewOpen}
-                    onClose={() => setReviewOpen(false)}
-                    mediaId={mediaId}
-                    mediaType={mediaType}
-                    mediaTitle={mediaTitle}
-                    posterPath={posterPath}
-                />
-            )}
+            {reviewDialog}
         </>
     )
 }

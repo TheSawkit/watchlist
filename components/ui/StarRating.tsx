@@ -43,9 +43,31 @@ export function StarRating({ value, onChange, size = "md", className }: StarRati
         onChange!(e.clientX - rect.left < rect.width / 2 ? starIndex * 2 - 1 : starIndex * 2)
     }
 
+    function handleKeyDown(e: React.KeyboardEvent) {
+        if (!interactive) return
+        const current = value ?? 0
+        if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+            e.preventDefault()
+            onChange!(Math.min(10, current + 1))
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+            e.preventDefault()
+            onChange!(Math.max(1, current - 1))
+        }
+    }
+
     return (
         <div
-            className={cn("flex items-center gap-0.5", className)}
+            className={cn(
+                "flex items-center gap-0.5",
+                interactive && "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm",
+                className,
+            )}
+            role={interactive ? "slider" : undefined}
+            aria-valuenow={interactive ? (value ?? 0) : undefined}
+            aria-valuemin={interactive ? 1 : undefined}
+            aria-valuemax={interactive ? 10 : undefined}
+            tabIndex={interactive ? 0 : undefined}
+            onKeyDown={interactive ? handleKeyDown : undefined}
             onMouseLeave={() => interactive && setHovered(null)}
         >
             {[1, 2, 3, 4, 5].map((starIndex) => {

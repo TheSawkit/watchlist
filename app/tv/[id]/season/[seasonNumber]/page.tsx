@@ -2,16 +2,19 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
-import { getTvShowDetails, getSeasonDetails } from "@/lib/tmdb"
+import { getTvShowDetails, getSeasonDetails, getTvShowWatchProviders } from "@/lib/tmdb"
 import { getServerLocale, getTranslations } from "@/lib/i18n/server"
 import { getSeasonEpisodeWatches } from "@/app/actions/episodes"
 import { getSeasonAverageRating, getPublicEpisodeReviews } from "@/app/actions/reviews"
 import { SeasonWatchButton } from "@/components/media/SeasonWatchButton"
 import { CommunityRating } from "@/components/media/CommunityRating"
+import { WatchProviders } from "@/components/media/WatchProviders"
 import { EpisodeCard } from "@/components/media/EpisodeCard"
 import { ProgressBar } from "@/components/shared/ProgressBar"
 import { SectionHeading } from "@/components/ui/SectionHeading"
 import type { SeasonPageProps } from "@/types/pages"
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://reelmark.app"
 
 export async function generateMetadata({ params: paramsPromise }: SeasonPageProps): Promise<Metadata> {
     const params = await paramsPromise
@@ -35,6 +38,7 @@ export async function generateMetadata({ params: paramsPromise }: SeasonPageProp
         return {
             title: `${seasonDetails.name} — ${tvDetails.name}`,
             description,
+            alternates: { canonical: `${BASE_URL}/tv/${tvId}/season/${seasonNumber}` },
             openGraph: {
                 title: `${seasonDetails.name} — ${tvDetails.name}`,
                 description,
@@ -72,13 +76,14 @@ export default async function SeasonPage(props: SeasonPageProps) {
         notFound()
     }
 
-    const t = await getTranslations()
-    const locale = await getServerLocale()
     const episodeIds = seasonDetails.episodes.map((e) => e.id)
-    const [watchedEpisodes, seasonRating, episodeReviews] = await Promise.all([
+    const [t, locale, watchedEpisodes, seasonRating, episodeReviews, watchProviders] = await Promise.all([
+        getTranslations(),
+        getServerLocale(),
         getSeasonEpisodeWatches(tvId, seasonNumber),
         getSeasonAverageRating(tvId, seasonNumber),
         getPublicEpisodeReviews(episodeIds),
+        getTvShowWatchProviders(tvId).catch(() => null),
     ])
     const watchedCount = watchedEpisodes.size
 
@@ -146,6 +151,8 @@ export default async function SeasonPage(props: SeasonPageProps) {
                         </p>
                     </div>
                 )}
+
+                <WatchProviders providers={watchProviders} />
 
                 {seasonRating && <CommunityRating avg={seasonRating.avg} count={seasonRating.count} />}
 

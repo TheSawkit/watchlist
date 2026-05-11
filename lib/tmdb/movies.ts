@@ -6,8 +6,11 @@ import type {
   VideoResponse,
   ReleaseDatesResponse,
   MediaImagesResponse,
+  WatchProvidersRegion,
+  WatchProvidersResponse,
 } from "@/types/tmdb"
 import { fetchTMDB, getUserRegion, clampPage, getMergeRegions, getImageLanguageFilter } from "./client"
+import { getWatchmodeProviders } from "@/lib/watchmode/providers"
 import { findLocalCertification } from "./certifications"
 
 /** @returns Paginated list of popular movies. */
@@ -155,4 +158,36 @@ export async function getMovieImages(id: number): Promise<MediaImagesResponse> {
   return fetchTMDB<MediaImagesResponse>(`/movie/${id}/images`, {
     include_image_language: imageLanguage,
   }, 86400)
+}
+
+/**
+ * Returns watch providers for a movie filtered to the user's region.
+ * Returns null if no providers are available for that region.
+ * Data sourced from JustWatch via TMDB.
+ *
+ * @param id - TMDB movie ID.
+ * @returns Watch providers for the user's region, or null.
+ */
+export async function getMovieWatchProviders(id: number): Promise<WatchProvidersRegion | null> {
+  try {
+    const region = await getUserRegion()
+    const [tmdbData, watchmode] = await Promise.all([
+      fetchTMDB<WatchProvidersResponse>(`/movie/${id}/watch/providers`, {}, 43200),
+      getWatchmodeProviders(id, 'movie', region),
+    ])
+    const tmdb = tmdbData.results[region] ?? null
+
+    if (watchmode) {
+      return {
+        link: tmdb?.link ?? '',
+        flatrate: watchmode.streaming.length ? watchmode.streaming : tmdb?.flatrate,
+        rent: watchmode.rent.length ? watchmode.rent : tmdb?.rent,
+        buy: watchmode.buy.length ? watchmode.buy : tmdb?.buy,
+      }
+    }
+
+    return tmdb
+  } catch {
+    return null
+  }
 }
