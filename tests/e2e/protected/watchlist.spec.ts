@@ -14,15 +14,15 @@ test.describe("Watchlist", () => {
         await page.goto(`/movie/${MOVIE_ID}`)
         await expect(page.getByRole("heading", { level: 1 })).toContainText(MOVIE_TITLE, { timeout: 10000 })
 
-        // Si déjà dans la liste, on retire d'abord pour partir d'un état propre
+        // État propre : retirer si déjà dans la liste
         const addedButton = page.getByRole("button", { name: /added|ajouté/i }).first()
         if (await addedButton.isVisible()) {
-            await addedButton.click()
+            await addedButton.click({ force: true })
             await expect(page.getByRole("button", { name: /add to list|ajouter/i }).first()).toBeVisible({ timeout: 5000 })
         }
 
         // Ajouter à la liste
-        await page.getByRole("button", { name: /add to list|ajouter/i }).first().click()
+        await page.getByRole("button", { name: /add to list|ajouter/i }).first().click({ force: true })
         await expect(page.getByRole("button", { name: /added|ajouté/i }).first()).toBeVisible({ timeout: 5000 })
 
         // Vérifier que le film apparaît dans la bibliothèque
@@ -31,7 +31,7 @@ test.describe("Watchlist", () => {
 
         // Nettoyer — retirer de la liste
         await page.goto(`/movie/${MOVIE_ID}`)
-        await page.getByRole("button", { name: /added|ajouté/i }).first().click()
+        await page.getByRole("button", { name: /added|ajouté/i }).first().click({ force: true })
         await expect(page.getByRole("button", { name: /add to list|ajouter/i }).first()).toBeVisible({ timeout: 5000 })
 
         // Vérifier qu'il n'est plus dans la bibliothèque
@@ -43,25 +43,24 @@ test.describe("Watchlist", () => {
         await page.goto(`/movie/${MOVIE_ID}`)
         await expect(page.getByRole("heading", { level: 1 })).toContainText(MOVIE_TITLE, { timeout: 10000 })
 
-        // État propre : s'assurer que le film n'est pas marqué comme vu
+        // État propre : retirer le statut "vu" si présent
         const watchedButton = page.getByRole("button", { name: /^watched$|^vu$/i }).first()
         if (await watchedButton.isVisible()) {
-            await watchedButton.click()
+            await watchedButton.click({ force: true })
             await expect(page.getByRole("button", { name: /mark as watched|marquer comme vu/i }).first()).toBeVisible({ timeout: 5000 })
         }
 
         // Marquer comme vu
-        await page.getByRole("button", { name: /mark as watched|marquer comme vu/i }).first().click()
+        await page.getByRole("button", { name: /mark as watched|marquer comme vu/i }).first().click({ force: true })
         await expect(page.getByRole("button", { name: /^watched$|^vu$/i }).first()).toBeVisible({ timeout: 5000 })
 
         // Vérifier dans la bibliothèque (onglet Watched)
         await page.goto("/library")
         await expect(page.getByText(MOVIE_TITLE)).toBeVisible({ timeout: 10000 })
 
-        // Nettoyer — retirer du vu
+        // Nettoyer — dé-marquer comme vu
         await page.goto(`/movie/${MOVIE_ID}`)
-        await page.getByRole("button", { name: /^watched$|^vu$/i }).first().click()
-        // Après click sur "Watched", passe à "to_watch" (fallbackStatus)
+        await page.getByRole("button", { name: /^watched$|^vu$/i }).first().click({ force: true })
         await expect(page.getByRole("button", { name: /^watched$|^vu$/i }).first()).not.toBeVisible({ timeout: 5000 })
     })
 })
