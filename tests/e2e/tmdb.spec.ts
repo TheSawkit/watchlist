@@ -1,10 +1,8 @@
 import { test, expect } from "@playwright/test"
 
-// Fight Club (1999) — ID stable, film emblématique peu susceptible d'être retiré de TMDB
 const MOVIE_ID = 550
 const MOVIE_TITLE = "Fight Club"
 
-// Game of Thrones — ID stable
 const TV_ID = 1399
 const TV_TITLE = "Game of Thrones"
 

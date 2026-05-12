@@ -11,7 +11,6 @@ test.describe("Login page", () => {
     test("shows validation error on empty submit", async ({ page }) => {
         await page.goto("/login")
         await page.getByRole("button", { name: /connexion|login|sign in/i }).click()
-        // The email field should be invalid (native browser validation)
         const emailInput = page.getByRole("textbox", { name: /email/i })
         const validationMessage = await emailInput.evaluate(
             (el: HTMLInputElement) => el.validationMessage
