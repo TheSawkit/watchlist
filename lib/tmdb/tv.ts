@@ -67,7 +67,7 @@ export async function getTvShowDetails(id: number): Promise<TvShowDetails> {
     const userRegion = await getUserRegion()
     details.certification = findTvCertification(ratings, userRegion)
   } catch (error) {
-    console.warn(`[tmdb/tv] Certification fetch failed for TV ${id}:`, error)
+    console.warn("[tmdb/tv] Certification fetch failed for TV:", id, error)
     details.certification = undefined
   }
 
