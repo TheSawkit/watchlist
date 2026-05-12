@@ -173,6 +173,9 @@ body {
   line-height: 1.6;
   letter-spacing: -0.011em;
   overflow-x: clip;
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 ::selection {
