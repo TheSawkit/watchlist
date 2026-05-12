@@ -125,16 +125,17 @@ export function MediaBanner({
                 </div>
             </div>
 
-            <div className="relative w-full -mt-16 min-h-[70vh] md:min-h-[80vh] flex flex-col justify-end pt-20 sm:pt-32 pb-6 sm:pb-12 overflow-hidden">
+            <div className="relative w-full -mt-16 min-h-[70vh] md:min-h-[80vh] flex flex-col justify-end pt-20 sm:pt-32 pb-6 sm:pb-12 overflow-hidden" style={{ marginTop: 'calc(-4rem - env(safe-area-inset-top))', paddingTop: 'calc(5rem + env(safe-area-inset-top))' }}>
                 <div
                     className="absolute inset-x-0 top-0 h-20 sm:h-32 -z-20 transition-opacity duration-(--duration-slower) ease-out"
-                    style={{ backgroundColor: dominantColor || "var(--color-primary)" }}
+                    style={{ height: 'calc(8rem + env(safe-area-inset-top))', backgroundColor: dominantColor || "var(--color-primary)" }}
                 />
                 <div className="absolute inset-x-0 inset-y-0 -z-10">
                     <Image
                         src={backdropUrl}
                         alt={title}
                         fill
+                        style={{ paddingTop: 'calc(5rem + env(safe-area-inset-top))' }}
                         className="pt-20 object-cover object-top"
                         priority
                         sizes="100vw"
