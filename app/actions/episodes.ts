@@ -27,7 +27,7 @@ async function syncTvShowWatchlistStatus(
     try {
         details = await getCachedTvShowDetails(tvId)
     } catch (error) {
-        console.warn(`[episodes] Failed to sync TV show ${tvId} watchlist status:`, error)
+        console.warn("[episodes] Failed to sync TV show %s watchlist status:", tvId, error)
         return
     }
 
