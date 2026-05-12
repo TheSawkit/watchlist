@@ -73,6 +73,15 @@ export function MediaBanner({
 
     return (
         <>
+            <div
+                className="fixed inset-x-0 top-0 w-full -z-30 pointer-events-none"
+                style={{ 
+                    height: 'calc(6rem + env(safe-area-inset-top))',
+                    backgroundColor: dominantColor || "var(--color-primary)",
+                    transition: 'background-color 300ms ease-out'
+                }}
+            />
+
             <div className={cn(
                 "fixed top-16 inset-x-0 z-40 transition-all duration-(--duration-base) ease-in-out",
                 scrolled ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
@@ -126,10 +135,6 @@ export function MediaBanner({
             </div>
 
             <div className="relative w-full -mt-16 min-h-[70vh] md:min-h-[80vh] flex flex-col justify-end pt-20 sm:pt-32 pb-6 sm:pb-12 overflow-hidden" style={{ marginTop: 'calc(-4rem - env(safe-area-inset-top))', paddingTop: 'calc(5rem + env(safe-area-inset-top))' }}>
-                <div
-                    className="absolute inset-x-0 top-0 h-20 sm:h-32 -z-20 transition-opacity duration-(--duration-slower) ease-out"
-                    style={{ height: 'calc(8rem + env(safe-area-inset-top))', backgroundColor: dominantColor || "var(--color-primary)" }}
-                />
                 <div className="absolute inset-x-0 inset-y-0 -z-10">
                     <Image
                         src={backdropUrl}
