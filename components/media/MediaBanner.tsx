@@ -10,6 +10,7 @@ import { useTranslation } from "@/lib/i18n/context"
 import { getLocale } from "@/lib/i18n/utils"
 import { formatDate, formatRuntime } from "@/lib/format"
 import { cn } from "@/lib/utils"
+import { useDominantColor } from "@/hooks/useDominantColor"
 
 /**
  * Large hero banner component displaying media details with parallax backdrop effect.
@@ -46,6 +47,7 @@ export function MediaBanner({
     const router = useRouter()
     const [scrolled, setScrolled] = useState(false)
     const bottomRef = useRef<HTMLDivElement>(null)
+    const dominantColor = useDominantColor(backdropUrl)
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -125,13 +127,15 @@ export function MediaBanner({
 
             <div className="relative w-full -mt-16 min-h-[70vh] md:min-h-[80vh] flex flex-col justify-end pt-20 sm:pt-32 pb-6 sm:pb-12 overflow-hidden">
                 <div
-                    className="absolute inset-x-0 top-0 h-full -z-10"
-                >
+                    className="absolute inset-x-0 top-0 h-20 sm:h-32 -z-20 transition-opacity duration-(--duration-slower) ease-out"
+                    style={{ backgroundColor: dominantColor || "var(--color-primary)" }}
+                />
+                <div className="absolute inset-x-0 inset-y-0 -z-10">
                     <Image
                         src={backdropUrl}
                         alt={title}
                         fill
-                        className="object-cover object-center opacity-70"
+                        className="pt-20 object-cover object-top"
                         priority
                         sizes="100vw"
                     />
