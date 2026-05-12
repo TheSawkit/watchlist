@@ -2,8 +2,8 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Instagram, Globe } from 'lucide-react'
-import { siLetterboxd } from 'simple-icons'
+import { Globe } from 'lucide-react'
+import { siInstagram, siLetterboxd } from 'simple-icons'
 import { Button } from '@/components/ui/button'
 import type { UserProfile } from '@/types/profile'
 import { useTranslation } from '@/lib/i18n/context'
@@ -33,6 +33,22 @@ function LetterboxdIcon({ className }: LetterboxdIconProps) {
     )
 }
 
+interface InstagramIconProps { className?: string }
+function InstagramIcon({ className }: InstagramIconProps) {
+    return (
+        <svg
+            className={className}
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+            width="1em"
+            height="1em"
+        >
+            <path d={siInstagram.path} />
+        </svg>
+    )
+}
+
 interface XIconProps { className?: string }
 function XIcon({ className }: XIconProps) {
     return (
@@ -58,7 +74,7 @@ export function ProfileHero({ profile, avatarUrl, fullName, isOwnProfile, friend
     const socialLinks = [
         profile.instagram && {
             href: `https://instagram.com/${profile.instagram}`,
-            icon: <Instagram className="h-4 w-4" />,
+            icon: <InstagramIcon className="h-4 w-4" />,
             label: 'Instagram',
         },
         profile.tiktok && {
