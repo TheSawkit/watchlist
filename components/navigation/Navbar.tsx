@@ -5,6 +5,7 @@ import Title from "@/components/layout/Title";
 import { getTranslations } from "@/lib/i18n/server";
 import { NavbarMobile } from "@/components/navigation/NavbarMobile";
 import { NavLinks } from "@/components/navigation/NavLinks";
+import { SearchModal } from "@/components/search/SearchModal";
 import { SignoutButton } from "@/components/auth/SignoutButton";
 import { UserAvatar } from "@/components/shared/UserAvatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -22,38 +23,41 @@ export default async function Navbar() {
         <header>
             <nav className="fixed w-full top-0 z-50 border-b border-border-subtle bg-surface/30 backdrop-blur-3xl backdrop-saturate-150 shadow-navbar" style={{ paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)', paddingTop: 'env(safe-area-inset-top)', width: 'calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right))' }}>
                 <div className="mx-auto max-w-7xl px-6 lg:px-12">
-                    <div className="grid grid-cols-3 h-16 items-center">
-                    {user ? (
-                        <div className="flex items-center md:hidden justify-start col-start-1">
-                            <NavbarMobile
-                                user={
-                                    user as {
-                                        user_metadata: { full_name?: string; username?: string; picture?: string; avatar_url?: string };
-                                        email?: string;
+                    <div className="grid grid-cols-3 h-16 items-center gap-4">
+                        {user ? (
+                            <div className="flex items-center md:hidden justify-start col-start-1">
+                                <NavbarMobile
+                                    user={
+                                        user as {
+                                            user_metadata: { full_name?: string; username?: string; picture?: string; avatar_url?: string };
+                                            email?: string;
+                                        }
                                     }
-                                }
-                            />
+                                />
+                            </div>
+                        ) : null}
+
+                        <div className="flex justify-center md:justify-start col-start-2 md:col-start-1">
+                            <Link
+                                href="/"
+                                className="font-display text-2xl font-normal text-text transform transition-transform duration-(--duration-fast) hover:scale-105 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 flex items-center"
+                            >
+                                <Title className="inline-block h-[0.7em] align-baseline mr-[0.03em] text-text" />
+                            </Link>
                         </div>
-                    ) : null}
 
-                    <div className="flex justify-center md:justify-start col-start-2 md:col-start-1">
-                        <Link
-                            href="/"
-                            className="font-display text-2xl font-normal text-text transform transition-transform duration-(--duration-fast) hover:scale-105 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none min-h-12 flex items-center"
-                        >
-                            <Title className="inline-block h-[0.7em] align-baseline mr-[0.03em] text-text" />
-                        </Link>
-                    </div>
+                        {user ? (
+                            <div className="hidden md:flex gap-6 justify-center col-start-2">
+                                <NavLinks orientation="horizontal" />
+                            </div>
+                        ) : null}
 
-                    {user ? (
-                        <div className="hidden md:flex gap-8 justify-center col-start-2">
-                            <NavLinks orientation="horizontal" />
-                        </div>
-                    ) : null}
-
-                    <div className="hidden md:flex gap-4 justify-end col-start-3">
+                        <div className="hidden md:flex gap-4 justify-end col-start-3">
                         {user ? (
                             <div className="flex items-center gap-4">
+                                <div className="hidden md:flex">
+                                    <SearchModal />
+                                </div>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button

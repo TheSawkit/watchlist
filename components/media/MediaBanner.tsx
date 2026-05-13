@@ -75,9 +75,9 @@ export function MediaBanner({
         <>
             <div
                 className="fixed inset-x-0 top-0 w-full -z-30 pointer-events-none"
-                style={{ 
+                style={{
                     height: 'calc(6rem + env(safe-area-inset-top))',
-                    backgroundColor: dominantColor || "var(--color-primary)",
+                    backgroundColor: dominantColor || "var(--color-background)",
                     transition: 'background-color 300ms ease-out'
                 }}
             />
@@ -140,7 +140,7 @@ export function MediaBanner({
                         src={backdropUrl}
                         alt={title}
                         fill
-                        style={{ paddingTop: 'calc(5rem + env(safe-area-inset-top))' }}
+                        style={{ paddingTop: 'calc(4rem + env(safe-area-inset-top))' }}
                         className="pt-20 object-cover object-top"
                         priority
                         sizes="100vw"

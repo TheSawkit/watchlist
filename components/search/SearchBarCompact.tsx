@@ -8,12 +8,7 @@ import { useTranslation } from "@/lib/i18n/context"
 import { useSearchSuggestions } from "@/hooks/useSearchSuggestions"
 import { SearchDropdown } from "./SearchDropdown"
 
-interface SearchBarProps {
-    onClose?: () => void
-    autoFocus?: boolean
-}
-
-export function SearchBar({ onClose, autoFocus = false }: SearchBarProps = {}) {
+export function SearchBarCompact() {
     const { t } = useTranslation()
     const [query, setQuery] = useState("")
     const { results, isLoading, isOpen, setIsOpen } = useSearchSuggestions(query)
@@ -24,12 +19,11 @@ export function SearchBar({ onClose, autoFocus = false }: SearchBarProps = {}) {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsOpen(false)
-                onClose?.()
             }
         }
         document.addEventListener("mousedown", handleClickOutside)
         return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [setIsOpen, onClose])
+    }, [setIsOpen])
 
     const handleSearch = (e?: React.FormEvent) => {
         if (e) e.preventDefault()
@@ -40,29 +34,25 @@ export function SearchBar({ onClose, autoFocus = false }: SearchBarProps = {}) {
     }
 
     return (
-        <div className="relative w-full max-w-3xl mx-auto mb-8 md:mb-12" ref={dropdownRef}>
+        <div className="relative w-full" ref={dropdownRef}>
             <form onSubmit={handleSearch} className="relative group flex items-center" role="search">
-                <label htmlFor="search-input" className="sr-only">{t.pages.search.placeholder}</label>
+                <label htmlFor="search-input-compact" className="sr-only">{t.pages.search.placeholder}</label>
                 <Input
-                    id="search-input"
+                    id="search-input-compact"
                     type="text"
                     placeholder={t.pages.search.placeholder}
                     autoComplete="off"
-                    className="pl-16 pr-10 py-3 h-16 bg-glass-bg backdrop-blur-xl border border-glass-border hover:border-glass-border-hover focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background text-base shadow-card transition-all duration-(--duration-base) ease-apple rounded-(--radius-xl)"
+                    className="pl-10 pr-8 py-2 h-10 bg-surface-2/50 backdrop-blur border border-border/30 hover:border-border/50 focus-visible:border-primary/60 focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-1 focus-visible:ring-offset-background text-sm shadow-sm transition-all duration-(--duration-fast) ease-apple rounded-lg"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => query.length >= 2 && setIsOpen(true)}
-                    autoFocus={autoFocus}
                 />
 
-                <div className="absolute left-0 inset-y-0 pl-5 flex items-center pointer-events-none group-focus-within:text-red transition-all duration-(--duration-fast) ease-apple">
+                <div className="absolute left-0 inset-y-0 pl-3 flex items-center pointer-events-none group-focus-within:text-primary transition-all duration-(--duration-fast) ease-apple">
                     {isLoading ? (
-                        <Loader2 className="w-6 h-6 animate-spin text-muted" />
+                        <Loader2 className="w-4 h-4 animate-spin text-muted" />
                     ) : (
-                        <div className="flex items-center gap-3">
-                            <Search className="w-6 h-6 text-muted transition-all duration-(--duration-fast) ease-apple group-focus-within:scale-110" />
-                            <div className="w-px h-7 bg-border/30" />
-                        </div>
+                        <Search className="w-4 h-4 text-muted transition-all duration-(--duration-fast) ease-apple group-focus-within:scale-110" />
                     )}
                 </div>
 
@@ -71,9 +61,9 @@ export function SearchBar({ onClose, autoFocus = false }: SearchBarProps = {}) {
                         type="button"
                         onClick={() => setQuery("")}
                         aria-label={t.common.clearSearch}
-                        className="absolute inset-y-0 right-3 flex items-center text-muted hover:text-text transition-all duration-(--duration-fast) ease-apple hover:scale-110"
+                        className="absolute inset-y-0 right-2 flex items-center text-muted hover:text-text transition-all duration-(--duration-fast) ease-apple"
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-4 h-4" />
                     </button>
                 )}
             </form>

@@ -8,6 +8,7 @@ import { Settings, Menu, X } from "lucide-react"
 import { SignoutButton } from "@/components/auth/SignoutButton"
 import { NavLinks } from "@/components/navigation/NavLinks"
 import { UserAvatar } from "@/components/shared/UserAvatar"
+import { SearchBarCompact } from "@/components/search/SearchBarCompact"
 import { useTranslation } from "@/lib/i18n/context"
 import type { NavbarMobileProps } from "@/types/components"
 
@@ -85,7 +86,8 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
                         </div>
                     </div>
 
-                    <div className="flex-1 p-4">
+                    <div className="flex-1 p-4 flex flex-col gap-4">
+                        <SearchBarCompact />
                         <NavLinks onLinkClick={closeMenu} />
                     </div>
                 </div>
